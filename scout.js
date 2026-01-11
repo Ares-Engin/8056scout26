@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const firebaseConfig = {
   apiKey: "AIzaSyDe-UDKwmW3pt9CWeHJW11GpgzKQIFLmN4",
   authDomain: "lfscout26.firebaseapp.com",
@@ -46,3 +47,32 @@ const autoCoral = () => v("autoCoral");
 const teleopCoral = () => v("teleopCoral");
 const comment = () => v("comment");
 const status = t => document.getElementById("status").innerText = t;
+=======
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { addDoc, collection, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.href = "index.html";
+});
+
+document.getElementById("scoutForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  await addDoc(collection(db, "scouting"), {
+    scout: auth.currentUser.email,
+    matchNumber: matchNumber.value,
+    teamNumber: teamNumber.value,
+    autoCoral: autoCoral.value,
+    teleopCoral: teleopCoral.value,
+    endgame: endgame.value,
+    driverSkill: driver.value,
+    comment: comment.value,
+    time: serverTimestamp()
+  });
+
+  status.innerText = "✅ Match submitted!";
+  e.target.reset();
+});
+>>>>>>> 93e86b19b715aef053c8530644d305ded61b89c5

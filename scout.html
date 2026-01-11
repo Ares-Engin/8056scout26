@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>REBULT Scouting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>REBULT Scouting</h1>
+
+<form id="scoutForm">
+  <input type="number" id="matchNumber" placeholder="Match Number" required>
+  <input type="number" id="teamNumber" placeholder="Team Number" required>
+
+  <h3>Auto Coral (Total)</h3>
+  <input type="number" id="autoCoral" min="0" value="0">
+
+  <h3>Teleop Coral (Total)</h3>
+  <input type="number" id="teleopCoral" min="0" value="0">
+
+  <h3>Endgame</h3>
+  <select id="endgame">
+    <option>None</option>
+    <option>Parked</option>
+    <option>Shallow Cage</option>
+    <option>Deep Cage</option>
+  </select>
+
+  <h3>Driver Skill (1–5)</h3>
+  <input type="range" id="driver" min="1" max="5">
+
+  <h3>Comments</h3>
+  <input type="text" id="comment">
+
+  <button type="submit">Submit Match</button>
+</form>
+
+<p id="status"></p>
+
+<script type="module" src="scout.js"></script>
+</body>
+</html>

@@ -27,6 +27,10 @@ function change(id, delta) {
   document.getElementById(id).innerText = counters[id];
 }
 
+function logout() {
+  auth.signOut().then(() => window.location.href = "index.html");
+}
+
 // 🔹 Submit scouting data
 function submitScout() {
   const user = auth.currentUser;

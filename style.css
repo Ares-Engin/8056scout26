@@ -76,7 +76,7 @@ select {
 }
 
 .controls button {
-  width: 48px;          /* 👈 slimmer */
+  width: 48px;
   height: 48px;
   font-size: 26px;
   border-radius: 12px;
@@ -123,4 +123,9 @@ select {
   font-weight: bold;
 
   margin-bottom: 30px;
+}
+
+.logo{
+  width: 100px;
+  margin-bottom: 20px;
 }

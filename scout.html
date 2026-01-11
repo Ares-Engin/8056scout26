@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REBULT Scouting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h2>Match Scouting</h2>
+
+  <input id="scoutName" placeholder="Scout Name">
+  <input id="matchNumber" type="number" placeholder="Match Number">
+  <input id="teamNumber" type="number" placeholder="Team Number">
+
+  <label>Auto Coral Scored</label>
+  <input id="autoCoral" type="number" value="0">
+
+  <label>TeleOp Coral Scored</label>
+  <input id="teleopCoral" type="number" value="0">
+
+  <label>Comments</label>
+  <input id="comment" placeholder="Notes">
+
+  <button onclick="submitData()">Submit Match</button>
+  <button onclick="logout()">Logout</button>
+
+  <p id="status"></p>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script src="scout.js"></script>
+</body>
+</html>

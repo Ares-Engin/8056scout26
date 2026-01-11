@@ -1,3 +1,4 @@
+// 🔹 Firebase config (YOUR REAL VALUES)
 const firebaseConfig = {
   apiKey: "AIzaSyDe-UDKwmW3pt9CWeHJW11GpgzKQIFLmN4",
   authDomain: "lfscout26.firebaseapp.com",
@@ -8,41 +9,53 @@ const firebaseConfig = {
   measurementId: "G-CHS156EKD4"
 };
 
+// 🔹 Init Firebase (v8 style)
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-auth.onAuthStateChanged(user => {
-  if (!user) window.location.href = "index.html";
-});
+// 🔹 Counters
+const counters = {
+  autoHigh: 0,
+  autoLow: 0,
+  teleHigh: 0,
+  teleLow: 0
+};
 
-function submitData() {
+function change(id, delta) {
+  counters[id] = Math.max(0, counters[id] + delta);
+  document.getElementById(id).innerText = counters[id];
+}
+
+// 🔹 Submit scouting data
+function submitScout() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("You must be logged in");
+    return;
+  }
+
   const data = {
-    scout: scoutName(),
-    match: matchNumber(),
-    team: teamNumber(),
-    autoCoral: autoCoral(),
-    teleopCoral: teleopCoral(),
-    comment: comment(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    scout: user.email,
+    matchNumber: document.getElementById("matchNumber").value,
+    teamNumber: document.getElementById("teamNumber").value,
+    auto: {
+      high: counters.autoHigh,
+      low: counters.autoLow,
+      leave: document.getElementById("autoLeave").checked
+    },
+    teleop: {
+      high: counters.teleHigh,
+      low: counters.teleLow
+    },
+    endgame: document.getElementById("endgame").value,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  db.collection("matches").add(data)
-    .then(() => status("Saved ✔"))
-    .catch(e => status(e.message));
+  db.collection("scouting").add(data)
+    .then(() => alert("Match submitted!"))
+    .catch(err => {
+      console.error(err);
+      alert("Error saving data");
+    });
 }
-
-function logout() {
-  auth.signOut().then(() => window.location.href = "index.html");
-}
-
-/* helpers */
-const v = id => document.getElementById(id).value;
-const scoutName = () => v("scoutName");
-const matchNumber = () => v("matchNumber");
-const teamNumber = () => v("teamNumber");
-const autoCoral = () => v("autoCoral");
-const teleopCoral = () => v("teleopCoral");
-const comment = () => v("comment");
-const status = t => document.getElementById("status").innerText = t;

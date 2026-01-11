@@ -3,36 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REBULT Scouting</title>
+  <title>REBULT 2026 Scouting</title>
   <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
-  <h2>Match Scouting</h2>
-
-  <input id="scoutName" placeholder="Scout Name">
-  <input id="matchNumber" type="number" placeholder="Match Number">
-  <input id="teamNumber" type="number" placeholder="Team Number">
-
-  <label>Auto Coral Scored</label>
-  <input id="autoCoral" type="number" value="0">
-
-  <label>TeleOp Coral Scored</label>
-  <input id="teleopCoral" type="number" value="0">
-
-  <label>Comments</label>
-  <input id="comment" placeholder="Notes">
-
-  <button onclick="submitData()">Submit Match</button>
-  <button onclick="logout()">Logout</button>
-
-  <p id="status"></p>
-
-  <!-- Firebase -->
+  <!-- Firebase v8 (KEEP THESE) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
 
-  <script src="scout.js"></script>
+<h1>REBULT 2026 – Scouting</h1>
+
+<section class="section">
+  <h2>Match Info</h2>
+  <input id="matchNumber" type="number" placeholder="Match Number">
+  <input id="teamNumber" type="number" placeholder="Team Number">
+</section>
+
+<section class="section auto">
+  <h2>Autonomous</h2>
+
+  <div class="counter">
+    <span>Auto High</span>
+    <div class="controls">
+      <button onclick="change('autoHigh', -1)">−</button>
+      <span id="autoHigh">0</span>
+      <button onclick="change('autoHigh', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Auto Low</span>
+    <div class="controls">
+      <button onclick="change('autoLow', -1)">−</button>
+      <span id="autoLow">0</span>
+      <button onclick="change('autoLow', 1)">+</button>
+    </div>
+  </div>
+
+  <label class="checkbox">
+    <input type="checkbox" id="autoLeave"> Auto Leave
+  </label>
+</section>
+
+<section class="section teleop">
+  <h2>TeleOp</h2>
+
+  <div class="counter">
+    <span>TeleOp High</span>
+    <div class="controls">
+      <button onclick="change('teleHigh', -1)">−</button>
+      <span id="teleHigh">0</span>
+      <button onclick="change('teleHigh', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>TeleOp Low</span>
+    <div class="controls">
+      <button onclick="change('teleLow', -1)">−</button>
+      <span id="teleLow">0</span>
+      <button onclick="change('teleLow', 1)">+</button>
+    </div>
+  </div>
+</section>
+
+<section class="section endgame">
+  <h2>Endgame</h2>
+  <select id="endgame">
+    <option value="">Select</option>
+    <option value="parked">Parked</option>
+    <option value="shallow">Shallow Cage</option>
+    <option value="deep">Deep Cage</option>
+    <option value="failed">Failed</option>
+  </select>
+</section>
+
+<button class="submit" onclick="submitScout()">Submit Match</button>
+
+<script src="scout.js"></script>
 </body>
 </html>

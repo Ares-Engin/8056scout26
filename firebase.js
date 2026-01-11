@@ -2,13 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-export const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
+const firebaseConfig = {
+  apiKey: "AIzaSyDe-UDKwmW3pt9CWeHJW11GpgzKQIFLmN4",
+  authDomain: "lfscout26.firebaseapp.com",
+  projectId: "lfscout26",
+  storageBucket: "lfscout26.firebasestorage.app",
+  messagingSenderId: "234755831598",
+  appId: "1:234755831598:web:bb2f0846dc8f1539b0acbf",
+  measurementId: "G-CHS156EKD4"
 };
 
 export const app = initializeApp(firebaseConfig);

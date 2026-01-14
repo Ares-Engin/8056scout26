@@ -126,11 +126,6 @@ select {
 }
 
 .logo{
-<<<<<<< HEAD
-  width: 100px;
-  margin-bottom: 20px;
-}
-=======
   width: 150px;
 }
 
@@ -203,4 +198,3 @@ select {
   background: #ff8400;
   color: black;
 }
->>>>>>> 3dca70e (New Version Fix)

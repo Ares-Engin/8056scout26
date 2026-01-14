@@ -17,8 +17,31 @@
 
 <section class="section">
   <h2>Match Info</h2>
-  <input id="matchNumber" type="number" placeholder="Match Number">
-  <input id="teamNumber" type="number" placeholder="Team Number">
+  <div class="next">
+    <img src="logo.png" class="logoinfo">
+    <div class="stack">
+      <input id="matchNumber" type="number" placeholder="Match Number" class="info">
+      <input id="teamNumber" type="number" placeholder="Team Number" class="info">
+    </div>
+    </div>
+    <h2>Match Type</h2>
+    <div class="radio-group">
+      <input type="radio" name="matchtype" value="Practice" id="Practice">
+      <label for="Practice">Practice</label>
+      <input type="radio" name="matchtype" value="Qualification" id="Qualification">
+      <label for="Qualification">Qualification</label>
+      <input type="radio" name="matchtype" value="Finals" id="Finals">
+      <label for="Finals">Finals</label>
+    </div>
+    <br>
+    <h2>Alliance Color</h2>
+    <div class="radio-group">
+      <input type="radio" name="alliance" value="Red" id="Red">
+      <label for="Red">Red</label>
+      <input type="radio" name="alliance" value="Blue" id="Blue">
+      <label for="Blue">Blue</label>
+    </div>
+  
 </section>
 
 <section class="section auto">
@@ -81,7 +104,7 @@
 </section>
 
 <button class="submit" onclick="submitScout()">Submit Match</button>
-<button onclick="logout()">Logout</button>
+<button onclick="logout()" class="log-button">Logout</button>
 
 <script src="scout.js"></script>
 </body>

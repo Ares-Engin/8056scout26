@@ -1,6 +1,6 @@
 /* ---------- GLOBAL ---------- */
 body {
-  background: #0f172a;
+  background: #000000;
   color: white;
   font-family: Arial, sans-serif;
   padding: 16px;
@@ -18,7 +18,7 @@ h1 {
 
 /* ---------- SECTIONS ---------- */
 .section {
-  background: #1e293b;
+  background: #410000;
   padding: 20px;
   border-radius: 18px;
   margin-bottom: 20px;
@@ -81,7 +81,7 @@ select {
   font-size: 26px;
   border-radius: 12px;
   border: none;
-  background: #38bdf8;
+  background: #ff8400;
   color: black;
   font-weight: bold;
 }
@@ -113,9 +113,9 @@ select {
 /* ---------- SUBMIT ---------- */
 .submit {
   width: 100%;
-  max-width: 420px;
+  max-width: 300px;
 
-  padding: 18px;
+  padding: 12px;
   font-size: 20px;
   border-radius: 16px;
   background: #22c55e;
@@ -126,6 +126,81 @@ select {
 }
 
 .logo{
+<<<<<<< HEAD
   width: 100px;
   margin-bottom: 20px;
 }
+=======
+  width: 150px;
+}
+
+.log-button{
+  width: 300px;
+
+  padding: 12px;
+  font-size: 20px;
+  border-radius: 16px;
+  background: #f97316;
+  border: none;
+  font-weight: bold;
+
+  margin-bottom: 10px;
+}
+
+.log-input{
+  width: 300px;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+}
+
+.next{
+  display: flex;
+  align-items: center;
+  margin-top: -90px;
+  margin-bottom: -70px;
+}
+
+.stack{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.info{
+  width: 150px;
+}
+.logoinfo{
+  width: 300px;
+  margin: -50px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.radio-group input[type="radio"] {
+  display: none;
+}
+
+.radio-group label {
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #334155;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  text-align: center;
+}
+
+.radio-group input[type="radio"]:checked + label {
+  background: #ff8400;
+  color: black;
+}
+>>>>>>> 3dca70e (New Version Fix)

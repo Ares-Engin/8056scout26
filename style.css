@@ -198,3 +198,91 @@ select {
   background: #ff8400;
   color: black;
 }
+<<<<<<< HEAD
+=======
+
+/* ---------- MATCH CARD (for matches.html) ---------- */
+.match-card {
+  background: #410000;
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ff8400;
+}
+
+.match-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.delete-btn {
+  padding: 8px 12px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+.match-info {
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #333;
+}
+
+.info-row .label {
+  font-weight: bold;
+  color: #ff8400;
+}
+
+.info-row span {
+  text-align: right;
+}
+
+.match-stats {
+  display: flex;
+  gap: 15px;
+  justify-content: space-around;
+  background: #0f172a;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+.stat-group {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-group strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #ff8400;
+}
+
+.stat-group div {
+  font-size: 14px;
+  margin: 4px 0;
+}
+>>>>>>> 7246201 (New Version Fix)

@@ -6,7 +6,6 @@
   <title>REBULT 2026 Scouting</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Firebase v8 (KEEP THESE) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -23,28 +22,29 @@
       <input id="matchNumber" type="number" placeholder="Match Number" class="info">
       <input id="teamNumber" type="number" placeholder="Team Number" class="info">
     </div>
-    </div>
-    <h2>Event Details</h2>
-    <input id="seasonYear" type="number" placeholder="Season Year (e.g., 2026)" class="info">
-    <input id="regionalCompetition" type="text" placeholder="Regional/Competition Name" class="info">
-    <h2>Match Type</h2>
-    <div class="radio-group">
-      <input type="radio" name="matchtype" value="Practice" id="Practice">
-      <label for="Practice">Practice</label>
-      <input type="radio" name="matchtype" value="Qualification" id="Qualification">
-      <label for="Qualification">Qualification</label>
-      <input type="radio" name="matchtype" value="Finals" id="Finals">
-      <label for="Finals">Finals</label>
-    </div>
-    <br>
-    <h2>Alliance Color</h2>
-    <div class="radio-group">
-      <input type="radio" name="alliance" value="Red" id="Red">
-      <label for="Red">Red</label>
-      <input type="radio" name="alliance" value="Blue" id="Blue">
-      <label for="Blue">Blue</label>
-    </div>
-  
+  </div>
+
+  <h2>Event Details</h2>
+  <input id="seasonYear" type="number" placeholder="Season Year (e.g., 2026)" class="info">
+  <input id="regionalCompetition" type="text" placeholder="Regional/Competition Name" class="info">
+
+  <h2>Match Type</h2>
+  <div class="radio-group">
+    <input type="radio" name="matchtype" value="Practice" id="Practice">
+    <label for="Practice">Practice</label>
+    <input type="radio" name="matchtype" value="Qualification" id="Qualification">
+    <label for="Qualification">Qualification</label>
+    <input type="radio" name="matchtype" value="Finals" id="Finals">
+    <label for="Finals">Finals</label>
+  </div>
+
+  <h2>Alliance Color</h2>
+  <div class="radio-group">
+    <input type="radio" name="alliance" value="Red" id="Red">
+    <label for="Red">Red</label>
+    <input type="radio" name="alliance" value="Blue" id="Blue">
+    <label for="Blue">Blue</label>
+  </div>
 </section>
 
 <section class="section auto">
@@ -108,6 +108,7 @@
 
 <button class="submit" onclick="submitScout()">Submit Match</button>
 <button onclick="logout()" class="log-button">Logout</button>
+<button onclick="location.href='matches.html'" class="log-button">View Matches</button>
 
 <script src="auth.js"></script>
 <script src="scout.js"></script>

@@ -1,12 +1,11 @@
 auth.onAuthStateChanged(async user => {
-  const u = await db.collection("users").doc(user.uid).get();
-  const role = u.data().role;
-  const team = u.data().teamNumber;
+  if (!user) return location.href = "index.html";
 
+  const userData = await getCurrentUserData();
   let query = db.collection("scouting").orderBy("createdAt", "desc");
 
-  if (role === "user") {
-    query = query.where("scoutTeam", "==", team);
+  if (userData.role !== "team8056" && userData.role !== "admin") {
+    query = query.where("scoutTeam", "==", userData.teamNumber);
   }
 
   const snap = await query.get();
@@ -15,10 +14,21 @@ auth.onAuthStateChanged(async user => {
     const div = document.createElement("div");
     div.className = "match-card";
     div.innerHTML = `
-      <strong>Team ${d.teamNumber} | Match ${d.matchNumber}</strong><br>
-      ${d.scout}<br>
+      <b>Team ${d.teamNumber}</b> | Match ${d.matchNumber}<br>
+      ${d.scoutEmail}<br>
       ${d.createdAt?.toDate().toLocaleString()}
+      ${
+        userData.role === "admin" || userData.role === "team8056"
+        ? `<button onclick="deleteMatch('${doc.id}')">Delete</button>`
+        : ""
+      }
     `;
-    document.getElementById("list").appendChild(div);
+    list.appendChild(div);
   });
 });
+
+function deleteMatch(id) {
+  if (confirm("Delete match?")) {
+    db.collection("scouting").doc(id).delete().then(() => location.reload());
+  }
+}

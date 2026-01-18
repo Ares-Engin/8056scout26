@@ -6,16 +6,14 @@
 </head>
 <body>
 
-<h1>REBULT Dashboard</h1>
+<h1>Dashboard</h1>
 
 <button class="log-button" onclick="location.href='scout.html'">Scout Match</button>
 <button class="log-button" onclick="location.href='matches.html'">View Matches</button>
 <button class="log-button" onclick="location.href='account.html'">My Account</button>
 
-<button id="acceptBtn" class="log-button" style="display:none"
-        onclick="location.href='accept.html'">
-  User Accept
-</button>
+<button id="adminBtn" class="log-button" style="display:none"
+ onclick="location.href='accept.html'">User Accept</button>
 
 <button class="log-button" onclick="logout()">Logout</button>
 
@@ -26,16 +24,12 @@
 
 <script>
 auth.onAuthStateChanged(async user => {
-  const snap = await db.collection("users").doc(user.uid).get();
-  if (snap.data().role === "admin") {
-    document.getElementById("acceptBtn").style.display = "block";
+  if (!user) location.href = "index.html";
+  const data = await getCurrentUserData();
+  if (data?.role === "admin") {
+    document.getElementById("adminBtn").style.display = "block";
   }
 });
-
-window.logout = function () {
-  auth.signOut().then(() => location.href = "index.html");
-};
 </script>
-
 </body>
 </html>

@@ -1,6 +1,3 @@
-const auth = firebase.auth();
-const db = firebase.firestore();
-
 const counters = {
   autoHigh: 0,
   autoLow: 0,
@@ -8,27 +5,24 @@ const counters = {
   teleLow: 0
 };
 
-window.change = function (id, delta) {
+function change(id, delta) {
   counters[id] = Math.max(0, counters[id] + delta);
   document.getElementById(id).innerText = counters[id];
-};
+}
 
-window.submitScout = async function () {
+async function submitScout() {
   const user = auth.currentUser;
   if (!user) return alert("Not logged in");
 
-  const u = await db.collection("users").doc(user.uid).get();
-  const userData = u.data();
+  const userData = await getCurrentUserData();
 
   await db.collection("scouting").add({
-    scout: userData.name,
+    scoutUid: user.uid,
+    scoutEmail: user.email,
     scoutTeam: userData.teamNumber,
-    owner: user.uid,
 
     matchNumber: Number(matchNumber.value),
     teamNumber: Number(teamNumber.value),
-
-    season: "DECODE",
     seasonYear: Number(seasonYear.value),
     regionalCompetition: regionalCompetition.value,
 
@@ -39,18 +33,13 @@ window.submitScout = async function () {
       num4: counters.teleLow
     },
 
-    selects: {
-      select1: autoLeave.checked ? "yes" : null,
-      select2: endgame.value || null
-    },
-
     meta: {
-      matchType: document.querySelector("input[name='matchtype']:checked")?.value,
-      alliance: document.querySelector("input[name='alliance']:checked")?.value
+      matchType: document.querySelector("input[name='matchtype']:checked")?.value || null,
+      alliance: document.querySelector("input[name='alliance']:checked")?.value || null
     },
 
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  alert("Match saved!");
-};
+  alert("Match submitted!");
+}

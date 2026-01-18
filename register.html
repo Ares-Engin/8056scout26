@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>REBULT Scouting Login</title>
+  <title>Register</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="center">
 
 <img src="logo.png" class="logo">
-<h2>Scout Login</h2>
+<h2>Create Account</h2>
 
+<input id="name" placeholder="Full Name" class="log-input">
 <input id="email" type="email" placeholder="Email" class="log-input">
 <input id="password" type="password" placeholder="Password" class="log-input">
+<input id="teamNumber" type="number" placeholder="Team Number" class="log-input">
+<input id="birthMonth" type="number" placeholder="Birth Month" class="log-input">
+<input id="birthYear" type="number" placeholder="Birth Year" class="log-input">
 
-<button onclick="login()" class="log-button">Login</button>
-<button onclick="location.href='register.html'" class="log-button">Sign Up</button>
+<button onclick="register()" class="log-button">Create Account</button>
+<button onclick="location.href='index.html'" class="log-button">Back</button>
 
 <p id="error"></p>
 

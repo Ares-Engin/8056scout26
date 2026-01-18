@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Matches</title>
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Collected Matches</h1>
-<button onclick="location.href='scout.html'" class="log-button">Back</button>
-<div id="list"></div>
+<h1>Matches</h1>
+<div id="matches"></div>
+
+<button class="log-button" onclick="location.href='dashboard.html'">Back</button>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="auth.js"></script>
-<script src="view.js"></script>
+<script src="matches.js"></script>
+
 </body>
 </html>

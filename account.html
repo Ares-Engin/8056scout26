@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -8,7 +10,7 @@
 
 <h1>My Account</h1>
 
-<button class="log-button" onclick="resetPass()">Change Password</button>
+<button class="log-button" onclick="resetPassword()">Change Password</button>
 <button class="log-button" onclick="deleteAccount()">Delete Account</button>
 <button class="log-button" onclick="location.href='dashboard.html'">Back</button>
 
@@ -16,22 +18,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<script>
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-window.resetPass = function () {
-  auth.sendPasswordResetEmail(auth.currentUser.email)
-    .then(() => alert("Password reset email sent"));
-};
-
-window.deleteAccount = async function () {
-  if (!confirm("Delete account permanently?")) return;
-  await db.collection("users").doc(auth.currentUser.uid).delete();
-  await auth.currentUser.delete();
-  location.href = "index.html";
-};
-</script>
-
+<script src="auth.js"></script>
+<script src="account.js"></script>
 </body>
 </html>

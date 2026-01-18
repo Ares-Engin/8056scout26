@@ -1,18 +1,44 @@
-auth.onAuthStateChanged(user => {
-  if (!user) location.href = "index.html";
-});
+const auth = firebase.auth();
 
-function changePassword() {
-  const newPass = prompt("New password:");
-  if (!newPass) return;
-  auth.currentUser.updatePassword(newPass)
-    .then(() => alert("Password updated"));
+/**
+ * Send password reset email
+ */
+function resetPassword() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Not logged in");
+    return;
+  }
+
+  auth.sendPasswordResetEmail(user.email)
+    .then(() => {
+      alert("Password reset email sent to " + user.email);
+    })
+    .catch(err => {
+      alert(err.message);
+    });
 }
 
+/**
+ * Permanently delete account
+ */
 function deleteAccount() {
-  if (!confirm("This will permanently delete your account")) return;
-  auth.currentUser.delete().then(() => {
-    alert("Account deleted");
-    location.href = "index.html";
-  });
+  const user = auth.currentUser;
+  if (!user) return;
+
+  if (!confirm("Are you sure you want to permanently delete your account?")) {
+    return;
+  }
+
+  user.delete()
+    .then(() => {
+      alert("Account deleted");
+      location.href = "index.html";
+    })
+    .catch(err => {
+      alert(
+        "For security reasons, please log out and log back in, then try again.\n\n" +
+        err.message
+      );
+    });
 }

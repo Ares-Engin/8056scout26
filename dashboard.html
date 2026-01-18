@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>Dashboard</h1>
 
-<button class="log-button" onclick="location.href='scout.html'">Scout Match</button>
-<button class="log-button" onclick="location.href='matches.html'">View Matches</button>
-<button class="log-button" onclick="location.href='account.html'">My Account</button>
+<button class="log-button" onclick="go('scout.html')">Scout Match</button>
+<button class="log-button" onclick="go('matches.html')">View Matches</button>
+<button class="log-button" onclick="go('account.html')">My Account</button>
 
 <button id="adminBtn" class="log-button" style="display:none"
- onclick="location.href='accept.html'">User Accept</button>
+onclick="go('accept.html')">User Accept</button>
 
 <button class="log-button" onclick="logout()">Logout</button>
 
@@ -23,13 +23,18 @@
 <script src="auth.js"></script>
 
 <script>
-auth.onAuthStateChanged(async user => {
-  if (!user) location.href = "index.html";
-  const data = await getCurrentUserData();
-  if (data?.role === "admin") {
-    document.getElementById("adminBtn").style.display = "block";
+function go(p) { location.href = p; }
+
+function logout() {
+  auth.signOut().then(() => location.href = "index.html");
+}
+
+auth.onAuthStateChanged(user => {
+  if (isAdmin(user)) {
+    adminBtn.style.display = "block";
   }
 });
 </script>
+
 </body>
 </html>

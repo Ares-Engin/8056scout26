@@ -9,6 +9,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* ✅ prevents sideways scrolling on phones */
+  overflow-x: hidden;
 }
 
 h1 {
@@ -29,12 +32,6 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.section h2 {
-  margin-top: 0;
-  margin-bottom: 14px;
-  text-align: center;
 }
 
 /* ---------- INPUTS ---------- */
@@ -62,12 +59,6 @@ select {
   margin: 14px 0;
 }
 
-.counter span:first-child {
-  margin-bottom: 8px;
-  font-size: 16px;
-}
-
-/* ---------- BUTTON + NUMBER ROW ---------- */
 .controls {
   display: flex;
   align-items: center;
@@ -86,8 +77,6 @@ select {
   font-weight: bold;
 }
 
-
-/* 🔥 NUMBER TEXT SAME SIZE AS BUTTON */
 .controls span {
   font-size: 26px;
   font-weight: bold;
@@ -102,77 +91,28 @@ select {
   border-radius: 14px;
 }
 
-/* ---------- CHECKBOX ---------- */
-.checkbox {
-  margin-top: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* ---------- SUBMIT ---------- */
-.submit {
+/* ---------- BUTTONS ---------- */
+.submit,
+.log-button {
   width: 100%;
   max-width: 300px;
-
-  padding: 12px;
+  padding: 14px;
   font-size: 20px;
   border-radius: 16px;
+  border: none;
+  font-weight: bold;
+}
+
+.submit {
   background: #22c55e;
-  border: none;
-  font-weight: bold;
-
-  margin-bottom: 30px;
 }
 
-.logo{
-  width: 150px;
-}
-
-.log-button{
-  width: 300px;
-
-  padding: 12px;
-  font-size: 20px;
-  border-radius: 16px;
+.log-button {
   background: #f97316;
-  border: none;
-  font-weight: bold;
-
   margin-bottom: 10px;
 }
 
-.log-input{
-  width: 300px;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
-  text-align: center;
-}
-
-.next{
-  display: flex;
-  align-items: center;
-  margin-top: -90px;
-  margin-bottom: -70px;
-}
-
-.stack{
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
-.info{
-  width: 150px;
-}
-.logoinfo{
-  width: 300px;
-  margin: -50px;
-}
-
+/* ---------- RADIO ---------- */
 .radio-group {
   display: flex;
   gap: 10px;
@@ -180,7 +120,7 @@ select {
   flex-wrap: wrap;
 }
 
-.radio-group input[type="radio"] {
+.radio-group input {
   display: none;
 }
 
@@ -189,17 +129,15 @@ select {
   border-radius: 14px;
   background: #334155;
   cursor: pointer;
-  user-select: none;
   font-weight: bold;
-  text-align: center;
 }
 
-.radio-group input[type="radio"]:checked + label {
+.radio-group input:checked + label {
   background: #ff8400;
   color: black;
 }
 
-/* ---------- MATCH CARD (for matches.html) ---------- */
+/* ---------- MATCH CARD ---------- */
 .match-card {
   background: #410000;
   padding: 20px;
@@ -209,77 +147,38 @@ select {
   max-width: 500px;
 }
 
-.match-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ff8400;
-}
+/* ---------- MOBILE FIXES ---------- */
+@media (max-width: 480px) {
 
-.match-title {
-  font-size: 18px;
-  font-weight: bold;
-}
+  body {
+    padding: 12px;
+  }
 
-.delete-btn {
-  padding: 8px 12px;
-  background: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-}
+  h1 {
+    font-size: 26px;
+  }
 
-.delete-btn:hover {
-  background: #b91c1c;
-}
+  .section {
+    max-width: 100%;
+    padding: 18px;
+  }
 
-.match-info {
-  margin-bottom: 15px;
-}
+  input,
+  select {
+    max-width: 100%;
+    font-size: 18px;
+  }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #333;
-}
+  .controls button,
+  .controls span {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
 
-.info-row .label {
-  font-weight: bold;
-  color: #ff8400;
-}
-
-.info-row span {
-  text-align: right;
-}
-
-.match-stats {
-  display: flex;
-  gap: 15px;
-  justify-content: space-around;
-  background: #0f172a;
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 15px;
-}
-
-.stat-group {
-  flex: 1;
-  text-align: center;
-}
-
-.stat-group strong {
-  display: block;
-  margin-bottom: 8px;
-  color: #ff8400;
-}
-
-.stat-group div {
-  font-size: 14px;
-  margin: 4px 0;
+  .submit,
+  .log-button {
+    font-size: 22px;
+    padding: 16px;
+  }
 }

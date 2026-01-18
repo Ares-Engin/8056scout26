@@ -1,40 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>User Accept</title>
-  <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>New Users</h2>
-<div id="users"></div>
+<h1>User Accept</h1>
+<div id="list"></div>
+
+<button class="log-button" onclick="location.href='dashboard.html'">Back</button>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="auth.js"></script>
+<script src="accept.js"></script>
 
-<script>
-auth.onAuthStateChanged(async user => {
-  const admin = await getCurrentUserData();
-  if (admin.role !== "admin") location.href = "dashboard.html";
-
-  const snap = await db.collection("users").where("role", "==", "new").get();
-  snap.forEach(doc => {
-    const u = doc.data();
-    users.innerHTML += `
-      <div class="match-card">
-        ${u.fullName} (Team ${u.teamNumber})
-        <button onclick="setRole('${doc.id}','normal')">Normal</button>
-        <button onclick="setRole('${doc.id}','team8056')">Team8056</button>
-      </div>`;
-  });
-});
-
-function setRole(uid, role) {
-  db.collection("users").doc(uid).update({ role })
-    .then(() => location.reload());
-}
-</script>
 </body>
 </html>

@@ -9,9 +9,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  /* ✅ prevents sideways scrolling on phones */
-  overflow-x: hidden;
 }
 
 h1 {
@@ -32,6 +29,12 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.section h2 {
+  margin-top: 0;
+  margin-bottom: 14px;
+  text-align: center;
 }
 
 /* ---------- INPUTS ---------- */
@@ -59,6 +62,12 @@ select {
   margin: 14px 0;
 }
 
+.counter span:first-child {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+/* ---------- BUTTON + NUMBER ROW ---------- */
 .controls {
   display: flex;
   align-items: center;
@@ -91,28 +100,76 @@ select {
   border-radius: 14px;
 }
 
-/* ---------- BUTTONS ---------- */
-.submit,
-.log-button {
+/* ---------- CHECKBOX ---------- */
+.checkbox {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------- SUBMIT ---------- */
+.submit {
   width: 100%;
   max-width: 300px;
-  padding: 14px;
+
+  padding: 12px;
   font-size: 20px;
   border-radius: 16px;
+  background: #22c55e;
   border: none;
   font-weight: bold;
+
+  margin-bottom: 30px;
 }
 
-.submit {
-  background: #22c55e;
+.logo {
+  width: 150px;
 }
 
 .log-button {
+  width: 300px;
+  padding: 12px;
+  font-size: 20px;
+  border-radius: 16px;
   background: #f97316;
+  border: none;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* ---------- RADIO ---------- */
+.log-input {
+  width: 300px;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+}
+
+.next {
+  display: flex;
+  align-items: center;
+  margin-top: -90px;
+  margin-bottom: -70px;
+}
+
+.stack {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.info {
+  width: 150px;
+}
+
+.logoinfo {
+  width: 300px;
+  margin: -50px;
+}
+
 .radio-group {
   display: flex;
   gap: 10px;
@@ -120,7 +177,7 @@ select {
   flex-wrap: wrap;
 }
 
-.radio-group input {
+.radio-group input[type="radio"] {
   display: none;
 }
 
@@ -129,10 +186,12 @@ select {
   border-radius: 14px;
   background: #334155;
   cursor: pointer;
+  user-select: none;
   font-weight: bold;
+  text-align: center;
 }
 
-.radio-group input:checked + label {
+.radio-group input[type="radio"]:checked + label {
   background: #ff8400;
   color: black;
 }
@@ -147,38 +206,76 @@ select {
   max-width: 500px;
 }
 
-/* ---------- MOBILE FIXES ---------- */
-@media (max-width: 480px) {
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ff8400;
+}
 
+.match-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.delete-btn {
+  padding: 8px 12px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.match-info {
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #333;
+}
+
+.info-row .label {
+  font-weight: bold;
+  color: #ff8400;
+}
+
+.match-stats {
+  display: flex;
+  gap: 15px;
+  justify-content: space-around;
+  background: #0f172a;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+/* ---------- MOBILE ALIGNMENT FIX (NO SIZE CHANGES) ---------- */
+@media (max-width: 600px) {
   body {
-    padding: 12px;
+    align-items: stretch;
   }
 
-  h1 {
-    font-size: 26px;
+  .section,
+  .match-card {
+    max-width: none;
+    margin-left: 8px;
+    margin-right: 8px;
   }
 
-  .section {
-    max-width: 100%;
-    padding: 18px;
-  }
-
-  input,
-  select {
-    max-width: 100%;
-    font-size: 18px;
-  }
-
-  .controls button,
-  .controls span {
-    width: 56px;
-    height: 56px;
-    font-size: 28px;
-  }
-
+  .log-button,
   .submit,
-  .log-button {
-    font-size: 22px;
-    padding: 16px;
+  .log-input {
+    width: calc(100% - 16px);
+    max-width: none;
+    margin-left: 8px;
+    margin-right: 8px;
   }
 }

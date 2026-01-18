@@ -14,15 +14,44 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-function isAdmin(user) {
-  return user && user.email === "aress2608@gmail.com";
+function register() {
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .then(cred => {
+      const user = cred.user;
+
+      const userData = {
+        email: user.email,
+        role: "new",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (typeof scoutname !== "undefined" && scoutname.value)
+        userData.fullName = scoutname.value;
+
+      if (typeof teamno !== "undefined" && teamno.value)
+        userData.teamNumber = Number(teamno.value);
+
+      if (typeof birthMonth !== "undefined" && birthMonth.value)
+        userData.birthMonth = birthMonth.value;
+
+      if (typeof birthYear !== "undefined" && birthYear.value)
+        userData.birthYear = Number(birthYear.value);
+
+      return db.collection("users").doc(user.uid).set(userData);
+    })
+    .then(() => location.href = "dashboard.html")
+    .catch(e => {
+      console.error(e);
+      error.innerText = e.message;
+    });
 }
 
-auth.onAuthStateChanged(user => {
-  const publicPages = ["index.html", "register.html"];
-  const current = location.pathname.split("/").pop();
+function login() {
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .then(() => location.href = "dashboard.html")
+    .catch(e => error.innerText = e.message);
+}
 
-  if (!user && !publicPages.includes(current)) {
-    location.href = "index.html";
-  }
-});
+function logout() {
+  auth.signOut().then(() => location.href = "index.html");
+}

@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REBULT 2026 Scouting</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REBULT 2026 – Match Scouting</title>
+
   <link rel="stylesheet" href="style.css">
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
 <body>
 
-<h1>REBULT 2026 – Scouting</h1>
+<h1>REBULT 2026 – Match Scouting</h1>
 
+<!-- ---------- MATCH INFO ---------- -->
 <section class="section">
   <h2>Match Info</h2>
+
   <div class="next">
     <img src="logo.png" class="logoinfo">
     <div class="stack">
@@ -24,91 +28,139 @@
     </div>
   </div>
 
-  <h2>Event Details</h2>
-  <input id="seasonYear" type="number" placeholder="Season Year" class="info">
-  <input id="regionalCompetition" type="text" placeholder="Regional Name" class="info">
-
   <h2>Match Type</h2>
   <div class="radio-group">
     <input type="radio" name="matchtype" value="Practice" id="Practice">
     <label for="Practice">Practice</label>
+
     <input type="radio" name="matchtype" value="Qualification" id="Qualification">
     <label for="Qualification">Qualification</label>
+
     <input type="radio" name="matchtype" value="Finals" id="Finals">
     <label for="Finals">Finals</label>
   </div>
 
-  <h2>Alliance Color</h2>
+  <h2>Alliance</h2>
   <div class="radio-group">
     <input type="radio" name="alliance" value="Red" id="Red">
     <label for="Red">Red</label>
+
     <input type="radio" name="alliance" value="Blue" id="Blue">
     <label for="Blue">Blue</label>
   </div>
 </section>
 
+<!-- ---------- AUTONOMOUS ---------- -->
 <section class="section auto">
   <h2>Autonomous</h2>
 
   <div class="counter">
-    <span>Auto High</span>
+    <span>Fuel Successful</span>
     <div class="controls">
-      <button onclick="change('autoHigh', -1)">−</button>
-      <span id="autoHigh">0</span>
-      <button onclick="change('autoHigh', 1)">+</button>
+      <button onclick="change('autoFuelSuccess', -1)">−</button>
+      <span id="autoFuelSuccess">0</span>
+      <button onclick="change('autoFuelSuccess', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
-    <span>Auto Low</span>
+    <span>Fuel Failed</span>
     <div class="controls">
-      <button onclick="change('autoLow', -1)">−</button>
-      <span id="autoLow">0</span>
-      <button onclick="change('autoLow', 1)">+</button>
+      <button onclick="change('autoFuelFail', -1)">−</button>
+      <span id="autoFuelFail">0</span>
+      <button onclick="change('autoFuelFail', 1)">+</button>
     </div>
   </div>
 
   <label class="checkbox">
-    <input type="checkbox" id="autoLeave"> Auto Leave
+    <input type="checkbox" id="autoLeave"> Auto Leave / Taxi
   </label>
 </section>
 
+<!-- ---------- TELEOP ---------- -->
 <section class="section teleop">
   <h2>TeleOp</h2>
 
   <div class="counter">
-    <span>TeleOp High</span>
+    <span>Fuel Successful</span>
     <div class="controls">
-      <button onclick="change('teleHigh', -1)">−</button>
-      <span id="teleHigh">0</span>
-      <button onclick="change('teleHigh', 1)">+</button>
+      <button onclick="change('teleFuelSuccess', -1)">−</button>
+      <span id="teleFuelSuccess">0</span>
+      <button onclick="change('teleFuelSuccess', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
-    <span>TeleOp Low</span>
+    <span>Fuel Failed</span>
     <div class="controls">
-      <button onclick="change('teleLow', -1)">−</button>
-      <span id="teleLow">0</span>
-      <button onclick="change('teleLow', 1)">+</button>
+      <button onclick="change('teleFuelFail', -1)">−</button>
+      <span id="teleFuelFail">0</span>
+      <button onclick="change('teleFuelFail', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Pickups</span>
+    <div class="controls">
+      <button onclick="change('pickups', -1)">−</button>
+      <span id="pickups">0</span>
+      <button onclick="change('pickups', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Drops</span>
+    <div class="controls">
+      <button onclick="change('drops', -1)">−</button>
+      <span id="drops">0</span>
+      <button onclick="change('drops', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Defense Actions</span>
+    <div class="controls">
+      <button onclick="change('defense', -1)">−</button>
+      <span id="defense">0</span>
+      <button onclick="change('defense', 1)">+</button>
     </div>
   </div>
 </section>
 
+<!-- ---------- ENDGAME ---------- -->
 <section class="section endgame">
   <h2>Endgame</h2>
+
   <select id="endgame">
     <option value="">Select</option>
-    <option value="parked">Parked</option>
-    <option value="shallow">Shallow Cage</option>
-    <option value="deep">Deep Cage</option>
-    <option value="failed">Failed</option>
+    <option value="none">None</option>
+    <option value="park">Park</option>
+    <option value="climb">Climb / Objective</option>
+  </select>
+
+  <label class="checkbox">
+    <input type="checkbox" id="endgameFail"> Endgame Failed
+  </label>
+</section>
+
+<!-- ---------- RATINGS ---------- -->
+<section class="section">
+  <h2>Ratings</h2>
+
+  <input id="driverRating" type="number" min="1" max="5" placeholder="Driver Skill (1–5)">
+  <input id="speedRating" type="number" min="1" max="5" placeholder="Robot Speed (1–5)">
+  <input id="defenseRating" type="number" min="1" max="5" placeholder="Defense (1–5)">
+
+  <select id="reliability">
+    <option value="">Reliability</option>
+    <option value="none">No Issues</option>
+    <option value="minor">Minor Issues</option>
+    <option value="major">Major Failure</option>
   </select>
 </section>
 
 <button class="submit" onclick="submitScout()">Submit Match</button>
-<button onclick="logout()" class="log-button">Logout</button>
-<button onclick="location.href='matches.html'" class="log-button">View Matches</button>
+<button onclick="location.href='dashboard.html'" class="log-button">Back to Menu</button>
 
 <script src="auth.js"></script>
 <script src="scout.js"></script>

@@ -2,22 +2,21 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ---------- COUNTERS ---------- */
-const counters = {
-  autoFuelSuccess: 0,
-  autoFuelFail: 0,
-  teleFuelSuccess: 0,
-  teleFuelFail: 0,
-  pickups: 0,
-  drops: 0,
-  defense: 0
-};
+const counters = {};
 
+/* ---------- SAFE COUNTER HANDLER ---------- */
 function change(id, delta) {
+  // If counter not initialized, read from DOM
+  if (counters[id] === undefined) {
+    const currentText = document.getElementById(id)?.innerText || "0";
+    counters[id] = parseInt(currentText, 10) || 0;
+  }
+
   counters[id] = Math.max(0, counters[id] + delta);
   document.getElementById(id).innerText = counters[id];
 }
 
-/* ---------- SUBMIT ---------- */
+/* ---------- SUBMIT MATCH ---------- */
 function submitScout() {
   const user = auth.currentUser;
   if (!user) {
@@ -37,17 +36,17 @@ function submitScout() {
     },
 
     auto: {
-      fuelSuccess: counters.autoFuelSuccess,
-      fuelFail: counters.autoFuelFail,
+      fuelSuccess: counters.autoFuelSuccess || 0,
+      fuelFail: counters.autoFuelFail || 0,
       taxi: autoLeave.checked
     },
 
     teleop: {
-      fuelSuccess: counters.teleFuelSuccess,
-      fuelFail: counters.teleFuelFail,
-      pickups: counters.pickups,
-      drops: counters.drops,
-      defense: counters.defense
+      fuelSuccess: counters.teleFuelSuccess || 0,
+      fuelFail: counters.teleFuelFail || 0,
+      pickups: counters.pickups || 0,
+      drops: counters.drops || 0,
+      defense: counters.defense || 0
     },
 
     endgame: {
@@ -56,10 +55,10 @@ function submitScout() {
     },
 
     ratings: {
-      driver: Number(driverRating.value),
-      speed: Number(speedRating.value),
-      defense: Number(defenseRating.value),
-      reliability: reliability.value
+      driver: Number(driverRating.value) || null,
+      speed: Number(speedRating.value) || null,
+      defense: Number(defenseRating.value) || null,
+      reliability: reliability.value || null
     },
 
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -68,7 +67,7 @@ function submitScout() {
   db.collection("scouting")
     .add(data)
     .then(() => {
-      alert("Match submitted");
+      alert("Match submitted successfully");
       location.reload();
     })
     .catch(err => {

@@ -57,18 +57,18 @@
   <div class="counter">
     <span>Fuel Successful</span>
     <div class="controls">
-      <button onclick="change('autoFuelSuccess', -1)">−</button>
+      <button type="button" onclick="change('autoFuelSuccess', -1)">−</button>
       <span id="autoFuelSuccess">0</span>
-      <button onclick="change('autoFuelSuccess', 1)">+</button>
+      <button type="button" onclick="change('autoFuelSuccess', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
     <span>Fuel Failed</span>
     <div class="controls">
-      <button onclick="change('autoFuelFail', -1)">−</button>
+      <button type="button" onclick="change('autoFuelFail', -1)">−</button>
       <span id="autoFuelFail">0</span>
-      <button onclick="change('autoFuelFail', 1)">+</button>
+      <button type="button" onclick="change('autoFuelFail', 1)">+</button>
     </div>
   </div>
 
@@ -84,45 +84,45 @@
   <div class="counter">
     <span>Fuel Successful</span>
     <div class="controls">
-      <button onclick="change('teleFuelSuccess', -1)">−</button>
+      <button type="button" onclick="change('teleFuelSuccess', -1)">−</button>
       <span id="teleFuelSuccess">0</span>
-      <button onclick="change('teleFuelSuccess', 1)">+</button>
+      <button type="button" onclick="change('teleFuelSuccess', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
     <span>Fuel Failed</span>
     <div class="controls">
-      <button onclick="change('teleFuelFail', -1)">−</button>
+      <button type="button" onclick="change('teleFuelFail', -1)">−</button>
       <span id="teleFuelFail">0</span>
-      <button onclick="change('teleFuelFail', 1)">+</button>
+      <button type="button" onclick="change('teleFuelFail', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
     <span>Pickups</span>
     <div class="controls">
-      <button onclick="change('pickups', -1)">−</button>
+      <button type="button" onclick="change('pickups', -1)">−</button>
       <span id="pickups">0</span>
-      <button onclick="change('pickups', 1)">+</button>
+      <button type="button" onclick="change('pickups', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
     <span>Drops</span>
     <div class="controls">
-      <button onclick="change('drops', -1)">−</button>
+      <button type="button" onclick="change('drops', -1)">−</button>
       <span id="drops">0</span>
-      <button onclick="change('drops', 1)">+</button>
+      <button type="button" onclick="change('drops', 1)">+</button>
     </div>
   </div>
 
   <div class="counter">
     <span>Defense Actions</span>
     <div class="controls">
-      <button onclick="change('defense', -1)">−</button>
+      <button type="button" onclick="change('defense', -1)">−</button>
       <span id="defense">0</span>
-      <button onclick="change('defense', 1)">+</button>
+      <button type="button" onclick="change('defense', 1)">+</button>
     </div>
   </div>
 </section>
@@ -160,7 +160,7 @@
 </section>
 
 <button class="submit" onclick="submitScout()">Submit Match</button>
-<button onclick="location.href='dashboard.html'" class="log-button">Back to Menu</button>
+<button class="log-button" onclick="location.href='dashboard.html'">Back to Menu</button>
 
 <script src="auth.js"></script>
 <script src="scout.js"></script>

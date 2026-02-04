@@ -6,9 +6,9 @@ const counters = {};
 
 /* ---------- SAFE COUNTER HANDLER ---------- */
 function change(id, delta) {
-  // If counter not initialized, read from DOM
   if (counters[id] === undefined) {
-    const currentText = document.getElementById(id)?.innerText || "0";
+    const el = document.getElementById(id);
+    const currentText = el ? el.innerText : "0";
     counters[id] = parseInt(currentText, 10) || 0;
   }
 
@@ -24,11 +24,29 @@ function submitScout() {
     return;
   }
 
+  // Get elements safely
+  const teamNumberEl = document.getElementById("teamNumber");
+  const matchNumberEl = document.getElementById("matchNumber");
+  const autoLeaveEl = document.getElementById("autoLeave");
+  const endgameEl = document.getElementById("endgame");
+
+  const driverRatingEl = document.getElementById("driverRating");
+  const speedRatingEl = document.getElementById("speedRating");
+  const defenseRatingEl = document.getElementById("defenseRating");
+  const reliabilityEl = document.getElementById("reliability");
+  const endgameFailEl = document.getElementById("endgameFail");
+
+  // Basic validation
+  if (!teamNumberEl.value || !matchNumberEl.value) {
+    alert("Team number and match number are required");
+    return;
+  }
+
   const data = {
     scout: user.email,
 
-    teamNumber: Number(teamNumber.value),
-    matchNumber: Number(matchNumber.value),
+    teamNumber: Number(teamNumberEl.value),
+    matchNumber: Number(matchNumberEl.value),
 
     meta: {
       matchType: document.querySelector("input[name='matchtype']:checked")?.value || null,
@@ -38,7 +56,7 @@ function submitScout() {
     auto: {
       fuelSuccess: counters.autoFuelSuccess || 0,
       fuelFail: counters.autoFuelFail || 0,
-      taxi: autoLeave.checked
+      taxi: autoLeaveEl.checked
     },
 
     teleop: {
@@ -50,15 +68,15 @@ function submitScout() {
     },
 
     endgame: {
-      result: endgame.value || "none",
-      failed: endgameFail.checked
+      result: endgameEl.value || "none",
+      failed: endgameFailEl.checked
     },
 
     ratings: {
-      driver: Number(driverRating.value) || null,
-      speed: Number(speedRating.value) || null,
-      defense: Number(defenseRating.value) || null,
-      reliability: reliability.value || null
+      driver: Number(driverRatingEl.value) || null,
+      speed: Number(speedRatingEl.value) || null,
+      defense: Number(defenseRatingEl.value) || null,
+      reliability: reliabilityEl.value || null
     },
 
     createdAt: firebase.firestore.FieldValue.serverTimestamp()

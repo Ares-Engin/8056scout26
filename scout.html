@@ -12,6 +12,24 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <!-- Counter functionality -->
+  <script>
+    // Initialize counters object
+    const counters = {};
+
+    // Counter change function
+    function change(id, delta) {
+      if (counters[id] === undefined) {
+        const el = document.getElementById(id);
+        const currentText = el ? el.textContent : "0";
+        counters[id] = parseInt(currentText, 10) || 0;
+      }
+
+      counters[id] = Math.max(0, counters[id] + delta);
+      document.getElementById(id).textContent = counters[id];
+    }
+  </script>
 </head>
 
 <body>

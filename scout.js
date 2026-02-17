@@ -1,20 +1,7 @@
+// counters and change() function are defined in scout.html head
+
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-/* ---------- COUNTERS ---------- */
-const counters = {};
-
-/* ---------- SAFE COUNTER HANDLER ---------- */
-function change(id, delta) {
-  if (counters[id] === undefined) {
-    const el = document.getElementById(id);
-    const currentText = el ? el.innerText : "0";
-    counters[id] = parseInt(currentText, 10) || 0;
-  }
-
-  counters[id] = Math.max(0, counters[id] + delta);
-  document.getElementById(id).innerText = counters[id];
-}
 
 /* ---------- SUBMIT MATCH ---------- */
 function submitScout() {

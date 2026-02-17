@@ -1,17 +1,15 @@
-// counters and change() function are defined in scout.html head
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* ---------- SUBMIT MATCH ---------- */
 function submitScout() {
+
   const user = auth.currentUser;
   if (!user) {
     alert("Not logged in");
     return;
   }
 
-  // Get elements safely
   const teamNumberEl = document.getElementById("teamNumber");
   const matchNumberEl = document.getElementById("matchNumber");
   const autoLeaveEl = document.getElementById("autoLeave");
@@ -23,7 +21,6 @@ function submitScout() {
   const reliabilityEl = document.getElementById("reliability");
   const endgameFailEl = document.getElementById("endgameFail");
 
-  // Basic validation
   if (!teamNumberEl.value || !matchNumberEl.value) {
     alert("Team number and match number are required");
     return;
@@ -76,7 +73,7 @@ function submitScout() {
       location.reload();
     })
     .catch(err => {
-      console.error(err);
+      console.error("Firestore error:", err);
       alert("Failed to submit match");
     });
 }

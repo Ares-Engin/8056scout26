@@ -4,7 +4,8 @@ const firebaseConfig = {
   projectId: "lfscout26",
   storageBucket: "lfscout26.firebasestorage.app",
   messagingSenderId: "234755831598",
-  appId: "1:234755831598:web:bb2f0846dc8f1539b0acbf"
+  appId: "1:234755831598:web:bb2f0846dc8f1539b0acbf",
+  measurementId: "G-CHS156EKD4"
 };
 
 if (!firebase.apps.length) {

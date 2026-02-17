@@ -60,6 +60,18 @@
       <button type="button" onclick="change('autoFuelSuccess', -1)">−</button>
       <span id="autoFuelSuccess">0</span>
       <button type="button" onclick="change('autoFuelSuccess', 1)">+</button>
+      <script>
+  function change(id, delta) {
+    const element = document.getElementById(id);
+    let value = parseInt(element.textContent, 100) || 0;
+    value += delta;
+
+    // Prevent negative numbers (optional)
+    if (value < 0) value = 0;
+
+    element.textContent = value;
+  }
+</script>
     </div>
   </div>
 
@@ -69,6 +81,18 @@
       <button type="button" onclick="change('autoFuelFail', -1)">−</button>
       <span id="autoFuelFail">0</span>
       <button type="button" onclick="change('autoFuelFail', 1)">+</button>
+      <script>
+  function change(id, delta) {
+    const element = document.getElementById(id);
+    let value = parseInt(element.textContent, 100) || 0;
+    value += delta;
+
+    // Prevent negative numbers
+    if (value < 0) value = 0;
+
+    element.textContent = value;
+  }
+</script>
     </div>
   </div>
 

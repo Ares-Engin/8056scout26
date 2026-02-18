@@ -1,21 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REBULT 2026 – Matches</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>Matches</h1>
-<div id="matches"></div>
+    <h1>Match Results</h1>
 
-<button class="log-button" onclick="location.href='dashboard.html'">Back</button>
+    <!-- Filter bar -->
+    <div class="filter-bar">
+        <select id="filterSelect" onchange="renderAll()">
+            <option value="all">All Matches</option>
+            <option value="red-win">Red Wins</option>
+            <option value="blue-win">Blue Wins</option>
+        </select>
+    </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="auth.js"></script>
-<script src="matches.js"></script>
+    <!-- Status messages -->
+    <p id="loadingMsg" style="display:none; text-align:center; color:#aaa;">⏳ Loading matches...</p>
+    <p id="errorMsg" style="display:none; text-align:center; color:#f87171;"></p>
+
+    <!-- Match cards go here -->
+    <div id="matches"></div>
+
+    <button class="log-button" onclick="location.href='dashboard.html'">Back to Menu</button>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- App scripts -->
+    <script src="auth.js"></script>
+    <script src="frc-config.js"></script>
+    <script src="matches.js"></script>
 
 </body>
+
 </html>

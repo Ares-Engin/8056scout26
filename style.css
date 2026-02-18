@@ -198,19 +198,20 @@ select {
 
 /* ---------- MATCH CARD ---------- */
 .match-card {
-  background: #410000;
-  padding: 20px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 16px;
   border-radius: 18px;
   margin-bottom: 20px;
   width: 100%;
-  max-width: 500px;
+  max-width: 760px;
 }
 
 .match-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 2px solid #ff8400;
 }
@@ -220,44 +221,163 @@ select {
   font-weight: bold;
 }
 
-.delete-btn {
-  padding: 8px 12px;
+.match-time {
+  font-size: 13px;
+  color: #aaa;
+}
+
+/* ---------- ALLIANCE ROW ---------- */
+.alliance-row {
+  display: flex;
+  gap: 12px;
+}
+
+.alliance-col {
+  flex: 1;
+  border-radius: 14px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.alliance-red  { background: #3b0000; border: 1px solid #7f1d1d; }
+.alliance-blue { background: #00103b; border: 1px solid #1e3a8a; }
+
+.alliance-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.alliance-label {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.alliance-score {
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.alliance-sub {
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+/* ---------- WIN / LOSS / TIE BADGES ---------- */
+.badge-win {
+  background: #16a34a;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.badge-loss {
   background: #dc2626;
   color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  font-size: 11px;
   font-weight: bold;
-  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: 20px;
 }
 
-.match-info {
-  margin-bottom: 15px;
+.badge-tie {
+  background: #78716c;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 20px;
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #333;
+/* ---------- TEAM BLOCK ---------- */
+.team-block {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
 }
 
-.info-row .label {
+.team-block.team-dq {
+  opacity: 0.5;
+}
+
+.team-number {
+  font-size: 15px;
   font-weight: bold;
   color: #ff8400;
+  margin-bottom: 6px;
 }
 
-.match-stats {
+.dq-badge {
+  background: #dc2626;
+  color: white;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
+/* ---------- SCOUT DATA ---------- */
+.scout-entry {
+  font-size: 12px;
+}
+
+.scout-row {
   display: flex;
-  gap: 15px;
-  justify-content: space-around;
-  background: #0f172a;
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 15px;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid #1e293b;
+  color: #ccc;
 }
 
-/* ---------- MOBILE ALIGNMENT FIX (NO SIZE CHANGES) ---------- */
+.scout-row b {
+  color: white;
+}
+
+.scout-row.warn b {
+  color: #fbbf24;
+}
+
+.scout-by {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.scout-empty {
+  font-size: 12px;
+  color: #475569;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* ---------- FILTER BAR ---------- */
+.filter-bar {
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filter-bar select {
+  width: auto;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #1e293b;
+  color: white;
+  border: 1px solid #334155;
+}
+
+/* ---------- MOBILE ---------- */
 @media (max-width: 600px) {
   body {
     align-items: stretch;
@@ -278,4 +398,14 @@ select {
     margin-left: 8px;
     margin-right: 8px;
   }
+
+  .alliance-row {
+    flex-direction: column;
+  }
+
+  .filter-bar {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
 }
+

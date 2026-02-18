@@ -4,76 +4,81 @@ const db = firebase.firestore();
 /* ---------- SUBMIT MATCH ---------- */
 function submitScout() {
 
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Not logged in");
-    return;
-  }
+  // Wait for Firebase to confirm auth state
+  auth.onAuthStateChanged(function (user) {
 
-  const teamNumberEl = document.getElementById("teamNumber");
-  const matchNumberEl = document.getElementById("matchNumber");
-  const autoLeaveEl = document.getElementById("autoLeave");
-  const endgameEl = document.getElementById("endgame");
+    if (!user) {
+      alert("Not logged in");
+      return;
+    }
 
-  const driverRatingEl = document.getElementById("driverRating");
-  const speedRatingEl = document.getElementById("speedRating");
-  const defenseRatingEl = document.getElementById("defenseRating");
-  const reliabilityEl = document.getElementById("reliability");
-  const endgameFailEl = document.getElementById("endgameFail");
+    const teamNumberEl = document.getElementById("teamNumber");
+    const matchNumberEl = document.getElementById("matchNumber");
+    const autoLeaveEl = document.getElementById("autoLeave");
+    const endgameEl = document.getElementById("endgame");
 
-  if (!teamNumberEl.value || !matchNumberEl.value) {
-    alert("Team number and match number are required");
-    return;
-  }
+    const driverRatingEl = document.getElementById("driverRating");
+    const speedRatingEl = document.getElementById("speedRating");
+    const defenseRatingEl = document.getElementById("defenseRating");
+    const reliabilityEl = document.getElementById("reliability");
+    const endgameFailEl = document.getElementById("endgameFail");
 
-  const data = {
-    scout: user.email,
+    if (!teamNumberEl.value || !matchNumberEl.value) {
+      alert("Team number and match number are required");
+      return;
+    }
 
-    teamNumber: Number(teamNumberEl.value),
-    matchNumber: Number(matchNumberEl.value),
+    const data = {
+      scout: user.email,
 
-    meta: {
-      matchType: document.querySelector("input[name='matchtype']:checked")?.value || null,
-      alliance: document.querySelector("input[name='alliance']:checked")?.value || null
-    },
+      teamNumber: Number(teamNumberEl.value),
+      matchNumber: Number(matchNumberEl.value),
 
-    auto: {
-      fuelSuccess: counters.autoFuelSuccess || 0,
-      fuelFail: counters.autoFuelFail || 0,
-      taxi: autoLeaveEl.checked
-    },
+      meta: {
+        matchType: document.querySelector("input[name='matchtype']:checked")?.value || null,
+        alliance: document.querySelector("input[name='alliance']:checked")?.value || null
+      },
 
-    teleop: {
-      fuelSuccess: counters.teleFuelSuccess || 0,
-      fuelFail: counters.teleFuelFail || 0,
-      pickups: counters.pickups || 0,
-      drops: counters.drops || 0,
-      defense: counters.defense || 0
-    },
+      auto: {
+        fuelSuccess: counters.autoFuelSuccess || 0,
+        fuelFail: counters.autoFuelFail || 0,
+        taxi: autoLeaveEl.checked
+      },
 
-    endgame: {
-      result: endgameEl.value || "none",
-      failed: endgameFailEl.checked
-    },
+      teleop: {
+        fuelSuccess: counters.teleFuelSuccess || 0,
+        fuelFail: counters.teleFuelFail || 0,
+        pickups: counters.pickups || 0,
+        drops: counters.drops || 0,
+        defense: counters.defense || 0
+      },
 
-    ratings: {
-      driver: Number(driverRatingEl.value) || null,
-      speed: Number(speedRatingEl.value) || null,
-      defense: Number(defenseRatingEl.value) || null,
-      reliability: reliabilityEl.value || null
-    },
+      endgame: {
+        result: endgameEl.value || "none",
+        failed: endgameFailEl.checked
+      },
 
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
+      ratings: {
+        driver: Number(driverRatingEl.value) || null,
+        speed: Number(speedRatingEl.value) || null,
+        defense: Number(defenseRatingEl.value) || null,
+        reliability: reliabilityEl.value || null
+      },
 
-  db.collection("scouting")
-    .add(data)
-    .then(() => {
-      alert("Match submitted successfully");
-      location.reload();
-    })
-    .catch(err => {
-      console.error("Firestore error:", err);
-      alert("Failed to submit match");
-    });
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection("scouting")
+      .add(data)
+      .then(() => {
+        alert("Match submitted successfully");
+        location.reload();
+      })
+      .catch(err => {
+        console.error("Firestore error:", err);
+        alert("Failed to submit match");
+      });
+
+  });
+
 }

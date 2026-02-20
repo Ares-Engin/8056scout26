@@ -1,6 +1,6 @@
 /* ============================================================
    MATCHES PAGE
-   - Fetches match results from FRC API
+   - Fetches match results from FRC API / TBA
    - Listens to Firestore for scout submissions
    - Merges both into rich match cards
    ============================================================ */
@@ -8,25 +8,25 @@
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let frcMatches = [];   // from FRC API
-let scoutEntries = {};   // keyed by matchNumber → array of scout docs
+let frcMatches = [];      // from API
+let scoutEntries = {};    // keyed by matchNumber → array of scout docs
+let currentUser = null;   // cached user (optional, no longer required)
 
 /* ---------- ENTRY POINT ---------- */
 auth.onAuthStateChanged(async user => {
-  if (!user) {
-    location.href = "index.html";
-    return;
-  }
+  // 🔧 FIX: Do NOT force redirect if not logged in
+  // Matches page should still work without auth
+  currentUser = user || null;
 
   showLoading(true);
 
-  // 1. Fetch FRC API matches
+  // 1. Fetch match API (TBA or FRC)
   try {
     frcMatches = await fetchFRCMatches();
-    frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
+    frcMatches.sort((a, b) => (a.matchNumber || 0) - (b.matchNumber || 0));
   } catch (err) {
-    console.error("FRC API fetch failed:", err);
-    showError("Could not load FRC match data. Check your API credentials in frc-config.js.");
+    console.error("FRC/TBA API fetch failed:", err);
+    showError("Could not load match data. Check your API key or event code in frc-config.js.");
     showLoading(false);
     return;
   }
@@ -35,13 +35,19 @@ auth.onAuthStateChanged(async user => {
   db.collection("scouting")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
-      // Rebuild scout entries map
+      // Rebuild scout entries map safely
       scoutEntries = {};
+
       snapshot.forEach(doc => {
         const d = doc.data();
         const mn = d.matchNumber;
+
         if (mn == null) return;
-        if (!scoutEntries[mn]) scoutEntries[mn] = [];
+
+        if (!scoutEntries[mn]) {
+          scoutEntries[mn] = [];
+        }
+
         scoutEntries[mn].push({ id: doc.id, ...d });
       });
 
@@ -49,6 +55,7 @@ auth.onAuthStateChanged(async user => {
       renderAll();
     }, err => {
       console.error("Firestore error:", err);
+      showError("Firestore connection failed. Check rules or indexes.");
       showLoading(false);
     });
 });
@@ -57,9 +64,12 @@ auth.onAuthStateChanged(async user => {
 function renderAll() {
   const filter = document.getElementById("filterSelect")?.value || "all";
   const container = document.getElementById("matches");
+
+  if (!container) return;
+
   container.innerHTML = "";
 
-  if (frcMatches.length === 0) {
+  if (!frcMatches || frcMatches.length === 0) {
     container.innerHTML = `<p style="text-align:center;color:#aaa;">No matches found.</p>`;
     return;
   }
@@ -67,8 +77,9 @@ function renderAll() {
   frcMatches.forEach(match => {
     // Apply filter
     if (filter !== "all") {
-      const redWon = match.scoreRedFinal > match.scoreBlueFinal;
-      const blueWon = match.scoreBlueFinal > match.scoreRedFinal;
+      const redWon = (match.scoreRedFinal ?? 0) > (match.scoreBlueFinal ?? 0);
+      const blueWon = (match.scoreBlueFinal ?? 0) > (match.scoreRedFinal ?? 0);
+
       if (filter === "red-win" && !redWon) return;
       if (filter === "blue-win" && !blueWon) return;
     }
@@ -80,12 +91,17 @@ function renderAll() {
 
 /* ---------- BUILD MATCH CARD ---------- */
 function buildMatchCard(match) {
-  const redWon = match.scoreRedFinal > match.scoreBlueFinal;
-  const blueWon = match.scoreBlueFinal > match.scoreRedFinal;
-  const tied = match.scoreRedFinal === match.scoreBlueFinal;
+  const redScore = match.scoreRedFinal ?? 0;
+  const blueScore = match.scoreBlueFinal ?? 0;
 
-  const redTeams = match.teams.filter(t => t.station.startsWith("Red"));
-  const blueTeams = match.teams.filter(t => t.station.startsWith("Blue"));
+  const redWon = redScore > blueScore;
+  const blueWon = blueScore > redScore;
+  const tied = redScore === blueScore;
+
+  const teams = match.teams || [];
+
+  const redTeams = teams.filter(t => t.station && t.station.startsWith("Red"));
+  const blueTeams = teams.filter(t => t.station && t.station.startsWith("Blue"));
 
   const scouts = scoutEntries[match.matchNumber] || [];
 
@@ -94,7 +110,7 @@ function buildMatchCard(match) {
 
   card.innerHTML = `
     <div class="match-header">
-      <span class="match-title">${match.description}</span>
+      <span class="match-title">${match.description || `Match ${match.matchNumber}`}</span>
       <span class="match-time">${formatTime(match.actualStartTime)}</span>
     </div>
 
@@ -104,7 +120,7 @@ function buildMatchCard(match) {
       <div class="alliance-col alliance-red">
         <div class="alliance-header">
           <span class="alliance-label">🔴 Red</span>
-          <span class="alliance-score">${match.scoreRedFinal ?? "—"}</span>
+          <span class="alliance-score">${redScore}</span>
           ${redWon ? '<span class="badge-win">WIN</span>' : tied ? '<span class="badge-tie">TIE</span>' : '<span class="badge-loss">LOSS</span>'}
         </div>
         <div class="alliance-sub">
@@ -119,7 +135,7 @@ function buildMatchCard(match) {
       <div class="alliance-col alliance-blue">
         <div class="alliance-header">
           <span class="alliance-label">🔵 Blue</span>
-          <span class="alliance-score">${match.scoreBlueFinal ?? "—"}</span>
+          <span class="alliance-score">${blueScore}</span>
           ${blueWon ? '<span class="badge-win">WIN</span>' : tied ? '<span class="badge-tie">TIE</span>' : '<span class="badge-loss">LOSS</span>'}
         </div>
         <div class="alliance-sub">
@@ -142,6 +158,7 @@ function teamBlock(teamEntry, scouts) {
   const scout = scouts.find(s => s.teamNumber === tn);
 
   let scoutHTML = "";
+
   if (scout) {
     const auto = scout.auto || {};
     const teleop = scout.teleop || {};
@@ -193,5 +210,8 @@ function showLoading(on) {
 
 function showError(msg) {
   const el = document.getElementById("errorMsg");
-  if (el) { el.textContent = msg; el.style.display = "block"; }
+  if (el) {
+    el.textContent = msg;
+    el.style.display = "block";
+  }
 }

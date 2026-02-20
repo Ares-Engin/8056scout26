@@ -180,8 +180,30 @@
   <button class="submit" onclick="submitScout()">Submit Match</button>
   <button class="log-button" onclick="location.href='dashboard.html'">Back to Menu</button>
 
-  <script src="auth.js"></script>
-  <script src="scout.js"></script>
+
+  <!-- Firebase Config (REQUIRED BEFORE ANY OTHER JS) -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDe-UDKwmW3pt9CWeHJW11GpgzKQIFLmN4",
+      authDomain: "lfscout26.firebaseapp.com",
+      projectId: "lfscout26",
+      storageBucket: "lfscout26.firebasestorage.app",
+      messagingSenderId: "234755831598",
+      appId: "1:234755831598:web:bb2f0846dc8f1539b0acbf",
+
+      measurementId: "G-CHS156EKD4"
+    };
+
+    // Initialize Firebase ONCE
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
+
+  <!-- Load scripts AFTER Firebase is initialized -->
+  <script src="scout.js" defer></script>
+  <script src="auth.js" defer></script>
+
 </body>
 
 </html>

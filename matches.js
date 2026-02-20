@@ -1,8 +1,5 @@
 /* ============================================================
-   MATCHES PAGE (FIXED – GitHub Pages + Empty DB Safe)
-   - Always renders API matches even if Firestore is empty
-   - Firebase timing safe
-   - Real-time scout merge still works
+   MATCHES PAGE – FINAL STABLE VERSION (FRC API + FIRESTORE)
    ============================================================ */
 
 const auth = firebase.auth();
@@ -11,34 +8,38 @@ const db = firebase.firestore();
 let frcMatches = [];
 let scoutEntries = {};
 let currentUser = null;
-let apiLoaded = false;
-let firestoreLoaded = false;
 
-/* ---------- SAFE START ---------- */
-window.addEventListener("load", () => {
-  startMatchesPage();
-});
+/* ---------- ENTRY POINT ---------- */
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user || null;
 
-async function startMatchesPage() {
   showLoading(true);
 
-  // Auth (optional, do NOT block page)
-  auth.onAuthStateChanged(user => {
-    currentUser = user || null;
-  });
-
-  // 1️⃣ Fetch API FIRST and render immediately
+  // 🔥 STEP 1: Fetch API matches FIRST (always render them)
   try {
-    frcMatches = await fetchFRCMatches();
+    console.log("Fetching FRC matches...");
+    const apiData = await fetchFRCMatches();
+
+    console.log("Raw API Data:", apiData);
+
+    // FRC API returns array directly OR inside Matches depending on wrapper
+    frcMatches = Array.isArray(apiData) ? apiData : (apiData || []);
+
     frcMatches.sort((a, b) => (a.matchNumber || 0) - (b.matchNumber || 0));
-    apiLoaded = true;
-    renderAll(); // 🔥 THIS is what fixes empty page
+
+    console.log("Parsed Matches:", frcMatches.length);
+
+    // Render immediately (DO NOT wait for Firestore)
+    renderAll();
+
   } catch (err) {
-    console.error("FRC/TBA API fetch failed:", err);
-    showError("Could not load match data. Check frc-config.js API key or event code.");
+    console.error("FRC API failed:", err);
+    showError("Failed to load matches from FRC API. Check frc-config.js credentials & event code.");
+    showLoading(false);
+    return;
   }
 
-  // 2️⃣ Firestore listener (will enhance cards later)
+  // 🔥 STEP 2: Attach Firestore listener (optional overlay)
   db.collection("scouting")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
@@ -47,6 +48,7 @@ async function startMatchesPage() {
       snapshot.forEach(doc => {
         const d = doc.data();
         const mn = d.matchNumber;
+
         if (mn == null) return;
 
         if (!scoutEntries[mn]) {
@@ -56,68 +58,81 @@ async function startMatchesPage() {
         scoutEntries[mn].push({ id: doc.id, ...d });
       });
 
-      firestoreLoaded = true;
-      renderAll(); // 🔥 Re-render WITH scout data
+      console.log("Scout entries loaded:", scoutEntries);
+
+      // Re-render with scout data overlay
+      renderAll();
       showLoading(false);
+
     }, err => {
       console.error("Firestore error:", err);
-      showError("Firestore connection failed. Check rules or indexes.");
       showLoading(false);
     });
-}
+});
 
 /* ---------- RENDER ---------- */
 function renderAll() {
   const container = document.getElementById("matches");
-  if (!container) return;
+  const filter = document.getElementById("filterSelect")?.value || "all";
 
-  // If API still not loaded, don't wipe UI
-  if (!apiLoaded) return;
+  if (!container) {
+    console.error("Matches container not found");
+    return;
+  }
 
   container.innerHTML = "";
 
   if (!frcMatches || frcMatches.length === 0) {
-    container.innerHTML = `<p style="text-align:center;color:#aaa;">No matches found from API.</p>`;
+    container.innerHTML = `<p style="text-align:center;color:#aaa;">No matches received from API.</p>`;
     return;
   }
 
   frcMatches.forEach(match => {
+    if (!match) return;
+
+    const redScore = match.scoreRedFinal ?? 0;
+    const blueScore = match.scoreBlueFinal ?? 0;
+
+    const redWon = redScore > blueScore;
+    const blueWon = blueScore > redScore;
+
+    // Filter logic
+    if (filter === "red-win" && !redWon) return;
+    if (filter === "blue-win" && !blueWon) return;
+
     const card = buildMatchCard(match);
     container.appendChild(card);
   });
 }
 
-/* ---------- BUILD MATCH CARD ---------- */
+/* ---------- BUILD MATCH CARD (FRC API SAFE) ---------- */
 function buildMatchCard(match) {
-  const redScore = match.scoreRedFinal ?? 0;
-  const blueScore = match.scoreBlueFinal ?? 0;
-
-  const redWon = redScore > blueScore;
-  const blueWon = blueScore > redScore;
-  const tied = redScore === blueScore;
-
-  const teams = match.teams || [];
-  const redTeams = teams.filter(t => t.station?.startsWith("Red"));
-  const blueTeams = teams.filter(t => t.station?.startsWith("Blue"));
-
+  const teamsArray = match.teams || [];
   const scouts = scoutEntries[match.matchNumber] || [];
+
+  // FRC API stations: "Red1", "Blue2", etc.
+  const redTeams = teamsArray.filter(t => t.station && t.station.includes("Red"));
+  const blueTeams = teamsArray.filter(t => t.station && t.station.includes("Blue"));
 
   const card = document.createElement("div");
   card.className = "match-card";
 
   card.innerHTML = `
     <div class="match-header">
-      <span class="match-title">${match.description || `Match ${match.matchNumber}`}</span>
-      <span class="match-time">${formatTime(match.actualStartTime)}</span>
+      <span class="match-title">
+        ${match.description || `Match ${match.matchNumber}`}
+      </span>
+      <span class="match-time">
+        ${formatTime(match.actualStartTime)}
+      </span>
     </div>
 
     <div class="alliance-row">
 
       <div class="alliance-col alliance-red">
         <div class="alliance-header">
-          <span class="alliance-label">🔴 Red</span>
-          <span class="alliance-score">${redScore}</span>
-          ${redWon ? '<span class="badge-win">WIN</span>' : tied ? '<span class="badge-tie">TIE</span>' : '<span class="badge-loss">LOSS</span>'}
+          <span>🔴 Red</span>
+          <span>${match.scoreRedFinal ?? "—"}</span>
         </div>
         <div class="alliance-teams">
           ${redTeams.map(t => teamBlock(t, scouts)).join("")}
@@ -126,9 +141,8 @@ function buildMatchCard(match) {
 
       <div class="alliance-col alliance-blue">
         <div class="alliance-header">
-          <span class="alliance-label">🔵 Blue</span>
-          <span class="alliance-score">${blueScore}</span>
-          ${blueWon ? '<span class="badge-win">WIN</span>' : tied ? '<span class="badge-tie">TIE</span>' : '<span class="badge-loss">LOSS</span>'}
+          <span>🔵 Blue</span>
+          <span>${match.scoreBlueFinal ?? "—"}</span>
         </div>
         <div class="alliance-teams">
           ${blueTeams.map(t => teamBlock(t, scouts)).join("")}
@@ -146,11 +160,15 @@ function teamBlock(teamEntry, scouts) {
   const tn = teamEntry.teamNumber;
   const scout = scouts.find(s => s.teamNumber === tn);
 
-  if (!scout) {
-    return `
-      <div class="team-block">
-        <div class="team-number">#${tn}</div>
-        <div class="scout-empty">No scout data</div>
+  let scoutHTML = `<div class="scout-empty">No scout data</div>`;
+
+  if (scout) {
+    scoutHTML = `
+      <div class="scout-entry">
+        <div class="scout-row"><span>Auto Fuel ✓</span><b>${scout.auto?.fuelSuccess ?? 0}</b></div>
+        <div class="scout-row"><span>Tele Fuel ✓</span><b>${scout.teleop?.fuelSuccess ?? 0}</b></div>
+        <div class="scout-row"><span>Defense</span><b>${scout.teleop?.defense ?? 0}</b></div>
+        <div class="scout-by">Scouted by ${scout.scoutEmail ?? "unknown"}</div>
       </div>
     `;
   }
@@ -158,12 +176,7 @@ function teamBlock(teamEntry, scouts) {
   return `
     <div class="team-block">
       <div class="team-number">#${tn}</div>
-      <div class="scout-entry">
-        <div>Auto ✓: ${scout.auto?.fuelSuccess ?? 0}</div>
-        <div>Tele ✓: ${scout.teleop?.fuelSuccess ?? 0}</div>
-        <div>Driver: ${scout.ratings?.driver ?? "—"}/5</div>
-        <div class="scout-by">By ${scout.scoutEmail ?? "unknown"}</div>
-      </div>
+      ${scoutHTML}
     </div>
   `;
 }

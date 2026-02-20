@@ -5,8 +5,8 @@
    - Fixes blank page bug
    ============================================================ */
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+//const auth = firebase.auth();
+//const db = firebase.firestore();
 
 let frcMatches = [];
 let scoutEntries = {};

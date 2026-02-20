@@ -1,124 +1,180 @@
 /* ============================================================
-   MATCHES PAGE SCRIPT (GitHub Pages + FRC API Compatible)
-   Fixes:
-   - Blank matches page
-   - Silent API failures
-   - No rendering issue
-   - Works even if database is empty
+   FINAL MATCHES PAGE (WORKS WITH TBA + FIRESTORE + GITHUB PAGES)
+   - Shows API matches even if DB empty
+   - Merges Firestore scouting correctly
+   - Fixes blank page bug
    ============================================================ */
 
-const FRC_CONFIG = {
-  season: 2025,
-  eventKey: "2025tuhc",   // Format: YEAR + event code (lowercase)
-  apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ", // ← PUT YOUR TBA KEY HERE
-  level: "qm" // qm = qualification matches
-};
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-/* ================= AUTH ================= */
-function frcAuthHeader() {
-  return "Basic " + btoa(FRC_CONFIG.username + ":" + FRC_CONFIG.token);
-}
+let frcMatches = [];
+let scoutEntries = {};
 
-/* ================= FETCH FRC MATCHES ================= */
-async function fetchFRCMatches() {
+/* ================= INIT ================= */
+document.addEventListener("DOMContentLoaded", () => {
+  initMatchesPage();
+});
+
+async function initMatchesPage() {
+  showLoading(true);
+  console.log("🚀 Matches page initializing...");
+
   try {
-    const url = `https://frc-api.firstinspires.org/v3.0/${FRC_CONFIG.season}/matches/${FRC_CONFIG.eventCode}?tournamentLevel=${FRC_CONFIG.level}`;
+    // 1. Load API matches (TBA)
+    frcMatches = await fetchFRCMatches();
+    console.log("✅ API Matches Loaded:", frcMatches.length);
 
-    const res = await fetch(url, {
-      headers: {
-        "Authorization": frcAuthHeader(),
-        "If-Modified-Since": ""
-      }
-    });
+    frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
 
-    if (!res.ok) {
-      console.error("FRC API Status:", res.status);
-      return [];
-    }
+    // 2. Listen to Firestore scouting (REAL DB)
+    db.collection("scouting")
+      .onSnapshot(snapshot => {
+        console.log("📡 Firestore snapshot received:", snapshot.size);
 
-    const data = await res.json();
-    console.log("FRC API Matches:", data);
+        scoutEntries = {};
 
-    return data.Matches || [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const mn = data.matchNumber;
+
+          if (mn == null) return;
+
+          if (!scoutEntries[mn]) {
+            scoutEntries[mn] = [];
+          }
+
+          scoutEntries[mn].push(data);
+        });
+
+        renderAllMatches();
+        showLoading(false);
+      }, err => {
+        console.error("❌ Firestore Error:", err);
+        showError("Firestore connection failed.");
+        showLoading(false);
+      });
+
   } catch (err) {
-    console.error("FRC API Fetch Error:", err);
-    return [];
+    console.error("❌ API ERROR:", err);
+    showError("Failed to load matches from API.");
+    showLoading(false);
   }
 }
 
-/* ================= FETCH SELF SCOUTED DATA ================= */
-async function fetchLocalScouting() {
-  try {
-    const res = await fetch("https://frc-scouting-default-rtdb.firebaseio.com/scouting.json");
-    if (!res.ok) return [];
-
-    const data = await res.json();
-    if (!data) return [];
-
-    return Object.values(data);
-  } catch (err) {
-    console.error("Local scouting fetch error:", err);
-    return [];
-  }
-}
-
-/* ================= RENDER MATCHES ================= */
-function renderMatches(matches) {
-  const container = document.getElementById("matchesContainer");
+/* ================= RENDER ALL ================= */
+function renderAllMatches() {
+  const container = document.getElementById("matches");
+  const filter = document.getElementById("filterSelect")?.value || "all";
 
   if (!container) {
-    console.error("matchesContainer div not found in HTML");
+    console.error("❌ matches div not found!");
     return;
   }
 
   container.innerHTML = "";
 
-  if (!matches || matches.length === 0) {
-    container.innerHTML = "<p>No matches found.</p>";
+  if (!frcMatches || frcMatches.length === 0) {
+    container.innerHTML = "<p style='text-align:center;'>No matches from API.</p>";
     return;
   }
 
-  matches.forEach(match => {
-    const div = document.createElement("div");
-    div.className = "match-card";
+  frcMatches.forEach(match => {
+    const redScore = match.scoreRedFinal ?? 0;
+    const blueScore = match.scoreBlueFinal ?? 0;
 
-    const matchNum = match.matchNumber ?? match.match ?? "N/A";
+    // Filter logic
+    if (filter === "red-win" && redScore <= blueScore) return;
+    if (filter === "blue-win" && blueScore <= redScore) return;
 
-    const redTeams = match.teams
-      ? match.teams.filter(t => t.alliance === "Red").map(t => t.teamNumber)
-      : (match.redTeams || []);
-
-    const blueTeams = match.teams
-      ? match.teams.filter(t => t.alliance === "Blue").map(t => t.teamNumber)
-      : (match.blueTeams || []);
-
-    div.innerHTML = `
-            <h3>Match ${matchNum}</h3>
-            <p><strong>Red:</strong> ${redTeams.join(", ") || "N/A"}</p>
-            <p><strong>Blue:</strong> ${blueTeams.join(", ") || "N/A"}</p>
-        `;
-
-    container.appendChild(div);
+    const card = buildMatchCard(match);
+    container.appendChild(card);
   });
 }
 
-/* ================= INIT PAGE ================= */
-async function loadMatchesPage() {
-  console.log("Loading matches page...");
+/* ================= BUILD MATCH CARD ================= */
+function buildMatchCard(match) {
+  const card = document.createElement("div");
+  card.className = "match-card";
 
-  const frcMatches = await fetchFRCMatches();
-  const localMatches = await fetchLocalScouting();
+  const scouts = scoutEntries[match.matchNumber] || [];
 
-  console.log("FRC Matches Count:", frcMatches.length);
-  console.log("Local Matches Count:", localMatches.length);
+  const redTeams = match.teams.filter(t => t.station.startsWith("Red"));
+  const blueTeams = match.teams.filter(t => t.station.startsWith("Blue"));
 
-  // Always prioritize API matches
-  const allMatches = frcMatches.length > 0 ? frcMatches : localMatches;
+  card.innerHTML = `
+    <div class="match-header">
+      <h3>${match.description}</h3>
+      <span>${formatTime(match.actualStartTime)}</span>
+    </div>
 
-  renderMatches(allMatches);
+    <div class="alliances">
+
+      <div class="alliance red">
+        <h4>🔴 Red (${match.scoreRedFinal ?? 0})</h4>
+        ${redTeams.map(t => teamBlock(t, scouts)).join("")}
+      </div>
+
+      <div class="alliance blue">
+        <h4>🔵 Blue (${match.scoreBlueFinal ?? 0})</h4>
+        ${blueTeams.map(t => teamBlock(t, scouts)).join("")}
+      </div>
+
+    </div>
+  `;
+
+  return card;
 }
 
-/* ================= RUN ON PAGE LOAD ================= */
-document.addEventListener("DOMContentLoaded", () => {
-  loadMatchesPage();
+/* ================= TEAM BLOCK ================= */
+function teamBlock(team, scouts) {
+  const scout = scouts.find(s => s.teamNumber === team.teamNumber);
+
+  if (!scout) {
+    return `
+      <div class="team-block">
+        <b>#${team.teamNumber}</b>
+        <div class="scout-empty">No scout data</div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="team-block">
+      <b>#${team.teamNumber}</b>
+      <div class="scout-data">
+        Auto ✓: ${scout.auto?.fuelSuccess ?? 0} |
+        Tele ✓: ${scout.teleop?.fuelSuccess ?? 0} |
+        Endgame: ${scout.endgame?.result ?? "—"}
+      </div>
+      <div class="scout-by">Scouted by: ${scout.scoutEmail ?? "unknown"}</div>
+    </div>
+  `;
+}
+
+/* ================= HELPERS ================= */
+function formatTime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function showLoading(show) {
+  const el = document.getElementById("loadingMsg");
+  if (el) el.style.display = show ? "block" : "none";
+}
+
+function showError(msg) {
+  const el = document.getElementById("errorMsg");
+  if (el) {
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+}
+
+/* ================= FILTER LISTENER ================= */
+document.addEventListener("change", (e) => {
+  if (e.target.id === "filterSelect") {
+    renderAllMatches();
+  }
 });

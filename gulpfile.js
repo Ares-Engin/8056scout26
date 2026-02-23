@@ -8,7 +8,7 @@ const autoprefixer = require('autoprefixer');
 // HTML Task: Just copy to dist
 function html() {
     return gulp.src('./src/*.html')
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./docs'));
 }
 
 // CSS Task: Process Tailwind WITHOUT minification
@@ -25,26 +25,26 @@ function css() {
             this.emit('end');
         })
         .pipe(rename('style.css'))
-        .pipe(gulp.dest('./dist/css'))
+        .pipe(gulp.dest('./docs/css'))
         .pipe(browserSync.stream());
 }
 
 // JS Task: Just copy to dist
 function js() {
     return gulp.src('./src/js/*.js')
-        .pipe(gulp.dest('./dist/js'));
+        .pipe(gulp.dest('./docs/js'));
 }
 
 // Assets Task: Copy images to dist
 function assets() {
     return gulp.src('./src/img/**/*.{png,jpg,jpeg,svg,gif,ico}', { encoding: false })
-        .pipe(gulp.dest('./dist/img'));
+        .pipe(gulp.dest('./docs/img'));
 }
 
 // Dev Task: Serve and watch
 function dev() {
     browserSync.init({
-        server: "./dist",
+        server: "./docs",
         port: 3000,
         notify: false
     });

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - REBULT 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Theme Manager -->
+  <script src="js/theme.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center p-6" x-data="registerApp">
+
+  <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
+    <div class="flex flex-col items-center mb-8 relative">
+      <button @click="$store.theme.toggle()"
+        class="absolute -top-4 -right-4 p-2 bg-slate-800/50 hover:bg-slate-800 rounded-full transition-colors">
+        <template x-if="!$store.theme.isLight">
+          <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
+            </path>
+          </svg>
+        </template>
+        <template x-if="$store.theme.isLight">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+        </template>
+      </button>
+      <img src="img/logo.png" alt="REBULT Logo" class="h-20 mb-4">
+      <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
+        REBULT 2026</h1>
+      <p class="text-slate-400 mt-2">Create your scout account</p>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-1">Full Name</label>
+        <input x-model="name" type="text" placeholder="John Doe"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-1">Team Number</label>
+          <input x-model="team" type="number" placeholder="8056"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-1">Secret Code</label>
+          <input x-model="code" type="password" placeholder="••••"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
+        <input x-model="email" type="email" placeholder="email@example.com"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-1">Password</label>
+        <input x-model="password" type="password" placeholder="••••••••"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+      </div>
+
+      <div x-show="errorMessage" x-text="errorMessage"
+        class="text-red-500 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20"></div>
+
+      <button @click="loading = true; errorMessage = ''; auth.createUserWithEmailAndPassword(email, password)
+                    .then(cred => {
+                        return db.collection('users').doc(cred.user.uid).set({
+                            email: email,
+                            name: name,
+                            teamNumber: Number(team),
+                            secretCode: code,
+                            role: 'new'
+                        });
+                    })
+                    .then(() => location.href = 'dashboard.html')
+                    .catch(e => { errorMessage = e.message; loading = false; })" :disabled="loading"
+        class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-600/20 transform transition-all active:scale-95 flex items-center justify-center">
+        <template x-if="loading">
+          <svg class="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+        </template>
+        <span x-text="loading ? 'Creating Account...' : 'Create Account'"></span>
+      </button>
+    </div>
+
+    <div class="mt-8 text-center text-slate-500 text-sm">
+      Already have an account?
+      <a href="index.html" class="text-orange-500 hover:text-orange-400 font-bold ml-1">Login Page</a>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/register-app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@import "./legacy.css";
+
+@theme {
+    --color-brand-orange: #f97316;
+    --color-brand-orange-light: #fb923c;
+    --color-brand-orange-dark: #ea580c;
+}
+
+:root {
+    --bg-main: #020617;
+    /* slate-950 */
+    --text-main: #f8fafc;
+    /* slate-50 */
+    --card-bg: #0f172a;
+    /* slate-900 */
+    --border-main: #1e293b;
+    /* slate-800 */
+    --accent-orange: #f97316;
+    /* orange-500 */
+    --accent-orange-hover: #fb923c;
+    /* orange-400 */
+}
+
+.light {
+    --bg-main: #f8fafc;
+    /* slate-50 */
+    --text-main: #020617;
+    /* slate-950 */
+    --card-bg: #ffffff;
+    --border-main: #e2e8f0;
+    /* slate-200 */
+    --accent-orange: #ea580c;
+    /* orange-600 */
+    --accent-orange-hover: #f97316;
+    /* orange-500 */
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Apply new colors to existing elements */
+.bg-slate-950 {
+    background-color: var(--bg-main);
+}
+
+.bg-slate-900 {
+    background-color: var(--card-bg);
+}
+
+.border-slate-800 {
+    border-color: var(--border-main);
+}
+
+.text-slate-400 {
+    color: #94a3b8;
+}
+
+/* Keep some slate colors for subtext */
+
+.from-orange-400 {
+    --tw-gradient-from: var(--accent-orange-hover) !important;
+}
+
+.to-orange-600 {
+    --tw-gradient-to: var(--accent-orange) !important;
+}
+
+.bg-orange-500 {
+    background-color: var(--accent-orange);
+}
+
+.bg-orange-600 {
+    background-color: var(--accent-orange);
+}
+
+/* Search Highlighting */
+.highlight-search {
+    background-color: rgba(249, 115, 22, 0.3);
+    color: #fdba74;
+    /* orange-300 */
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: 800;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+    transition: all 0.2s ease-in-out;
+}
+
+.light .highlight-search {
+    background-color: rgba(234, 88, 12, 0.2);
+    color: #c2410c;
+    /* orange-700 */
+}
+
+/* Energetic Win Animation */
+@keyframes win-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-15px) scale(1.2) rotate(10deg);
+    }
+}
+
+.animate-win-bounce {
+    animation: win-bounce 0.8s infinite;
+}

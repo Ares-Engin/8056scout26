@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Results - REBULT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Theme Manager -->
+    <script src="js/theme.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen p-4 md:p-8" x-data="matchesApp">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <button @click="location.href='dashboard.html'"
+                    class="p-2 hover:bg-slate-900 rounded-lg border border-slate-800 transition-colors">
+                    <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+                <h1
+                    class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase">
+                    Match Results</h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button @click="$store.theme.toggle()"
+                    class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl transition-all flex items-center justify-center">
+                    <template x-if="!$store.theme.isLight">
+                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
+                            </path>
+                        </svg>
+                    </template>
+                    <template x-if="$store.theme.isLight">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                    </template>
+                </button>
+                <div class="flex items-center gap-3">
+                    <input x-model="teamFilter" type="text" placeholder="Team filter..."
+                        class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none w-32 md:w-48 transition-all">
+
+                    <select x-model="filter"
+                        class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none">
+                        <option value="all">All Matches</option>
+                        <option value="red-win">Red Wins</option>
+                        <option value="blue-win">Blue Wins</option>
+                    </select>
+                </div>
+        </header>
+
+        <template x-if="loading">
+            <div class="flex flex-col items-center justify-center py-20 animate-pulse">
+                <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4">
+                </div>
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">Syncing Data...</p>
+            </div>
+        </template>
+
+        <template x-if="errorMessage">
+            <div class="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl text-red-500 text-center font-bold"
+                x-text="errorMessage"></div>
+        </template>
+
+        <div class="grid grid-cols-1 gap-6">
+            <template x-for="match in filteredMatches()" :key="match.matchNumber">
+                <div
+                    class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition-all hover:border-slate-700">
+                    <div class="bg-slate-950 p-4 border-b border-slate-800 flex justify-between items-center">
+                        <span class="text-orange-500 font-black" x-text="'MATCH #' + match.matchNumber"></span>
+                        <span class="text-slate-500 text-xs font-bold uppercase"
+                            x-text="match.actualStartTime ? new Date(match.actualStartTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Upcoming'"></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2">
+                        <!-- Red Alliance -->
+                        <div class="p-6 border-b md:border-b-0 md:border-r border-slate-800 bg-red-600/5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-600"></div>
+                                    <h3 class="font-black text-red-500 uppercase">Red Alliance</h3>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <template x-if="match.scoreRedFinal > match.scoreBlueFinal">
+                                        <span class="text-3xl animate-win-bounce inline-block">🏆</span>
+                                    </template>
+                                    <span class="text-3xl font-black text-white"
+                                        x-text="match.scoreRedFinal || 0"></span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <template x-for="team in match.teams.filter(t => t.station.startsWith('Red'))">
+                                    <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="font-black text-red-400"
+                                                :class="{ 'highlight-search': isHighlighted(team.teamNumber) }"
+                                                x-text="'#' + team.teamNumber"></span>
+                                            <template
+                                                x-if="scoutEntries[match.matchNumber]?.some(s => s.teamNumber === team.teamNumber)">
+                                                <span
+                                                    class="bg-green-500/20 text-green-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Scouted</span>
+                                            </template>
+                                        </div>
+
+                                        <!-- Scout Data Summary -->
+                                        <div class="text-[11px] grid grid-cols-2 gap-2 text-slate-500">
+                                            <template
+                                                x-if="!scoutEntries[match.matchNumber]?.some(s => s.teamNumber === team.teamNumber)">
+                                                <div
+                                                    class="col-span-2 text-center py-1 italic opacity-30 tracking-wider uppercase font-bold">
+                                                    No Data</div>
+                                            </template>
+                                            <template
+                                                x-if="scoutEntries[match.matchNumber]?.find(s => s.teamNumber === team.teamNumber)">
+                                                <div class="contents"
+                                                    x-data="{ s: scoutEntries[match.matchNumber].find(s => s.teamNumber === team.teamNumber) }">
+                                                    <div>Auto ✓: <span class="text-white font-bold"
+                                                            x-text="s.auto.fuelSuccess"></span></div>
+                                                    <div>Tele ✓: <span class="text-white font-bold"
+                                                            x-text="s.teleop.fuelSuccess"></span></div>
+                                                    <div class="col-span-2">End: <span
+                                                            class="text-white font-bold uppercase"
+                                                            x-text="s.endgame.result || 'none'"></span></div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Blue Alliance -->
+                        <div class="p-6 bg-blue-600/5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-blue-600"></div>
+                                    <h3 class="font-black text-blue-500 uppercase">Blue Alliance</h3>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <template x-if="match.scoreBlueFinal > match.scoreRedFinal">
+                                        <span class="text-3xl animate-win-bounce inline-block">🏆</span>
+                                    </template>
+                                    <span class="text-3xl font-black text-white"
+                                        x-text="match.scoreBlueFinal || 0"></span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <template x-for="team in match.teams.filter(t => t.station.startsWith('Blue'))">
+                                    <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="font-black text-blue-400"
+                                                :class="{ 'highlight-search': isHighlighted(team.teamNumber) }"
+                                                x-text="'#' + team.teamNumber"></span>
+                                            <template
+                                                x-if="scoutEntries[match.matchNumber]?.some(s => s.teamNumber === team.teamNumber)">
+                                                <span
+                                                    class="bg-green-500/20 text-green-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Scouted</span>
+                                            </template>
+                                        </div>
+
+                                        <!-- Scout Data Summary -->
+                                        <div class="text-[11px] grid grid-cols-2 gap-2 text-slate-500">
+                                            <template
+                                                x-if="!scoutEntries[match.matchNumber]?.some(s => s.teamNumber === team.teamNumber)">
+                                                <div
+                                                    class="col-span-2 text-center py-1 italic opacity-30 tracking-wider uppercase font-bold">
+                                                    No Data</div>
+                                            </template>
+                                            <template
+                                                x-if="scoutEntries[match.matchNumber]?.find(s => s.teamNumber === team.teamNumber)">
+                                                <div class="contents"
+                                                    x-data="{ s: scoutEntries[match.matchNumber].find(s => s.teamNumber === team.teamNumber) }">
+                                                    <div>Auto ✓: <span class="text-white font-bold"
+                                                            x-text="s.auto.fuelSuccess"></span></div>
+                                                    <div>Tele ✓: <span class="text-white font-bold"
+                                                            x-text="s.teleop.fuelSuccess"></span></div>
+                                                    <div class="col-span-2">End: <span
+                                                            class="text-white font-bold uppercase"
+                                                            x-text="s.endgame.result || 'none'"></span></div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Your Application Logic -->
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/matches-app.js"></script>
+</body>
+
+</html>

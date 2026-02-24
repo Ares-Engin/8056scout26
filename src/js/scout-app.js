@@ -1,7 +1,19 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('scoutApp', () => ({
-        regional: FRC_CONFIG.events[0].key,
-        availableEvents: FRC_CONFIG.events,
+        selectedYear: FRC_CONFIG.defaultSeason,
+        availableSeasons: FRC_CONFIG.seasons,
+        regional: '',
+
+        get filteredEvents() {
+            return FRC_CONFIG.events.filter(e => e.season === Number(this.selectedYear));
+        },
+
+        init() {
+            // Set first regional of selected year as default
+            const firstEvent = this.filteredEvents[0];
+            if (firstEvent) this.regional = firstEvent.key;
+        },
+
         matchNumber: '',
         teamNumber: '',
         matchType: 'Qualification',

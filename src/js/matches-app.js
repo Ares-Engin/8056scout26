@@ -10,6 +10,11 @@ document.addEventListener('alpine:init', () => {
         searchQuery: '',
         loading: true,
         errorMessage: '',
+        expandedMatch: null,
+
+        toggleMatch(key) {
+            this.expandedMatch = this.expandedMatch === key ? null : key;
+        },
 
         async init() {
             try {

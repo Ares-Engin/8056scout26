@@ -9,9 +9,17 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
-            // Set first regional of selected year as default
-            const firstEvent = this.filteredEvents[0];
-            if (firstEvent) this.regional = firstEvent.key;
+            // Watch for year changes to reset regional
+            this.$watch('selectedYear', (val) => {
+                const firstEvent = this.filteredEvents[0];
+                if (firstEvent) this.regional = firstEvent.key;
+            });
+
+            // Set initial regional if empty
+            if (!this.regional) {
+                const firstEvent = this.filteredEvents[0];
+                if (firstEvent) this.regional = firstEvent.key;
+            }
         },
 
         matchNumber: '',
@@ -20,9 +28,17 @@ document.addEventListener('alpine:init', () => {
         alliance: '',
         auto: { fuelSuccess: 0, fuelFail: 0, taxi: false },
         teleop: { fuelSuccess: 0, fuelFail: 0, pickups: 0, drops: 0, defense: 0 },
-        endgame: { result: '', failed: false },
-        ratings: { driver: 3, speed: 3, defense: 3, reliability: '' },
+        endgame: { result: 'none', failed: false },
+        ratings: { driver: 3, speed: 3, defense: 3, reliability: 'none' },
         loading: false,
+
+        increment(section, key) {
+            this[section][key] = (this[section][key] || 0) + 1;
+        },
+
+        decrement(section, key) {
+            this[section][key] = Math.max(0, (this[section][key] || 0) - 1);
+        },
 
         async submit() {
             if (!this.matchNumber || !this.teamNumber) return alert('Match and Team numbers are required');
@@ -32,11 +48,15 @@ document.addEventListener('alpine:init', () => {
                     regional: this.regional,
                     matchNumber: Number(this.matchNumber),
                     teamNumber: Number(this.teamNumber),
-                    meta: { matchType: this.matchType, alliance: this.alliance },
-                    auto: this.auto,
-                    teleop: this.teleop,
-                    endgame: this.endgame,
-                    ratings: this.ratings,
+                    meta: {
+                        matchType: this.matchType,
+                        alliance: this.alliance,
+                        scouterTeamNumber: Alpine.store('auth').profile?.teamNumber || 0
+                    },
+                    auto: { ...this.auto },
+                    teleop: { ...this.teleop },
+                    endgame: { ...this.endgame },
+                    ratings: { ...this.ratings },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     scoutEmail: auth.currentUser?.email,
                     scoutUID: auth.currentUser?.uid

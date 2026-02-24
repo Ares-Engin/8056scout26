@@ -65,16 +65,26 @@
         Match Information
       </h2>
       <div class="space-y-6 text-slate-400">
-        <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Regional / Event</label>
+          <select x-model="regional"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none appearance-none transition-all font-bold">
+            <template x-for="event in availableEvents" :key="event.key">
+              <option :value="event.key" x-text="event.name"></option>
+            </template>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold uppercase mb-2">Match #</label>
-            <input x-model="matchNumber" type="number"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Match Number</label>
+            <input x-model="matchNumber" type="number" placeholder="Enter #"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 focus:ring-2 focus:ring-orange-500 outline-none transition-all font-bold">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase mb-2">Team #</label>
-            <input x-model="teamNumber" type="number"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Team Number</label>
+            <input x-model="teamNumber" type="number" placeholder="Enter #"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 focus:ring-2 focus:ring-orange-500 outline-none transition-all font-bold">
           </div>
         </div>
 
@@ -90,13 +100,16 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase mb-2">Alliance Color</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button @click="alliance = 'Red'" class="py-3 rounded-xl border transition-all font-black uppercase text-sm"
-              :class="alliance === 'Red' ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20 scale-105' : 'bg-slate-950 border-slate-700 text-red-500/50 hover:border-red-500/50 hover:scale-102'">Red</button>
+          <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Alliance Color</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button @click="alliance = 'Red'"
+              class="py-4 rounded-xl border transition-all font-black uppercase text-sm tracking-widest"
+              :class="alliance === 'Red' ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20 scale-102' : 'bg-slate-950 border-slate-700 text-red-500/70 hover:border-red-500/50'">Red
+              Alliance</button>
             <button @click="alliance = 'Blue'"
-              class="py-3 rounded-xl border transition-all font-black uppercase text-sm"
-              :class="alliance === 'Blue' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20 scale-105' : 'bg-slate-950 border-slate-700 text-blue-500/50 hover:border-blue-500/50 hover:scale-102'">Blue</button>
+              class="py-4 rounded-xl border transition-all font-black uppercase text-sm tracking-widest"
+              :class="alliance === 'Blue' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20 scale-102' : 'bg-slate-950 border-slate-700 text-blue-500/70 hover:border-blue-500/50'">Blue
+              Alliance</button>
           </div>
         </div>
       </div>
@@ -114,14 +127,14 @@
       <div class="space-y-4">
         <template x-for="(label, key) in { 'Fuel Successful': 'fuelSuccess', 'Fuel Failed': 'fuelFail' }">
           <div
-            class="flex items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all">
+            class="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all gap-4">
             <span class="font-bold text-slate-300" x-text="label"></span>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
               <button @click="auto[key] = Math.max(0, auto[key] - 1)"
-                class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
-              <span class="w-8 text-center text-lg font-black text-orange-500" x-text="auto[key]"></span>
+                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
+              <span class="w-10 text-center text-xl font-black text-orange-500" x-text="auto[key]"></span>
               <button @click="auto[key]++"
-                class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
+                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
             </div>
           </div>
         </template>
@@ -158,14 +171,14 @@
                       'Defense Actions': 'defense'
                   }">
           <div
-            class="flex items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all">
+            class="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all gap-4">
             <span class="font-bold text-slate-300" x-text="label"></span>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
               <button @click="teleop[key] = Math.max(0, teleop[key] - 1)"
-                class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
-              <span class="w-8 text-center text-lg font-black text-blue-500" x-text="teleop[key]"></span>
+                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
+              <span class="w-10 text-center text-xl font-black text-blue-500" x-text="teleop[key]"></span>
               <button @click="teleop[key]++"
-                class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
+                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
             </div>
           </div>
         </template>

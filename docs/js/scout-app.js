@@ -1,5 +1,7 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('scoutApp', () => ({
+        regional: FRC_CONFIG.events[0].key,
+        availableEvents: FRC_CONFIG.events,
         matchNumber: '',
         teamNumber: '',
         matchType: 'Qualification',
@@ -15,6 +17,7 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
             try {
                 const data = {
+                    regional: this.regional,
                     matchNumber: Number(this.matchNumber),
                     teamNumber: Number(this.teamNumber),
                     meta: { matchType: this.matchType, alliance: this.alliance },

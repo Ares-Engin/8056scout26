@@ -2,14 +2,26 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('matchesApp', () => ({
         frcMatches: [],
         scoutEntries: {},
-        filter: 'all',
-        teamFilter: '',
+        availableSeasons: FRC_CONFIG.seasons,
+        availableEvents: FRC_CONFIG.events,
+        selectedSeasons: [FRC_CONFIG.defaultSeason],
+        selectedEvents: [FRC_CONFIG.events.find(e => e.season === FRC_CONFIG.defaultSeason)?.key].filter(Boolean),
+        selectedTypes: ['Qualification'],
+        searchQuery: '',
         loading: true,
         errorMessage: '',
 
         async init() {
             try {
-                this.frcMatches = await fetchFRCMatches();
+                this.loading = true;
+                // Fetch matches for all selected events
+                const allMatches = await Promise.all(
+                    this.selectedEvents.map(key => fetchFRCMatches(key))
+                );
+                // Flatten and add event key to each match for filtering
+                this.frcMatches = allMatches.flatMap((matches, i) =>
+                    matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
+                );
                 this.frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
 
                 db.collection('scouting').onSnapshot(snapshot => {
@@ -17,8 +29,9 @@ document.addEventListener('alpine:init', () => {
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         if (data.matchNumber) {
-                            if (!this.scoutEntries[data.matchNumber]) this.scoutEntries[data.matchNumber] = [];
-                            this.scoutEntries[data.matchNumber].push(data);
+                            const key = `${data.regional}_${data.matchNumber}`;
+                            if (!this.scoutEntries[key]) this.scoutEntries[key] = [];
+                            this.scoutEntries[key].push(data);
                         }
                     });
                     this.loading = false;
@@ -34,18 +47,19 @@ document.addEventListener('alpine:init', () => {
 
         filteredMatches() {
             return this.frcMatches.filter(m => {
-                // Alliance winner filter
-                if (this.filter !== 'all') {
-                    const rs = m.scoreRedFinal || 0;
-                    const bs = m.scoreBlueFinal || 0;
-                    if (this.filter === 'red-win' && rs <= bs) return false;
-                    if (this.filter === 'blue-win' && bs <= rs) return false;
-                }
+                // Event Filter
+                if (this.selectedEvents.length > 0 && !this.selectedEvents.includes(m.eventKey)) return false;
 
-                // Team number filter
-                if (this.teamFilter) {
-                    const hasTeam = m.teams.some(t => t.teamNumber.toString().includes(this.teamFilter));
-                    if (!hasTeam) return false;
+                // Match Type Filter (Mapping TBA description to our types)
+                const type = m.description.includes('Qual') ? 'Qualification' :
+                    m.description.includes('Practice') ? 'Practice' : 'Finals';
+                if (this.selectedTypes.length > 0 && !this.selectedTypes.includes(type)) return false;
+
+                // Search Filter (Team Number or Match Number)
+                if (this.searchQuery) {
+                    const matchNumMatch = m.matchNumber.toString() === this.searchQuery;
+                    const teamMatch = m.teams.some(t => t.teamNumber.toString().includes(this.searchQuery));
+                    if (!matchNumMatch && !teamMatch) return false;
                 }
 
                 return true;
@@ -53,8 +67,8 @@ document.addEventListener('alpine:init', () => {
         },
 
         isHighlighted(teamNumber) {
-            if (!this.teamFilter) return false;
-            return teamNumber.toString().includes(this.teamFilter);
+            if (!this.searchQuery) return false;
+            return teamNumber.toString().includes(this.searchQuery);
         }
     }));
 });

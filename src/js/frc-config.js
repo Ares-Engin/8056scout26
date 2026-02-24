@@ -4,15 +4,23 @@
    ============================================================ */
 
 const FRC_CONFIG = {
-    season: 2025,
-    eventKey: "2025tuhc",   // Format: YEAR + event code (lowercase)
-    apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ", // ← PUT YOUR TBA KEY HERE
-    level: "qm" // qm = qualification matches
+    seasons: [2024, 2025, 2026],
+    events: [
+        { key: "2025tuhc", name: "Haliç Regional 2025", season: 2025 },
+        { key: "2025tuis", name: "Istanbul Regional 2025", season: 2025 },
+        { key: "2025tubs", name: "Bosphorus Regional 2025", season: 2025 },
+        { key: "2026tuhc", name: "Haliç Regional 2026", season: 2026 },
+        { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 }
+    ],
+    defaultSeason: 2026,
+    apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",
+    level: "qm"
 };
 
 /* Fetches match results from The Blue Alliance API */
-async function fetchFRCMatches() {
-    const url = `https://www.thebluealliance.com/api/v3/event/${FRC_CONFIG.eventKey}/matches`;
+async function fetchFRCMatches(eventKey) {
+    const key = eventKey || FRC_CONFIG.events[0].key;
+    const url = `https://www.thebluealliance.com/api/v3/event/${key}/matches`;
 
     const res = await fetch(url, {
         headers: {

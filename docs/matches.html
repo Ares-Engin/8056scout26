@@ -19,26 +19,26 @@
 <body class="bg-slate-950 text-white min-h-screen p-4 md:p-8" x-data="matchesApp">
 
     <div class="max-w-4xl mx-auto">
-        <header class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-6">
-                <button @click="location.href='dashboard.html'"
-                    class="p-2.5 hover:bg-slate-900 rounded-xl border border-slate-800 transition-colors shadow-lg shadow-orange-600/5">
-                    <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
-                    </svg>
-                </button>
-                <div class="flex items-center gap-3">
-                    <img src="img/logo.png" alt="REBULT Logo" class="h-12">
-                    <h1
-                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase tracking-tighter">
-                        Match Results</h1>
+        <header class="mb-8 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-6">
+                    <button @click="location.href='dashboard.html'"
+                        class="p-2.5 hover:bg-slate-900 rounded-xl border border-slate-800 transition-colors shadow-lg shadow-orange-600/5">
+                        <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <img src="img/logo.png" alt="REBULT Logo" class="h-12">
+                        <h1
+                            class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase tracking-tighter">
+                            Match Results</h1>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center gap-3">
                 <button @click="$store.theme.toggle()"
-                    class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl transition-all flex items-center justify-center">
+                    class="self-end md:self-auto bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all flex items-center justify-center">
                     <template x-if="!$store.theme.isLight">
                         <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,17 +54,54 @@
                         </svg>
                     </template>
                 </button>
-                <div class="flex items-center gap-3">
-                    <input x-model="teamFilter" type="text" placeholder="Team filter..."
-                        class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none w-32 md:w-48 transition-all">
+            </div>
 
-                    <select x-model="filter"
-                        class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none">
-                        <option value="all">All Matches</option>
-                        <option value="red-win">Red Wins</option>
-                        <option value="blue-win">Blue Wins</option>
+            <!-- Enhanced Filters -->
+            <div
+                class="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Search Team /
+                        Match</label>
+                    <input x-model="searchQuery" type="text" placeholder="e.g. 8056 or 42"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Seasons</label>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="year in availableSeasons">
+                            <button
+                                @click="selectedSeasons.includes(year) ? selectedSeasons = selectedSeasons.filter(y => y !== year) : selectedSeasons.push(year); init()"
+                                :class="selectedSeasons.includes(year) ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-950 border-slate-800 text-slate-500'"
+                                class="px-3 py-1.5 rounded-lg border text-xs font-black transition-all"
+                                x-text="year"></button>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Regionals</label>
+                    <select multiple x-model="selectedEvents" @change="init()"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-orange-500 outline-none h-20">
+                        <template x-for="event in availableEvents.filter(e => selectedSeasons.includes(e.season))">
+                            <option :value="event.key" x-text="event.name"></option>
+                        </template>
                     </select>
                 </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Match Type</label>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="type in ['Practice', 'Qualification', 'Finals']">
+                            <button
+                                @click="selectedTypes.includes(type) ? selectedTypes = selectedTypes.filter(t => t !== type) : selectedTypes.push(type)"
+                                :class="selectedTypes.includes(type) ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-950 border-slate-800 text-slate-500'"
+                                class="px-3 py-1.5 rounded-lg border text-xs font-black transition-all"
+                                x-text="type"></button>
+                        </template>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <template x-if="loading">
@@ -85,9 +122,14 @@
                 <div
                     class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition-all hover:border-slate-700">
                     <div class="bg-slate-950 p-4 border-b border-slate-800 flex justify-between items-center">
-                        <span class="text-orange-500 font-black" x-text="'MATCH #' + match.matchNumber"></span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-orange-500 font-black" x-text="'MATCH #' + m.matchNumber"></span>
+                            <span
+                                class="text-[10px] font-black uppercase text-slate-600 bg-slate-900 px-2 py-0.5 rounded-md"
+                                x-text="availableEvents.find(e => e.key === m.eventKey)?.name || m.eventKey"></span>
+                        </div>
                         <span class="text-slate-500 text-xs font-bold uppercase"
-                            x-text="match.actualStartTime ? new Date(match.actualStartTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Upcoming'"></span>
+                            x-text="m.actualStartTime ? new Date(m.actualStartTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Upcoming'"></span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2">

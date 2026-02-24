@@ -5,6 +5,7 @@
     --color-brand-orange: #f97316;
     --color-brand-orange-light: #fb923c;
     --color-brand-orange-dark: #ea580c;
+    --color-brand-orange-glow: rgba(249, 115, 22, 0.4);
 }
 
 :root {

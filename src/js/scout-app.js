@@ -1,6 +1,5 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('scoutApp', () => ({
-        step: 1,
         matchNumber: '',
         teamNumber: '',
         matchType: 'Qualification',

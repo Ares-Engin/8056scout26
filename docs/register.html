@@ -82,18 +82,7 @@
       <div x-show="errorMessage" x-text="errorMessage"
         class="text-red-500 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20"></div>
 
-      <button @click="loading = true; errorMessage = ''; auth.createUserWithEmailAndPassword(email, password)
-                    .then(cred => {
-                        return db.collection('users').doc(cred.user.uid).set({
-                            email: email,
-                            name: name,
-                            teamNumber: Number(team),
-                            secretCode: code,
-                            role: 'new'
-                        });
-                    })
-                    .then(() => location.href = 'dashboard.html')
-                    .catch(e => { errorMessage = e.message; loading = false; })" :disabled="loading"
+      <button @click="register()" :disabled="loading"
         class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-600/20 transform transition-all active:scale-95 flex items-center justify-center">
         <template x-if="loading">
           <svg class="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"

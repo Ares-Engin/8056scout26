@@ -4,13 +4,17 @@
    ============================================================ */
 
 const FRC_CONFIG = {
-    seasons: [2024, 2025, 2026],
+    seasons: [2025, 2026],
     events: [
         { key: "2025tuhc", name: "Haliç Regional 2025", season: 2025 },
         { key: "2025tuis", name: "Istanbul Regional 2025", season: 2025 },
         { key: "2025tubs", name: "Bosphorus Regional 2025", season: 2025 },
+        { key: "2025marm", name: "Marmara Regional 2025", season: 2025 },
+        { key: "2025bask", name: "Başkent Regional 2025", season: 2025 },
         { key: "2026tuhc", name: "Haliç Regional 2026", season: 2026 },
-        { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 }
+        { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 },
+        { key: "2026marm", name: "Marmara Regional 2026", season: 2026 },
+        { key: "2026bask", name: "Başkent Regional 2026", season: 2026 }
     ],
     defaultSeason: 2026,
     apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",

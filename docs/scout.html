@@ -148,7 +148,8 @@
             <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
               <button @click="decrement('auto', key)"
                 class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
-              <span class="w-10 text-center text-xl font-black text-orange-500" x-text="auto[key] || 0"></span>
+              <span class="w-10 text-center text-xl font-black text-orange-500"
+                x-text="auto[key] !== undefined ? auto[key] : 0"></span>
               <button @click="increment('auto', key)"
                 class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
             </div>
@@ -192,7 +193,8 @@
             <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
               <button @click="decrement('teleop', key)"
                 class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">−</button>
-              <span class="w-10 text-center text-xl font-black text-blue-500" x-text="teleop[key] || 0"></span>
+              <span class="w-10 text-center text-xl font-black text-blue-500"
+                x-text="teleop[key] !== undefined ? teleop[key] : 0"></span>
               <button @click="increment('teleop', key)"
                 class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-xl font-black transition-colors shadow-sm">+</button>
             </div>
@@ -233,11 +235,11 @@
         <!-- Ratings -->
         <div class="space-y-6">
           <template
-            x-for="(label, key) in { 'Driver Skill': 'driver', 'Robot Speed': 'speed', 'Defensive Ability': 'defense' }">
+            x-for="(label, key) in { driver: 'Driver Skill', speed: 'Robot Speed', defense: 'Defensive Ability' }">
             <div>
               <div class="flex justify-between mb-2">
                 <label class="text-xs font-bold uppercase text-slate-500" x-text="label"></label>
-                <span class="text-xs font-bold text-orange-500" x-text="ratings[key] + '/5'"></span>
+                <span class="text-xs font-bold text-orange-500" x-text="(ratings[key] || 3) + '/5'"></span>
               </div>
               <input type="range" min="1" max="5" step="1" x-model="ratings[key]"
                 class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500">

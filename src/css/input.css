@@ -10,31 +10,20 @@
 
 :root {
     --bg-main: #020617;
-    /* slate-950 */
     --text-main: #f8fafc;
-    /* slate-50 */
     --card-bg: #0f172a;
-    /* slate-900 */
     --border-main: #1e293b;
-    /* slate-800 */
     --accent-orange: #f97316;
-    /* orange-500 */
     --accent-orange-hover: #fb923c;
-    /* orange-400 */
 }
 
 .light {
     --bg-main: #f8fafc;
-    /* slate-50 */
     --text-main: #020617;
-    /* slate-950 */
     --card-bg: #ffffff;
     --border-main: #e2e8f0;
-    /* slate-200 */
     --accent-orange: #ea580c;
-    /* orange-600 */
     --accent-orange-hover: #f97316;
-    /* orange-500 */
 }
 
 body {
@@ -43,7 +32,6 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Apply new colors to existing elements */
 .bg-slate-950 {
     background-color: var(--bg-main);
 }
@@ -59,8 +47,6 @@ body {
 .text-slate-400 {
     color: #94a3b8;
 }
-
-/* Keep some slate colors for subtext */
 
 .from-orange-400 {
     --tw-gradient-from: var(--accent-orange-hover) !important;
@@ -82,7 +68,6 @@ body {
 .highlight-search {
     background-color: rgba(249, 115, 22, 0.3);
     color: #fdba74;
-    /* orange-300 */
     padding: 2px 4px;
     border-radius: 4px;
     font-weight: 800;
@@ -93,10 +78,8 @@ body {
 .light .highlight-search {
     background-color: rgba(234, 88, 12, 0.2);
     color: #c2410c;
-    /* orange-700 */
 }
 
-/* Energetic Win Animation */
 @keyframes win-bounce {
 
     0%,
@@ -111,4 +94,1027 @@ body {
 
 .animate-win-bounce {
     animation: win-bounce 0.8s infinite;
+}
+
+/* ======================================================================
+   SHARED COMPONENTS
+   ====================================================================== */
+
+/* ---------- Page body ---------- */
+.page-body {
+    @apply bg-slate-950 text-white min-h-screen pb-24;
+}
+
+.page-body--centered {
+    @apply bg-slate-950 text-white min-h-screen flex flex-col justify-center p-6;
+}
+
+.page-body--padded {
+    @apply bg-slate-950 text-white min-h-screen pb-20;
+}
+
+/* ---------- Top Bar ---------- */
+.top-bar {
+    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm bg-opacity-90;
+}
+
+.top-bar--fixed {
+    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm bg-opacity-90;
+}
+
+.top-bar__text {
+    @apply text-orange-500 font-black tracking-widest text-[10px] uppercase;
+}
+
+/* ---------- Navigation ---------- */
+.nav-bar {
+    @apply bg-slate-900 border-b border-orange-500/30 p-4 sticky top-0 z-50 backdrop-blur-md bg-opacity-80;
+}
+
+.nav-bar__inner {
+    @apply max-w-4xl mx-auto flex items-center justify-between;
+}
+
+.nav-bar__left {
+    @apply flex items-center gap-4;
+}
+
+.back-btn {
+    @apply p-2 hover:bg-slate-800 rounded-xl transition-colors border border-slate-800;
+}
+
+.back-btn--shadow {
+    @apply p-2.5 hover:bg-slate-900 rounded-xl border border-slate-800 transition-colors shadow-lg shadow-orange-600/5;
+}
+
+.back-btn__icon {
+    @apply h-6 w-6 text-slate-400;
+}
+
+/* ---------- Brand / Logo ---------- */
+.brand {
+    @apply flex items-center gap-2;
+}
+
+.brand--gap3 {
+    @apply flex items-center gap-3;
+}
+
+.brand--gap6 {
+    @apply flex items-center gap-6;
+}
+
+.brand__logo--sm {
+    @apply h-10;
+}
+
+.brand__logo--md {
+    @apply h-12;
+}
+
+.brand__logo--lg {
+    @apply h-16 drop-shadow-[0_0_15px_rgba(249, 115, 22, 0.3)];
+}
+
+.brand__logo--xl {
+    @apply h-20 mb-4;
+}
+
+.brand__logo--hero {
+    @apply h-24 mb-6 drop-shadow-[0_0_20px_rgba(249, 115, 22, 0.4)] animate-pulse;
+}
+
+.brand__title {
+    @apply font-black text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase tracking-tighter;
+}
+
+.brand__title--lg {
+    @apply text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase tracking-tighter;
+}
+
+.brand__title--xl {
+    @apply text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 tracking-tighter;
+}
+
+.brand__title--hero {
+    @apply text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 tracking-tighter;
+}
+
+.brand__subtitle {
+    @apply text-slate-400 text-sm font-bold uppercase tracking-widest opacity-70;
+}
+
+.brand__subtitle--login {
+    @apply text-slate-400 mt-4 font-bold uppercase tracking-widest text-xs opacity-60;
+}
+
+.brand__subtitle--register {
+    @apply text-slate-400 mt-2;
+}
+
+/* ---------- Theme Toggle ---------- */
+.theme-toggle {
+    @apply bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all flex items-center justify-center;
+}
+
+.theme-toggle--sm {
+    @apply bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl transition-all flex items-center justify-center;
+}
+
+.theme-toggle--login {
+    @apply absolute -top-4 -right-4 p-2 bg-slate-800/50 hover:bg-slate-800 rounded-full transition-colors;
+}
+
+.theme-icon--sun {
+    @apply w-5 h-5 text-yellow-500;
+}
+
+.theme-icon--moon {
+    @apply w-5 h-5 text-indigo-400;
+}
+
+/* ---------- Cards / Sections ---------- */
+.card {
+    @apply bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-orange-500/30 transition-all;
+}
+
+.card--blue {
+    @apply bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-blue-500/30 transition-all;
+}
+
+.card--purple {
+    @apply bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-purple-500/30 transition-all;
+}
+
+.card--auth {
+    @apply w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl;
+}
+
+.card__header {
+    @apply flex flex-col items-center mb-8 relative;
+}
+
+.card__header--account {
+    @apply flex flex-col items-center mb-10;
+}
+
+/* ---------- Section Headers ---------- */
+.section-title {
+    @apply text-xl font-bold mb-6 flex items-center gap-3;
+}
+
+.section-title--orange {
+    @apply text-xl font-bold mb-6 flex items-center gap-3 text-orange-400;
+}
+
+.section-title--blue {
+    @apply text-xl font-bold mb-6 flex items-center gap-3 text-blue-400;
+}
+
+.section-title--purple {
+    @apply text-xl font-bold mb-6 flex items-center gap-3 text-purple-400;
+}
+
+.section-number {
+    @apply w-8 h-8 rounded-lg bg-orange-600/20 text-orange-500 flex items-center justify-center text-sm font-black shadow-lg shadow-orange-600/10;
+}
+
+.section-number--blue {
+    @apply w-8 h-8 rounded-lg bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black shadow-lg shadow-blue-600/10;
+}
+
+.section-number--purple {
+    @apply w-8 h-8 rounded-lg bg-purple-600/20 text-purple-500 flex items-center justify-center text-sm font-black shadow-lg shadow-purple-600/10;
+}
+
+/* ---------- Page Containers ---------- */
+.container--sm {
+    @apply max-w-xl mx-auto p-4 md:p-8 space-y-12;
+}
+
+.container--lg {
+    @apply max-w-4xl mx-auto;
+}
+
+/* ---------- Form Elements ---------- */
+.form-label {
+    @apply block text-xs font-black uppercase mb-2 tracking-widest opacity-60;
+}
+
+.form-label--simple {
+    @apply block text-xs font-bold uppercase mb-2;
+}
+
+.form-label--muted {
+    @apply block text-xs font-bold uppercase mb-2 text-slate-500;
+}
+
+.form-label--sm {
+    @apply block text-sm font-medium text-slate-400 mb-1;
+}
+
+.form-label--filter {
+    @apply text-[10px] font-black uppercase tracking-widest text-slate-500;
+}
+
+.form-select {
+    @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none appearance-none transition-all font-bold;
+}
+
+.form-select--purple {
+    @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none appearance-none transition-all;
+}
+
+.form-input {
+    @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 focus:ring-2 focus:ring-orange-500 outline-none transition-all font-bold;
+}
+
+.form-input--auth {
+    @apply w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all;
+}
+
+.form-input--search {
+    @apply w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all;
+}
+
+.form-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.form-grid--3col {
+    @apply grid grid-cols-3 gap-2;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+    @apply w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-600/20 transform transition-all active:scale-95 flex items-center justify-center;
+}
+
+.btn-submit {
+    @apply w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 disabled:opacity-50 text-white font-black py-6 rounded-3xl shadow-2xl shadow-orange-600/30 transform transition-all active:scale-95 flex flex-col items-center justify-center text-lg uppercase tracking-widest relative overflow-hidden group;
+}
+
+.btn-submit__overlay {
+    @apply absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300;
+}
+
+.btn-submit__text {
+    @apply z-10;
+}
+
+.btn-submit__subtext {
+    @apply text-[10px] opacity-70 mt-1 tracking-normal font-bold z-10;
+}
+
+.btn-match-type {
+    @apply py-2.5 rounded-xl border transition-all text-sm font-bold;
+}
+
+.btn-match-type--active {
+    @apply bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20;
+}
+
+.btn-match-type--inactive {
+    @apply bg-slate-950 border-slate-700 text-slate-400 hover:border-slate-500;
+}
+
+.btn-alliance {
+    @apply py-4 rounded-xl border transition-all font-black uppercase text-sm tracking-widest;
+}
+
+.btn-alliance-red--active {
+    @apply bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20 scale-102;
+}
+
+.btn-alliance-red--inactive {
+    @apply bg-slate-950 border-slate-700 text-red-500/70 hover:border-red-500/50;
+}
+
+.btn-alliance-blue--active {
+    @apply bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20 scale-102;
+}
+
+.btn-alliance-blue--inactive {
+    @apply bg-slate-950 border-slate-700 text-blue-500/70 hover:border-blue-500/50;
+}
+
+.btn-outline {
+    @apply w-full bg-slate-950 hover:bg-slate-800 border border-slate-700 py-4 rounded-xl font-bold transition-all text-sm flex items-center justify-center gap-3;
+}
+
+.btn-danger {
+    @apply w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 py-4 rounded-xl font-bold text-red-500 transition-all text-sm flex items-center justify-center gap-3;
+}
+
+.btn-back-link {
+    @apply mt-10 w-full text-slate-500 hover:text-white font-bold transition-colors flex items-center justify-center gap-2;
+}
+
+/* ---------- Counter Row ---------- */
+.counter-row {
+    @apply flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all gap-4;
+}
+
+.counter-row__label {
+    @apply font-bold text-slate-300;
+}
+
+.counter-controls {
+    @apply flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl;
+}
+
+.counter-btn {
+    @apply w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center text-xl font-black transition-all shadow-sm border border-slate-700;
+}
+
+.counter-display {
+    @apply w-14 h-12 flex items-center justify-center bg-slate-950 rounded-lg border border-orange-500/20 shadow-inner;
+}
+
+.counter-display--blue {
+    @apply w-14 h-12 flex items-center justify-center bg-slate-950 rounded-lg border border-blue-500/20 shadow-inner;
+}
+
+.counter-value {
+    @apply text-2xl font-black text-orange-500;
+}
+
+.counter-value--blue {
+    @apply text-2xl font-black text-blue-500;
+}
+
+/* ---------- Toggle Switch ---------- */
+.toggle-label {
+    @apply flex items-center gap-4 p-4 bg-slate-950 rounded-2xl border border-slate-800 cursor-pointer hover:border-orange-500/30 transition-all;
+}
+
+.toggle-label--purple {
+    @apply flex items-center gap-4 p-4 bg-slate-950 rounded-2xl border border-slate-800 cursor-pointer hover:border-purple-500/30 transition-all;
+}
+
+.toggle-wrap {
+    @apply relative inline-block w-12 h-6 transition duration-200 ease-in-out;
+}
+
+.toggle-input {
+    @apply opacity-0 w-0 h-0 peer;
+}
+
+.toggle-track {
+    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-slate-800 rounded-full transition duration-200 peer-checked:bg-orange-600;
+}
+
+.toggle-thumb {
+    @apply absolute cursor-pointer top-1 left-1 w-4 h-4 bg-white rounded-full transition duration-200 peer-checked:translate-x-6;
+}
+
+.toggle-text {
+    @apply font-bold text-slate-300;
+}
+
+/* ---------- Range Slider ---------- */
+.range-header {
+    @apply flex justify-between mb-2;
+}
+
+.range-label {
+    @apply text-xs font-bold uppercase text-slate-500;
+}
+
+.range-value {
+    @apply text-xs font-bold text-orange-500;
+}
+
+.range-input {
+    @apply w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500;
+}
+
+/* ---------- Divider ---------- */
+.divider {
+    @apply h-px bg-slate-800 my-2;
+}
+
+/* ---------- Spinner ---------- */
+.spinner {
+    @apply animate-spin h-6 w-6 mb-2 text-white;
+}
+
+.spinner--sm {
+    @apply animate-spin h-5 w-5 mr-3 text-white;
+}
+
+.spinner__circle {
+    @apply opacity-25;
+}
+
+.spinner__path {
+    @apply opacity-75;
+}
+
+/* ---------- Auth footer link ---------- */
+.auth-footer {
+    @apply mt-8 text-center text-slate-500 text-sm;
+}
+
+.auth-footer__link {
+    @apply text-orange-500 hover:text-orange-400 font-bold ml-1;
+}
+
+/* ---------- Error messages ---------- */
+.error-message {
+    @apply text-red-500 text-sm text-center bg-red-500/10 py-2 rounded-lg border border-red-500/20;
+}
+
+.error-banner {
+    @apply bg-red-500/10 border border-red-500/20 p-6 rounded-2xl text-red-500 text-center font-bold;
+}
+
+/* ---------- Checkbox (endgame style) ---------- */
+.checkbox-input {
+    @apply w-6 h-6 rounded border-slate-700 bg-slate-900 text-purple-600 focus:ring-purple-500;
+}
+
+.checkbox-text {
+    @apply font-bold text-slate-300 text-sm;
+}
+
+/* ======================================================================
+   DASHBOARD PAGE
+   ====================================================================== */
+
+.dashboard-header {
+    @apply flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6;
+}
+
+.dashboard-actions {
+    @apply flex flex-wrap items-center gap-3;
+}
+
+.dashboard-actions__inner {
+    @apply flex flex-1 sm:flex-none gap-2;
+}
+
+.dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.dashboard-card {
+    @apply group bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-orange-500/50 transition-all text-left shadow-lg hover:shadow-orange-600/10;
+}
+
+.dashboard-card--blue {
+    @apply group bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-blue-500/50 transition-all text-left shadow-lg hover:shadow-blue-600/10;
+}
+
+.dashboard-card--placeholder {
+    @apply bg-slate-900/50 border border-slate-800/50 border-dashed p-8 rounded-3xl flex flex-col justify-center;
+}
+
+.dashboard-card--admin {
+    @apply lg:col-span-3 group bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border border-purple-500/30 p-8 rounded-3xl hover:border-purple-500/60 transition-all text-left shadow-lg;
+}
+
+.dashboard-card__icon {
+    @apply bg-orange-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform;
+}
+
+.dashboard-card__icon--blue {
+    @apply bg-blue-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform;
+}
+
+.dashboard-card__icon--placeholder {
+    @apply bg-slate-800/50 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 opacity-30;
+}
+
+.dashboard-card__icon--admin {
+    @apply bg-purple-600/20 w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform;
+}
+
+.dashboard-card__title {
+    @apply text-xl font-bold mb-2;
+}
+
+.dashboard-card__title--muted {
+    @apply text-xl font-bold mb-2 text-slate-600;
+}
+
+.dashboard-card__desc {
+    @apply text-slate-400 text-sm;
+}
+
+.dashboard-card__desc--muted {
+    @apply text-slate-700 text-sm italic;
+}
+
+.dashboard-card__link {
+    @apply mt-6 flex items-center text-orange-500 font-bold text-sm;
+}
+
+.dashboard-card__link--blue {
+    @apply mt-6 flex items-center text-blue-500 font-bold text-sm;
+}
+
+.dashboard-card__admin-inner {
+    @apply flex items-center justify-between;
+}
+
+.dashboard-card__admin-content {
+    @apply flex items-center gap-6;
+}
+
+.btn-account {
+    @apply flex-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2;
+}
+
+.btn-logout {
+    @apply flex-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest text-red-500 transition-all flex items-center justify-center gap-2;
+}
+
+/* ======================================================================
+   MATCHES PAGE
+   ====================================================================== */
+
+.matches-header {
+    @apply mb-8 space-y-6;
+}
+
+.matches-header__row {
+    @apply flex flex-col md:flex-row md:items-center justify-between gap-4;
+}
+
+.matches-theme-toggle {
+    @apply self-end md:self-auto bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all flex items-center justify-center;
+}
+
+/* Filters */
+.filter-panel {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl;
+}
+
+.filter-group {
+    @apply space-y-2;
+}
+
+.filter-chips {
+    @apply flex flex-wrap gap-2;
+}
+
+.filter-chip {
+    @apply px-3 py-1.5 rounded-lg border text-xs font-black transition-all;
+}
+
+.filter-chip--active {
+    @apply bg-orange-500 border-orange-500 text-white;
+}
+
+.filter-chip--inactive {
+    @apply bg-slate-950 border-slate-800 text-slate-500;
+}
+
+.filter-chip-type--active {
+    @apply bg-blue-600 border-blue-500 text-white;
+}
+
+.filter-regional-list {
+    @apply flex flex-col gap-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-800;
+}
+
+.filter-regional-btn {
+    @apply w-full text-left px-3 py-2 rounded-xl border text-[10px] font-black transition-all;
+}
+
+.filter-regional-btn--active {
+    @apply bg-orange-600/20 border-orange-500/50 text-orange-400;
+}
+
+.filter-regional-btn--inactive {
+    @apply bg-slate-950 border-slate-800 text-slate-500;
+}
+
+/* Loading */
+.loading-container {
+    @apply flex flex-col items-center justify-center py-20 animate-pulse;
+}
+
+.loading-spinner {
+    @apply w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4;
+}
+
+.loading-text {
+    @apply text-slate-400 font-bold uppercase tracking-widest text-sm;
+}
+
+/* Match card */
+.match-grid {
+    @apply grid grid-cols-1 gap-4;
+}
+
+.match-card-new {
+    @apply bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all hover:border-slate-600;
+}
+
+.match-card__header {
+    @apply p-4 cursor-pointer flex items-center justify-between hover:bg-slate-800/50 transition-colors;
+}
+
+.match-card__match-info {
+    @apply flex items-center gap-3;
+}
+
+.match-card__match-number {
+    @apply text-orange-500 font-black text-xs;
+}
+
+.match-card__match-type {
+    @apply text-[9px] font-bold text-slate-500 uppercase;
+}
+
+.match-card__divider {
+    @apply h-8 w-px bg-slate-800;
+}
+
+.match-card__event-name {
+    @apply text-white font-black text-xs;
+}
+
+.match-card__event-year {
+    @apply text-[9px] font-bold text-slate-500;
+}
+
+.match-card__scores {
+    @apply flex items-center gap-4;
+}
+
+.match-card__score-preview {
+    @apply flex items-center gap-2;
+}
+
+.match-card__score-red {
+    @apply text-xs font-black text-red-500;
+}
+
+.match-card__score-blue {
+    @apply text-xs font-black text-blue-500;
+}
+
+.match-card__dot-red {
+    @apply w-1.5 h-1.5 rounded-full bg-red-500;
+}
+
+.match-card__dot-blue {
+    @apply w-1.5 h-1.5 rounded-full bg-blue-500;
+}
+
+.match-card__chevron {
+    @apply w-4 h-4 text-slate-600 transition-transform;
+}
+
+/* Expanded content */
+.match-expanded {
+    @apply border-t border-slate-800 bg-slate-950/30;
+}
+
+.match-alliances {
+    @apply grid grid-cols-2 divide-x divide-slate-800 border-b border-slate-800;
+}
+
+.alliance-panel--red {
+    @apply p-4 bg-red-500/5;
+}
+
+.alliance-panel--blue {
+    @apply p-4 bg-blue-500/5;
+}
+
+.alliance-title--red {
+    @apply text-[10px] font-black text-red-500 uppercase tracking-widest block mb-2;
+}
+
+.alliance-title--blue {
+    @apply text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2;
+}
+
+.alliance-teams {
+    @apply flex flex-wrap gap-2;
+}
+
+.team-chip {
+    @apply px-2 py-1 bg-slate-950 rounded border text-[11px] font-black;
+}
+
+.team-chip--red {
+    @apply border-red-500/20 text-slate-300;
+}
+
+.team-chip--blue {
+    @apply border-blue-500/20 text-slate-300;
+}
+
+.team-chip--highlighted {
+    @apply border-orange-500 text-orange-500 bg-orange-500/10;
+}
+
+.no-api-text {
+    @apply text-[9px] text-slate-600 italic;
+}
+
+/* Scout data in matches */
+.scout-section {
+    @apply p-4 space-y-4;
+}
+
+.scout-section__title {
+    @apply text-[10px] font-black text-slate-500 uppercase tracking-widest;
+}
+
+.scout-report {
+    @apply bg-slate-900/50 rounded-2xl p-4 border border-slate-800;
+}
+
+.scout-report__header {
+    @apply flex justify-between items-start mb-4;
+}
+
+.scout-report__team-badge {
+    @apply w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-black text-orange-500 border border-slate-700;
+}
+
+.scout-report__team-name {
+    @apply text-xs font-black text-white block;
+}
+
+.scout-report__scouter-label {
+    @apply text-slate-500 block;
+}
+
+.scout-report__scouter-team {
+    @apply text-orange-500 font-bold;
+}
+
+.scout-data-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.scout-stat-grid {
+    @apply grid grid-cols-2 gap-2 text-[10px];
+}
+
+.scout-stat-box {
+    @apply bg-slate-950/50 p-2 rounded-xl border border-slate-800;
+}
+
+.scout-stat-box--endgame {
+    @apply bg-slate-950/50 p-2 rounded-xl border border-slate-800 flex justify-between items-center;
+}
+
+.scout-stat-label {
+    @apply text-slate-500 block text-[8px] uppercase font-black mb-1;
+}
+
+.scout-stat-label--no-mb {
+    @apply text-slate-500 block text-[8px] uppercase font-black;
+}
+
+.scout-stat-row {
+    @apply flex justify-between;
+}
+
+.scout-stat-key {
+    @apply text-slate-400;
+}
+
+.scout-stat-value {
+    @apply text-white font-bold;
+}
+
+.scout-endgame-result {
+    @apply text-white font-black text-xs uppercase;
+}
+
+.scout-failed-badge {
+    @apply bg-red-500/20 text-red-500 text-[8px] font-black px-2 py-0.5 rounded-full border border-red-500/30 uppercase;
+}
+
+/* Ratings */
+.ratings-panel {
+    @apply bg-slate-950/50 p-3 rounded-xl border border-slate-800 space-y-3;
+}
+
+.ratings-label {
+    @apply text-slate-500 block text-[8px] uppercase font-black;
+}
+
+.ratings-rows {
+    @apply space-y-2;
+}
+
+.ratings-row {
+    @apply flex items-center gap-2;
+}
+
+.ratings-row__label {
+    @apply text-[9px] text-slate-400 w-10 uppercase;
+}
+
+.ratings-bar {
+    @apply flex-1 h-1 bg-slate-800 rounded-full overflow-hidden;
+}
+
+.ratings-bar__fill {
+    @apply h-full bg-orange-500;
+}
+
+.ratings-bar__value {
+    @apply text-[9px] font-black text-orange-500;
+}
+
+.ratings-reliability {
+    @apply pt-2 border-t border-slate-800/50;
+}
+
+.ratings-reliability__label {
+    @apply text-[8px] text-slate-500 uppercase font-black block mb-1;
+}
+
+.ratings-reliability__value {
+    @apply text-[10px] font-bold;
+}
+
+/* Detail button */
+.btn-detail {
+    @apply w-full mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors border border-slate-700;
+}
+
+/* Empty state */
+.empty-scout {
+    @apply text-center py-8 bg-slate-950/30 rounded-2xl border border-dashed border-slate-800;
+}
+
+.empty-scout__text {
+    @apply text-[10px] text-slate-600 font-black uppercase tracking-widest;
+}
+
+/* ======================================================================
+   ACCEPT (ADMIN) PAGE
+   ====================================================================== */
+
+.admin-title {
+    @apply text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-600 uppercase;
+}
+
+.admin-header {
+    @apply flex items-center gap-6 mb-12;
+}
+
+.admin-header__buttons {
+    @apply flex items-center gap-3;
+}
+
+.admin-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.admin-card {
+    @apply bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl flex flex-col h-full;
+}
+
+.admin-card__header {
+    @apply flex items-center justify-between mb-4;
+}
+
+.admin-card__avatar {
+    @apply w-12 h-12 bg-purple-600/20 rounded-2xl flex items-center justify-center font-black text-purple-400;
+}
+
+.admin-card__badge {
+    @apply bg-indigo-500/10 text-indigo-400 text-[10px] font-black px-2 py-1 rounded-full border border-indigo-500/20;
+}
+
+.admin-card__name {
+    @apply text-lg font-bold;
+}
+
+.admin-card__email {
+    @apply text-slate-400 text-sm mb-6;
+}
+
+.admin-card__details {
+    @apply text-xs space-y-2 mb-8 bg-slate-950 p-4 rounded-xl border border-slate-800;
+}
+
+.admin-card__detail-row {
+    @apply flex justify-between;
+}
+
+.admin-card__detail-label {
+    @apply text-slate-500 font-bold uppercase;
+}
+
+.admin-card__detail-value {
+    @apply text-white font-black;
+}
+
+.admin-card__actions {
+    @apply mt-auto space-y-2;
+}
+
+.btn-approve {
+    @apply w-full bg-slate-800 hover:bg-slate-700 py-3 rounded-xl font-bold text-sm transition-all uppercase tracking-widest text-white;
+}
+
+.btn-approve-admin {
+    @apply w-full bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/20 py-3 rounded-xl font-bold text-sm text-purple-400 transition-all uppercase tracking-widest;
+}
+
+.admin-empty {
+    @apply col-span-full py-20 bg-slate-900/10 border-2 border-dashed border-slate-800 rounded-3xl flex flex-col items-center justify-center opacity-50;
+}
+
+.admin-empty__icon {
+    @apply w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-4;
+}
+
+.admin-empty__text {
+    @apply font-bold text-slate-600 uppercase tracking-widest;
+}
+
+/* ======================================================================
+   ACCOUNT PAGE
+   ====================================================================== */
+
+.account-avatar {
+    @apply w-20 h-20 bg-orange-600/20 rounded-full flex items-center justify-center mb-4 border border-orange-500/30;
+}
+
+.account-title {
+    @apply text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600;
+}
+
+.account-email {
+    @apply text-slate-400 mt-2;
+}
+
+/* ---------- Utility / misc ---------- */
+.icon-sm {
+    @apply h-4 w-4;
+}
+
+.icon-md {
+    @apply h-5 w-5;
+}
+
+.icon--orange {
+    @apply h-5 w-5 text-orange-500;
+}
+
+.icon--slate {
+    @apply h-5 w-5 text-slate-400;
+}
+
+.icon-lg {
+    @apply h-8 w-8 text-orange-500;
+}
+
+.icon-lg--blue {
+    @apply h-8 w-8 text-blue-500;
+}
+
+.icon-lg--slate {
+    @apply h-8 w-8 text-slate-500;
+}
+
+.icon-lg--purple {
+    @apply h-8 w-8 text-purple-400;
+}
+
+.icon-arrow--admin {
+    @apply h-6 w-6 text-purple-400 group-hover:translate-x-2 transition-transform;
+}
+
+.stack-spacing--4 {
+    @apply space-y-4;
+}
+
+.stack-spacing--6 {
+    @apply space-y-6;
+}
+
+.text-label--alliance {
+    @apply text-[10px] font-bold uppercase;
+}
+
+.text-scouter-info {
+    @apply text-[9px] text-right;
+}
+
+.flex-col-gap {
+    @apply flex flex-col gap-1;
+}
+
+.icon-arrow {
+    @apply h-4 w-4 ml-1;
+}
+
+.admin-back-btn {
+    @apply p-2 hover:bg-slate-900 rounded-lg border border-slate-800 transition-colors;
 }

@@ -16,41 +16,36 @@
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-slate-950 text-white min-h-screen pb-24" x-data="scoutApp">
+<body class="page-body" x-data="scoutApp">
   <!-- Top Bar -->
-  <div
-    class="bg-slate-950 py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm bg-opacity-90">
-    <span class="text-orange-500 font-black tracking-widest text-[10px] uppercase">Laissez Faire</span>
+  <div class="top-bar">
+    <span class="top-bar__text">Laissez Faire</span>
   </div>
 
   <!-- Navigation Header -->
-  <nav class="bg-slate-900 border-b border-orange-500/30 p-4 sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <button @click="location.href='dashboard.html'"
-          class="p-2 hover:bg-slate-800 rounded-xl transition-colors border border-slate-800">
-          <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <nav class="nav-bar">
+    <div class="nav-bar__inner">
+      <div class="nav-bar__left">
+        <button @click="location.href='dashboard.html'" class="back-btn">
+          <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-        <div class="flex items-center gap-2">
-          <img src="img/logo.png" alt="REBUILT Logo" class="h-10">
-          <h1
-            class="font-black text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600 uppercase tracking-tighter">
-            SCOUTING</h1>
+        <div class="brand">
+          <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--sm">
+          <h1 class="brand__title">SCOUTING</h1>
         </div>
       </div>
-      <button @click="$store.theme.toggle()"
-        class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2.5 rounded-xl transition-all flex items-center justify-center">
+      <button @click="$store.theme.toggle()" class="theme-toggle">
         <template x-if="!$store.theme.isLight">
-          <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
             </path>
           </svg>
         </template>
         <template x-if="$store.theme.isLight">
-          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
           </svg>
@@ -59,31 +54,27 @@
     </div>
   </nav>
 
-  <div class="max-w-xl mx-auto p-4 md:p-8 space-y-12">
+  <div class="container--sm">
 
     <!-- PRE-MATCH -->
-    <section
-      class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-orange-500/30 transition-all">
-      <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
-        <span
-          class="w-8 h-8 rounded-lg bg-orange-600/20 text-orange-500 flex items-center justify-center text-sm font-black shadow-lg shadow-orange-600/10">01</span>
+    <section class="card">
+      <h2 class="section-title">
+        <span class="section-number">01</span>
         Match Information
       </h2>
-      <div class="space-y-6 text-slate-400">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="stack-spacing--6 text-slate-400">
+        <div class="form-grid">
           <div>
-            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Year / Season</label>
-            <select x-model="selectedYear" @change="init()"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none appearance-none transition-all font-bold">
+            <label class="form-label">Year / Season</label>
+            <select x-model="selectedYear" @change="init()" class="form-select">
               <template x-for="year in availableSeasons" :key="year">
                 <option :value="year" x-text="year"></option>
               </template>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Regional / Event</label>
-            <select x-model="regional"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none appearance-none transition-all font-bold">
+            <label class="form-label">Regional / Event</label>
+            <select x-model="regional" class="form-select">
               <template x-for="event in filteredEvents" :key="event.key">
                 <option :value="event.key" x-text="event.name"></option>
               </template>
@@ -91,40 +82,36 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="form-grid">
           <div>
-            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Match Number</label>
-            <input x-model="matchNumber" type="number" placeholder="Enter #"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 focus:ring-2 focus:ring-orange-500 outline-none transition-all font-bold">
+            <label class="form-label">Match Number</label>
+            <input x-model="matchNumber" type="number" placeholder="Enter #" class="form-input">
           </div>
           <div>
-            <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Team Number</label>
-            <input x-model="teamNumber" type="number" placeholder="Enter #"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-4 focus:ring-2 focus:ring-orange-500 outline-none transition-all font-bold">
+            <label class="form-label">Team Number</label>
+            <input x-model="teamNumber" type="number" placeholder="Enter #" class="form-input">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase mb-2">Match Type</label>
-          <div class="grid grid-cols-3 gap-2">
+          <label class="form-label--simple">Match Type</label>
+          <div class="form-grid--3col">
             <template x-for="type in ['Practice', 'Qualification', 'Playoffs']">
-              <button @click="matchType = type" class="py-2.5 rounded-xl border transition-all text-sm font-bold"
-                :class="matchType === type ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-slate-950 border-slate-700 text-slate-400 hover:border-slate-500'"
+              <button @click="matchType = type" class="btn-match-type"
+                :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
                 x-text="type"></button>
             </template>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-black uppercase mb-2 tracking-widest opacity-60">Alliance Color</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button @click="alliance = 'Red'"
-              class="py-4 rounded-xl border transition-all font-black uppercase text-sm tracking-widest"
-              :class="alliance === 'Red' ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20 scale-102' : 'bg-slate-950 border-slate-700 text-red-500/70 hover:border-red-500/50'">Red
+          <label class="form-label">Alliance Color</label>
+          <div class="form-grid">
+            <button @click="alliance = 'Red'" class="btn-alliance"
+              :class="alliance === 'Red' ? 'btn-alliance-red--active' : 'btn-alliance-red--inactive'">Red
               Alliance</button>
-            <button @click="alliance = 'Blue'"
-              class="py-4 rounded-xl border transition-all font-black uppercase text-sm tracking-widest"
-              :class="alliance === 'Blue' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20 scale-102' : 'bg-slate-950 border-slate-700 text-blue-500/70 hover:border-blue-500/50'">Blue
+            <button @click="alliance = 'Blue'" class="btn-alliance"
+              :class="alliance === 'Blue' ? 'btn-alliance-blue--active' : 'btn-alliance-blue--inactive'">Blue
               Alliance</button>
           </div>
         </div>
@@ -132,57 +119,45 @@
     </section>
 
     <!-- AUTONOMOUS -->
-    <section
-      class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-orange-500/30 transition-all">
-      <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-orange-400">
-        <span
-          class="w-8 h-8 rounded-lg bg-orange-600/20 text-orange-500 flex items-center justify-center text-sm font-black shadow-lg shadow-orange-600/10">02</span>
+    <section class="card">
+      <h2 class="section-title--orange">
+        <span class="section-number">02</span>
         Autonomous
       </h2>
 
-      <div class="space-y-4">
+      <div class="stack-spacing--4">
         <template x-for="(label, key) in { fuelSuccess: 'Fuel Successful', fuelFail: 'Fuel Failed' }">
-          <div
-            class="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all gap-4">
-            <span class="font-bold text-slate-300" x-text="label"></span>
-            <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
-              <button @click="decrement('auto', key)"
-                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center text-xl font-black transition-all shadow-sm border border-slate-700">−</button>
-              <div
-                class="w-14 h-12 flex items-center justify-center bg-slate-950 rounded-lg border border-orange-500/20 shadow-inner">
-                <span class="text-2xl font-black text-orange-500"
-                  x-text="auto[key] !== undefined ? auto[key] : 0"></span>
+          <div class="counter-row">
+            <span class="counter-row__label" x-text="label"></span>
+            <div class="counter-controls">
+              <button @click="decrement('auto', key)" class="counter-btn">−</button>
+              <div class="counter-display">
+                <span class="counter-value" x-text="auto[key] !== undefined ? auto[key] : 0"></span>
               </div>
-              <button @click="increment('auto', key)"
-                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center text-xl font-black transition-all shadow-sm border border-slate-700">+</button>
+              <button @click="increment('auto', key)" class="counter-btn">+</button>
             </div>
           </div>
         </template>
 
-        <label
-          class="flex items-center gap-4 p-4 bg-slate-950 rounded-2xl border border-slate-800 cursor-pointer hover:border-orange-500/30 transition-all">
-          <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
-            <input type="checkbox" x-model="auto.taxi" class="opacity-0 w-0 h-0 peer">
-            <span
-              class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-slate-800 rounded-full transition duration-200 peer-checked:bg-orange-600"></span>
-            <span
-              class="absolute cursor-pointer top-1 left-1 w-4 h-4 bg-white rounded-full transition duration-200 peer-checked:translate-x-6"></span>
+        <label class="toggle-label">
+          <div class="toggle-wrap">
+            <input type="checkbox" x-model="auto.taxi" class="toggle-input">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
           </div>
-          <span class="font-bold text-slate-300">Auto Leave / Taxi</span>
+          <span class="toggle-text">Auto Leave / Taxi</span>
         </label>
       </div>
     </section>
 
     <!-- TELEOP -->
-    <section
-      class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-blue-500/30 transition-all">
-      <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-blue-400">
-        <span
-          class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-500 flex items-center justify-center text-sm font-black shadow-lg shadow-blue-600/10">03</span>
+    <section class="card--blue">
+      <h2 class="section-title--blue">
+        <span class="section-number--blue">03</span>
         Tele-Operated
       </h2>
 
-      <div class="space-y-4">
+      <div class="stack-spacing--4">
         <template x-for="(label, key) in { 
                       fuelSuccess: 'Fuel Successful', 
                       fuelFail: 'Fuel Failed',
@@ -190,19 +165,14 @@
                       drops: 'Drops',
                       defense: 'Defense Actions'
                   }">
-          <div
-            class="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-950 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all gap-4">
-            <span class="font-bold text-slate-300" x-text="label"></span>
-            <div class="flex items-center gap-4 bg-slate-900/50 p-1 rounded-xl">
-              <button @click="decrement('teleop', key)"
-                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center text-xl font-black transition-all shadow-sm border border-slate-700">−</button>
-              <div
-                class="w-14 h-12 flex items-center justify-center bg-slate-950 rounded-lg border border-blue-500/20 shadow-inner">
-                <span class="text-2xl font-black text-blue-500"
-                  x-text="teleop[key] !== undefined ? teleop[key] : 0"></span>
+          <div class="counter-row">
+            <span class="counter-row__label" x-text="label"></span>
+            <div class="counter-controls">
+              <button @click="decrement('teleop', key)" class="counter-btn">−</button>
+              <div class="counter-display--blue">
+                <span class="counter-value--blue" x-text="teleop[key] !== undefined ? teleop[key] : 0"></span>
               </div>
-              <button @click="increment('teleop', key)"
-                class="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center text-xl font-black transition-all shadow-sm border border-slate-700">+</button>
+              <button @click="increment('teleop', key)" class="counter-btn">+</button>
             </div>
           </div>
         </template>
@@ -210,52 +180,45 @@
     </section>
 
     <!-- ENDGAME & RATINGS -->
-    <section
-      class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl hover:border-purple-500/30 transition-all">
-      <h2 class="text-xl font-bold mb-6 flex items-center gap-3 text-purple-400">
-        <span
-          class="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-500 flex items-center justify-center text-sm font-black shadow-lg shadow-purple-600/10">04</span>
-        Endgame & Ratings
+    <section class="card--purple">
+      <h2 class="section-title--purple">
+        <span class="section-number--purple">04</span>
+        Endgame &amp; Ratings
       </h2>
 
-      <div class="space-y-6">
+      <div class="stack-spacing--6">
         <div>
-          <label class="block text-xs font-bold uppercase mb-2 text-slate-500">Result</label>
-          <select x-model="endgame.result"
-            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none appearance-none transition-all">
+          <label class="form-label--muted">Result</label>
+          <select x-model="endgame.result" class="form-select--purple">
             <option value="none">Did Not Attempt</option>
             <option value="park">Park</option>
             <option value="climb">Successful Climb</option>
           </select>
         </div>
 
-        <label
-          class="flex items-center gap-4 p-4 bg-slate-950 rounded-2xl border border-slate-800 cursor-pointer hover:border-purple-500/30 transition-all">
-          <input type="checkbox" x-model="endgame.failed"
-            class="w-6 h-6 rounded border-slate-700 bg-slate-900 text-purple-600 focus:ring-purple-500">
-          <span class="font-bold text-slate-300 text-sm">Attempted but Failed</span>
+        <label class="toggle-label--purple">
+          <input type="checkbox" x-model="endgame.failed" class="checkbox-input">
+          <span class="checkbox-text">Attempted but Failed</span>
         </label>
 
-        <div class="h-px bg-slate-800 my-2"></div>
+        <div class="divider"></div>
 
         <!-- Ratings -->
-        <div class="space-y-6">
+        <div class="stack-spacing--6">
           <template
             x-for="(label, key) in { driver: 'Driver Skill', speed: 'Robot Speed', defense: 'Defensive Ability' }">
             <div>
-              <div class="flex justify-between mb-2">
-                <label class="text-xs font-bold uppercase text-slate-500" x-text="label"></label>
-                <span class="text-xs font-bold text-orange-500" x-text="(ratings[key] || 3) + '/5'"></span>
+              <div class="range-header">
+                <label class="range-label" x-text="label"></label>
+                <span class="range-value" x-text="(ratings[key] || 3) + '/5'"></span>
               </div>
-              <input type="range" min="1" max="5" step="1" x-model="ratings[key]"
-                class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500">
+              <input type="range" min="1" max="5" step="1" x-model="ratings[key]" class="range-input">
             </div>
           </template>
 
           <div>
-            <label class="block text-xs font-bold uppercase mb-2 text-slate-500">Reliability</label>
-            <select x-model="ratings.reliability"
-              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 outline-none appearance-none transition-all">
+            <label class="form-label--muted">Reliability</label>
+            <select x-model="ratings.reliability" class="form-select">
               <option value="none">Perfect - No Issues</option>
               <option value="minor">Minor Brownouts/Latency</option>
               <option value="major">Major Failure - Disabled</option>
@@ -266,21 +229,18 @@
     </section>
 
     <!-- Final Submission -->
-    <button @click="submit" :disabled="loading"
-      class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 disabled:opacity-50 text-white font-black py-6 rounded-3xl shadow-2xl shadow-orange-600/30 transform transition-all active:scale-95 flex flex-col items-center justify-center text-lg uppercase tracking-widest relative overflow-hidden group">
-      <div
-        class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-      </div>
+    <button @click="submit" :disabled="loading" class="btn-submit">
+      <div class="btn-submit__overlay"></div>
       <template x-if="loading">
-        <svg class="animate-spin h-6 w-6 mb-2 text-white" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor"
+        <svg class="spinner" fill="none" viewBox="0 0 24 24">
+          <circle class="spinner__circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="spinner__path" fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
           </path>
         </svg>
       </template>
-      <span class="z-10" x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
-      <span class="text-[10px] opacity-70 mt-1 tracking-normal font-bold z-10">Confirm and Send to Cloud</span>
+      <span class="btn-submit__text" x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
+      <span class="btn-submit__subtext">Confirm and Send to Cloud</span>
     </button>
 
   </div>

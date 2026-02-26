@@ -18,7 +18,7 @@ const CUSTOM_EVENTS = [
 
     { key: "2025tuhc", name: "Haliç Regional 2025", season: 2025 },
     { key: "2025tuis", name: "Istanbul Regional 2025", season: 2025 },
-    { key: "2025tubs", name: "Bosphorus Regional 2025", season: 2025 },
-    { key: "2025marm", name: "Marmara Regional 2025", season: 2025 },
-    { key: "2025bask", name: "Başkent Regional 2025", season: 2025 }
+    { key: "2025tuis2", name: "Bosphorus Regional 2025", season: 2025 },
+    { key: "2025tuis3", name: "Marmara Regional 2025", season: 2025 },
+    { key: "2025tuak", name: "Ankara Regional 2025", season: 2025 }
 ];

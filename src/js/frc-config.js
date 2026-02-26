@@ -38,11 +38,16 @@ async function fetchFRCMatches(eventKey) {
 
     const data = await res.json();
 
-    // Filter only qualification matches if needed
-    const filtered = data.filter(m => m.comp_level === FRC_CONFIG.level);
+    // Map TBA comp_levels to readable names
+    const levelNames = {
+        'qm': 'Qualification',
+        'qf': 'Quarterfinal',
+        'sf': 'Semifinal',
+        'f': 'Playoff'
+    };
 
     // Convert TBA format → FIRST API format (so your matches.js works unchanged)
-    return filtered.map(match => {
+    return data.map(match => {
         const redTeams = match.alliances.red.team_keys.map((t, i) => ({
             teamNumber: parseInt(t.replace("frc", "")),
             station: `Red${i + 1}`,
@@ -55,9 +60,15 @@ async function fetchFRCMatches(eventKey) {
             dq: false
         }));
 
+        const level = levelNames[match.comp_level] || 'Match';
+        const description = match.comp_level === 'qm'
+            ? `${level} ${match.match_number}`
+            : `${level} ${match.set_number}-${match.match_number}`;
+
         return {
             matchNumber: match.match_number,
-            description: `Qualification ${match.match_number}`,
+            description: description,
+            compLevel: match.comp_level,
             actualStartTime: match.actual_time
                 ? new Date(match.actual_time * 1000).toISOString()
                 : null,

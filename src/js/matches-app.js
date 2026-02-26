@@ -61,7 +61,7 @@ document.addEventListener('alpine:init', () => {
             // Start with API matches
             let list = this.frcMatches.map(m => {
                 const type = m.description.includes('Qual') ? 'Qualification' :
-                    m.description.includes('Practice') ? 'Practice' : 'Finals';
+                    m.description.includes('Practice') ? 'Practice' : 'Playoffs';
                 const eventShort = this.availableEvents.find(e => e.key === m.eventKey)?.name.split(' ')[0] || m.eventKey;
                 const year = this.availableEvents.find(e => e.key === m.eventKey)?.season || '';
 

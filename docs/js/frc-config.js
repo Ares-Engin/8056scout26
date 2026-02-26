@@ -3,19 +3,32 @@
    Replace ONLY the apiKey and eventKey
    ============================================================ */
 
+const DEFAULT_EVENTS = [
+    { key: "2026tuhc", name: "Haliç Regional 2026", season: 2026 },
+    { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 },
+    { key: "2026marm", name: "Marmara Regional 2026", season: 2026 },
+    { key: "2026bask", name: "Başkent Regional 2026", season: 2026 }
+];
+
+// Combine hardcoded events with custom ones (custom ones override defaults)
+const ALL_EVENTS = [...DEFAULT_EVENTS];
+if (typeof CUSTOM_EVENTS !== 'undefined' && Array.isArray(CUSTOM_EVENTS)) {
+    CUSTOM_EVENTS.forEach(ce => {
+        const index = ALL_EVENTS.findIndex(de => de.key === ce.key);
+        if (index !== -1) {
+            ALL_EVENTS[index] = ce; // Override existing
+        } else {
+            ALL_EVENTS.push(ce); // Add new
+        }
+    });
+}
+
+// Generate unique seasons from the events list
+const ALL_SEASONS = [...new Set(ALL_EVENTS.map(e => e.season))].sort((a, b) => b - a);
+
 const FRC_CONFIG = {
-    seasons: [2025, 2026],
-    events: [
-        { key: "2025tuhc", name: "Haliç Regional 2025", season: 2025 },
-        { key: "2025tuis", name: "Istanbul Regional 2025", season: 2025 },
-        { key: "2025tubs", name: "Bosphorus Regional 2025", season: 2025 },
-        { key: "2025marm", name: "Marmara Regional 2025", season: 2025 },
-        { key: "2025bask", name: "Başkent Regional 2025", season: 2025 },
-        { key: "2026tuhc", name: "Haliç Regional 2026", season: 2026 },
-        { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 },
-        { key: "2026marm", name: "Marmara Regional 2026", season: 2026 },
-        { key: "2026bask", name: "Başkent Regional 2026", season: 2026 }
-    ],
+    seasons: ALL_SEASONS,
+    events: ALL_EVENTS,
     defaultSeason: 2026,
     apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",
     level: "qm"
@@ -38,11 +51,16 @@ async function fetchFRCMatches(eventKey) {
 
     const data = await res.json();
 
-    // Filter only qualification matches if needed
-    const filtered = data.filter(m => m.comp_level === FRC_CONFIG.level);
+    // Map TBA comp_levels to readable names
+    const levelNames = {
+        'qm': 'Qualification',
+        'qf': 'Quarterfinal',
+        'sf': 'Semifinal',
+        'f': 'Playoff'
+    };
 
     // Convert TBA format → FIRST API format (so your matches.js works unchanged)
-    return filtered.map(match => {
+    return data.map(match => {
         const redTeams = match.alliances.red.team_keys.map((t, i) => ({
             teamNumber: parseInt(t.replace("frc", "")),
             station: `Red${i + 1}`,
@@ -55,9 +73,15 @@ async function fetchFRCMatches(eventKey) {
             dq: false
         }));
 
+        const level = levelNames[match.comp_level] || 'Match';
+        const description = match.comp_level === 'qm'
+            ? `${level} ${match.match_number}`
+            : `${level} ${match.set_number}-${match.match_number}`;
+
         return {
             matchNumber: match.match_number,
-            description: `Qualification ${match.match_number}`,
+            description: description,
+            compLevel: match.comp_level,
             actualStartTime: match.actual_time
                 ? new Date(match.actual_time * 1000).toISOString()
                 : null,

@@ -10,12 +10,15 @@ const DEFAULT_EVENTS = [
     { key: "2026bask", name: "Başkent Regional 2026", season: 2026 }
 ];
 
-// Combine hardcoded events with custom ones (avoiding duplicates)
+// Combine hardcoded events with custom ones (custom ones override defaults)
 const ALL_EVENTS = [...DEFAULT_EVENTS];
-if (typeof CUSTOM_EVENTS !== 'undefined') {
+if (typeof CUSTOM_EVENTS !== 'undefined' && Array.isArray(CUSTOM_EVENTS)) {
     CUSTOM_EVENTS.forEach(ce => {
-        if (!ALL_EVENTS.find(de => de.key === ce.key)) {
-            ALL_EVENTS.push(ce);
+        const index = ALL_EVENTS.findIndex(de => de.key === ce.key);
+        if (index !== -1) {
+            ALL_EVENTS[index] = ce; // Override existing
+        } else {
+            ALL_EVENTS.push(ce); // Add new
         }
     });
 }

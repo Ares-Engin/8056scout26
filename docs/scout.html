@@ -126,18 +126,14 @@
       </h2>
 
       <div class="stack-spacing--4">
-        <template x-for="(label, key) in { fuelSuccess: 'Fuel Successful', fuelFail: 'Fuel Failed' }">
-          <div class="counter-row">
-            <span class="counter-row__label" x-text="label"></span>
-            <div class="counter-controls">
-              <button @click="decrement('auto', key)" class="counter-btn">−</button>
-              <div class="counter-display">
-                <span class="counter-value" x-text="auto[key] !== undefined ? auto[key] : 0"></span>
-              </div>
-              <button @click="increment('auto', key)" class="counter-btn">+</button>
-            </div>
-          </div>
-        </template>
+        <div>
+          <label class="form-label">Level 1</label>
+          <select x-model="auto.level1" class="form-select">
+            <option value="none">Not Attempted</option>
+            <option value="success">Successful</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
 
         <label class="toggle-label">
           <div class="toggle-wrap">
@@ -150,63 +146,75 @@
       </div>
     </section>
 
-    <!-- TELEOP -->
-    <section class="card--blue">
-      <h2 class="section-title--blue">
-        <span class="section-number--blue">03</span>
-        Tele-Operated
-      </h2>
+    <!-- SHIFTS (Transition, Teleop A, Teleop B) -->
+    <template x-for="shift in [
+      { key: 'transitionShift', label: 'Transition Shift', color: 'orange' },
+      { key: 'teleopShiftA', label: 'Teleop Shift A', color: 'blue' },
+      { key: 'teleopShiftB', label: 'Teleop Shift B', color: 'blue' }
+    ]">
+      <section :class="'card--' + shift.color">
+        <h2 :class="'section-title--' + shift.color">
+          <span :class="'section-number--' + shift.color"
+            x-text="shift.label.includes('Transition') ? '03' : (shift.key === 'teleopShiftA' ? '04' : '05')"></span>
+          <span x-text="shift.label"></span>
+        </h2>
+        <div class="gap-grid">
+          <template x-for="i in 20">
+            <button @click="$data[shift.key] = (i-1)*5 + '-' + i*5" class="gap-btn"
+              :class="$data[shift.key] === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
+              <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
+            </button>
+          </template>
+        </div>
+      </section>
+    </template>
 
-      <div class="stack-spacing--4">
-        <template x-for="(label, key) in { 
-                      fuelSuccess: 'Fuel Successful', 
-                      fuelFail: 'Fuel Failed',
-                      pickups: 'Pickups',
-                      drops: 'Drops',
-                      defense: 'Defense Actions'
-                  }">
-          <div class="counter-row">
-            <span class="counter-row__label" x-text="label"></span>
-            <div class="counter-controls">
-              <button @click="decrement('teleop', key)" class="counter-btn">−</button>
-              <div class="counter-display--blue">
-                <span class="counter-value--blue" x-text="teleop[key] !== undefined ? teleop[key] : 0"></span>
-              </div>
-              <button @click="increment('teleop', key)" class="counter-btn">+</button>
-            </div>
-          </div>
-        </template>
-      </div>
-    </section>
 
     <!-- ENDGAME & RATINGS -->
     <section class="card--purple">
       <h2 class="section-title--purple">
-        <span class="section-number--purple">04</span>
+        <span class="section-number--purple">07</span>
         Endgame &amp; Ratings
       </h2>
 
       <div class="stack-spacing--6">
         <div>
-          <label class="form-label--muted">Result</label>
-          <select x-model="endgame.result" class="form-select--purple">
-            <option value="none">Did Not Attempt</option>
-            <option value="park">Park</option>
-            <option value="climb">Successful Climb</option>
+          <label class="form-label--muted">Climb Level</label>
+          <select x-model="endgame.level" class="form-select--purple">
+            <option value="none">Not Attempted</option>
+            <option value="level1">Level 1</option>
+            <option value="level2">Level 2</option>
+            <option value="level3">Level 3</option>
+            <option value="failed">Attempted but Failed</option>
           </select>
         </div>
 
-        <label class="toggle-label--purple">
-          <input type="checkbox" x-model="endgame.failed" class="checkbox-input">
-          <span class="checkbox-text">Attempted but Failed</span>
-        </label>
+        <div class="divider"></div>
+
+        <!-- Timer -->
+        <div class="timer-container">
+          <div class="timer-display" x-text="timerSeconds.toFixed(1)">0.0</div>
+          <div class="timer-controls">
+            <button @click="startTimer" class="btn-timer--record" v-if="!timerActive">Start Timer</button>
+            <button @click="stopTimer" class="btn-timer--record" v-if="timerActive">Pause</button>
+            <button @click="recordClimb" class="btn-timer--record">Record Time</button>
+            <button @click="resetTimer" class="btn-timer--reset">Reset</button>
+          </div>
+          <div class="timer-result" x-show="recordedClimbTime">
+            Recorded Time: <span class="timer-result__value" x-text="recordedClimbTime + 's'"></span>
+          </div>
+        </div>
 
         <div class="divider"></div>
 
         <!-- Ratings -->
         <div class="stack-spacing--6">
-          <template
-            x-for="(label, key) in { driver: 'Driver Skill', speed: 'Robot Speed', defense: 'Defensive Ability' }">
+          <template x-for="(label, key) in { 
+            driver: 'Driver Skill', 
+            speed: 'Robot Speed', 
+            defense: 'Defensive Ability',
+            stability: 'Stability' 
+          }">
             <div>
               <div class="range-header">
                 <label class="range-label" x-text="label"></label>
@@ -217,12 +225,8 @@
           </template>
 
           <div>
-            <label class="form-label--muted">Reliability</label>
-            <select x-model="ratings.reliability" class="form-select">
-              <option value="none">Perfect - No Issues</option>
-              <option value="minor">Minor Brownouts/Latency</option>
-              <option value="major">Major Failure - Disabled</option>
-            </select>
+            <label class="form-label--muted">Comments</label>
+            <textarea x-model="ratings.comments" class="form-textarea" placeholder="Add match notes..."></textarea>
           </div>
         </div>
       </div>

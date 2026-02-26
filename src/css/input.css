@@ -115,11 +115,13 @@ body {
 
 /* ---------- Top Bar ---------- */
 .top-bar {
-    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm bg-opacity-90;
+    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm;
+    background-color: rgb(2 6 23 / 0.9);
 }
 
 .top-bar--fixed {
-    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm bg-opacity-90;
+    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm;
+    background-color: rgb(2 6 23 / 0.9);
 }
 
 .top-bar__text {
@@ -128,7 +130,8 @@ body {
 
 /* ---------- Navigation ---------- */
 .nav-bar {
-    @apply bg-slate-900 border-b border-orange-500/30 p-4 sticky top-0 z-50 backdrop-blur-md bg-opacity-80;
+    @apply bg-slate-900 border-b border-orange-500/30 p-4 sticky top-0 z-50 backdrop-blur-md;
+    background-color: rgb(15 23 42 / 0.8);
 }
 
 .nav-bar__inner {

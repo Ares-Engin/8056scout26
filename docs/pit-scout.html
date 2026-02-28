@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- Theme Manager -->
     <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -40,9 +41,9 @@
             </div>
         </header>
 
-        <form @submit.prevent="submit" class="scout-form-container">
+        <form @submit.prevent="submit" class="space-y-6">
             <!-- Metadata Section -->
-            <div class="scout-report bg-slate-900/40 p-6 border-l-4 border-orange-500">
+            <div class="card p-6 border-l-4 border-orange-500">
                 <h3 class="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">Report Context</h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
@@ -70,7 +71,7 @@
             </div>
 
             <!-- Technical Data Section -->
-            <div class="scout-report bg-slate-900/40 p-6 border-l-4 border-blue-500">
+            <div class="card p-6 border-l-4 border-blue-500">
                 <h3 class="text-xs font-black uppercase tracking-widest text-blue-500 mb-4">Robot Technical Data</h3>
                 <div class="space-y-6">
                     <div class="space-y-1">
@@ -105,7 +106,7 @@
             </div>
 
             <!-- Strategy Section -->
-            <div class="scout-report bg-slate-900/40 p-6 border-l-4 border-green-500">
+            <div class="card p-6 border-l-4 border-green-500">
                 <h3 class="text-xs font-black uppercase tracking-widest text-green-500 mb-4">Strategy & Goals</h3>
                 <div class="space-y-6">
                     <div class="space-y-1">
@@ -128,7 +129,7 @@
 
             <!-- Submit -->
             <button type="submit"
-                class="btn-primary--md w-full py-4 text-lg font-black uppercase tracking-widest flex items-center justify-center gap-3"
+                class="btn-submit w-full py-4 text-lg font-black uppercase tracking-widest flex items-center justify-center gap-3"
                 :disabled="loading">
                 <template x-if="loading">
                     <div class="loading-spinner-sm"></div>

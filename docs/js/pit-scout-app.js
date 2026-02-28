@@ -33,9 +33,11 @@ document.addEventListener('alpine:init', () => {
                 if (firstEvent) this.regional = firstEvent.key;
             });
 
-            // Set initial regional
-            const firstEvent = this.filteredEvents[0];
-            if (firstEvent) this.regional = firstEvent.key;
+            // Set initial regional if empty
+            if (!this.regional) {
+                const firstEvent = this.filteredEvents[0];
+                if (firstEvent) this.regional = firstEvent.key;
+            }
         },
 
         async submit() {

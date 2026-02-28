@@ -66,7 +66,7 @@ async function fetchFRCMatches(eventKey) {
         'qm': 'Qualification',
         'qf': 'Quarterfinal',
         'sf': 'Semifinal',
-        'f': 'Playoff'
+        'f': 'Playoffs'
     };
 
     // Convert TBA format → FIRST API format (so your matches.js works unchanged)

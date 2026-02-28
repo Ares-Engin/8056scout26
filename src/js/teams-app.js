@@ -90,15 +90,33 @@ document.addEventListener('alpine:init', () => {
 
         async loadTeamDetail(team) {
             try {
-                // Load Awards (global history)
+                // 1. Fetch Basic Info (Name/City) and Media (Logo)
+                const info = await fetchFRCTeamInfo(team.teamNumber);
+                if (info) {
+                    team.name = info.nickname || info.name;
+                    team.city = info.city || team.city;
+                }
+
+                const media = await fetchFRCTeamMedia(team.teamNumber, 2025);
+                const logo = media.find(m => m.type === 'avatar' || m.type === 'image');
+                if (logo) {
+                    team.logoUrl = logo.direct_url || (logo.details?.base64_avatar ? `data:image/png;base64,${logo.details.base64_avatar}` : null);
+                }
+
+                // 2. Load Awards (global history)
                 const awardsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/awards`;
                 const awardsRes = await fetch(awardsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
                 if (awardsRes.ok) {
                     const allAwards = await awardsRes.json();
-                    team.awards = allAwards.slice(0, 10); // Show more awards
+                    // Map event keys to names
+                    for (const award of allAwards) {
+                        const event = FRC_CONFIG.events.find(e => e.key === award.event_key);
+                        award.event_name = event ? event.name : await this.getEventName(award.event_key);
+                    }
+                    team.awards = allAwards.slice(0, 10);
                 }
 
-                // Load Events for 2020-2026
+                // 3. Load Events for 2020-2026
                 const startYear = 2020;
                 const endYear = 2026;
                 const allTeamEvents = [];
@@ -114,6 +132,22 @@ document.addEventListener('alpine:init', () => {
             } catch (e) {
                 console.error("Detail load failed for " + team.teamNumber, e);
             }
+        },
+
+        eventCache: {},
+        async getEventName(eventKey) {
+            if (this.eventCache[eventKey]) return this.eventCache[eventKey];
+            try {
+                const res = await fetch(`https://www.thebluealliance.com/api/v3/event/${eventKey}`, {
+                    headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.eventCache[eventKey] = data.name;
+                    return data.name;
+                }
+            } catch (e) { }
+            return eventKey;
         },
 
         toggleHistory(teamNumber) {

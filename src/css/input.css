@@ -554,6 +554,10 @@ body {
     @apply bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-blue-500/50 transition-all text-left shadow-lg hover:shadow-blue-600/10;
 }
 
+.dashboard-card--orange {
+    @apply bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-orange-500/50 transition-all text-left shadow-lg hover:shadow-orange-600/10;
+}
+
 .dashboard-card--placeholder {
     @apply bg-slate-900/50 border border-slate-800/50 border-dashed p-8 rounded-3xl flex flex-col justify-center;
 }
@@ -568,6 +572,10 @@ body {
 
 .dashboard-card__icon--blue {
     @apply bg-blue-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform;
+}
+
+.dashboard-card__icon--orange {
+    @apply bg-orange-600/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform;
 }
 
 .dashboard-card__icon--placeholder {
@@ -600,6 +608,10 @@ body {
 
 .dashboard-card__link--blue {
     @apply mt-6 flex items-center text-blue-500 font-bold text-sm;
+}
+
+.dashboard-card__link--orange {
+    @apply mt-6 flex items-center text-orange-500 font-bold text-sm;
 }
 
 .dashboard-card__admin-inner {

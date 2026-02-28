@@ -112,8 +112,21 @@ document.addEventListener('alpine:init', () => {
             });
 
             return list.filter(m => {
+                // Event Filter
                 if (this.selectedEvents.length > 0 && !this.selectedEvents.includes(m.eventKey)) return false;
-                if (this.selectedTypes.length > 0 && !this.selectedTypes.includes(m.type)) return false;
+
+                // Type Filter
+                const isPractice = m.comp_level === 'p';
+                const isQual = m.comp_level === 'qm';
+                const isPlayoff = ['qf', 'sf', 'f'].includes(m.comp_level);
+
+                let typeMatch = false;
+                if (this.selectedTypes.includes('Practice') && isPractice) typeMatch = true;
+                if (this.selectedTypes.includes('Qualification') && isQual) typeMatch = true;
+                if (this.selectedTypes.includes('Playoffs') && isPlayoff) typeMatch = true;
+                if (!typeMatch) return false;
+
+                // Search Query Filter
                 if (this.searchQuery) {
                     const matchNumMatch = m.matchNumber.toString() === this.searchQuery;
                     const teamMatch = m.teams?.some(t => t.teamNumber.toString().includes(this.searchQuery)) ||

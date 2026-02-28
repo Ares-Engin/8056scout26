@@ -53,7 +53,7 @@ document.addEventListener('alpine:init', () => {
                         scouterTeamNumber: profile.teamNumber || 0,
                         scouterRole: profile.role || 'new',
                         scouterEmail: auth.currentUser?.email || 'unknown',
-                        isVerified: (profile.role && profile.role !== 'new')
+                        isVerified: !!(profile && profile.role && profile.role !== 'new')
                     },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };

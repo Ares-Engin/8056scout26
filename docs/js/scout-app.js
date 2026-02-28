@@ -87,7 +87,7 @@ document.addEventListener('alpine:init', () => {
                         alliance: this.alliance,
                         scouterTeamNumber: Alpine.store('auth').profile?.teamNumber || 0,
                         scouterRole: Alpine.store('auth').profile?.role || 'new',
-                        isVerified: (Alpine.store('auth').profile?.role && Alpine.store('auth').profile?.role !== 'new')
+                        isVerified: !!(Alpine.store('auth').profile?.role && Alpine.store('auth').profile?.role !== 'new')
                     },
                     auto: { ...this.auto },
                     transitionShift: this.transitionShift,

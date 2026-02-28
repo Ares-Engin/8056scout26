@@ -135,20 +135,20 @@
                                     <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">Event
                                         History</h3>
 
-                                    <!-- Current Season (2026) -->
-                                    <div class="flex flex-col gap-1">
-                                        <template x-for="event in (team.events || []).filter(e => e.year === 2026)">
+                                    <!-- Default View (2026 & 2025) -->
+                                    <div class="flex flex-col gap-2">
+                                        <template x-for="event in (team.events || []).filter(e => e.year >= 2025)">
                                             <div class="flex flex-col items-end">
                                                 <span class="text-[10px] text-white font-bold text-right"
                                                     x-text="event.name"></span>
-                                                <span class="text-[9px] text-orange-500/80 font-black uppercase">2026
-                                                    Season</span>
+                                                <span class="text-[9px] text-orange-500/80 font-black uppercase"
+                                                    x-text="event.year + ' Season'"></span>
                                             </div>
                                         </template>
                                     </div>
 
-                                    <!-- Past History Toggle -->
-                                    <template x-if="(team.events || []).some(e => e.year < 2026)">
+                                    <!-- Hidden History (Older than 2025) -->
+                                    <template x-if="(team.events || []).some(e => e.year < 2025)">
                                         <div class="pt-1">
                                             <button @click="toggleHistory(team.teamNumber)"
                                                 class="text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-orange-500 transition-colors flex items-center gap-1 ml-auto">
@@ -164,7 +164,7 @@
                                             <div x-show="expandedHistory.includes(team.teamNumber)" x-transition
                                                 class="flex flex-col gap-2 mt-2 border-t border-white/5 pt-2">
                                                 <template
-                                                    x-for="event in (team.events || []).filter(e => e.year < 2026)">
+                                                    x-for="event in (team.events || []).filter(e => e.year < 2025)">
                                                     <div class="flex flex-col items-end opacity-70">
                                                         <span class="text-[9px] text-slate-300 font-bold text-right"
                                                             x-text="event.name"></span>

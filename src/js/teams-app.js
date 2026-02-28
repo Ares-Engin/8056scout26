@@ -3,6 +3,7 @@ document.addEventListener('alpine:init', () => {
         teams: [],
         pitReports: {},
         expandedTeams: [],
+        expandedHistory: [],
         expandedPitReports: [],
         searchQuery: '',
         loading: true,
@@ -112,6 +113,14 @@ document.addEventListener('alpine:init', () => {
                 team.events = allTeamEvents.sort((a, b) => b.year - a.year || b.start_date.localeCompare(a.start_date));
             } catch (e) {
                 console.error("Detail load failed for " + team.teamNumber, e);
+            }
+        },
+
+        toggleHistory(teamNumber) {
+            if (this.expandedHistory.includes(teamNumber)) {
+                this.expandedHistory = this.expandedHistory.filter(t => t !== teamNumber);
+            } else {
+                this.expandedHistory.push(teamNumber);
             }
         },
 

@@ -31,7 +31,16 @@ const FRC_CONFIG = {
     events: ALL_EVENTS,
     defaultSeason: 2026,
     apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",
-    level: "qm"
+    level: "qm",
+    scoring: {
+        2026: {
+            fuelValue: 1,
+            autoLevel1: 15,
+            endgameLevel1: 10,
+            endgameLevel2: 20,
+            endgameLevel3: 30
+        }
+    }
 };
 
 /* Fetches match results from The Blue Alliance API */

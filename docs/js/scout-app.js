@@ -85,7 +85,8 @@ document.addEventListener('alpine:init', () => {
                     meta: {
                         matchType: this.matchType,
                         alliance: this.alliance,
-                        scouterTeamNumber: Alpine.store('auth').profile?.teamNumber || 0
+                        scouterTeamNumber: Alpine.store('auth').profile?.teamNumber || 0,
+                        scouterRole: Alpine.store('auth').profile?.role || 'new'
                     },
                     auto: { ...this.auto },
                     transitionShift: this.transitionShift,

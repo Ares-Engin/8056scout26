@@ -120,6 +120,54 @@ document.addEventListener('alpine:init', () => {
         isHighlighted(teamNumber) {
             if (!this.searchQuery) return false;
             return teamNumber.toString().includes(this.searchQuery);
+        },
+
+        // --- NEW HELPERS ---
+        getScoringRules(year) {
+            return FRC_CONFIG.scoring[year] || FRC_CONFIG.scoring[FRC_CONFIG.defaultSeason];
+        },
+
+        parseFuel(val) {
+            if (!val || typeof val !== 'string') return 0;
+            // "5-10" -> 5
+            const part = val.split('-')[0];
+            return parseInt(part) || 0;
+        },
+
+        calculateScores(entry, year) {
+            const rules = this.getScoringRules(year);
+            const fuelValue = rules.fuelValue || 1;
+
+            let autoFuel = this.parseFuel(entry.auto?.fuel); // In case it exists in old data
+            let auto = (entry.auto?.level1 === 'success' ? rules.autoLevel1 : 0) + (autoFuel * fuelValue);
+
+            let teleopFuel = this.parseFuel(entry.transitionShift) +
+                this.parseFuel(entry.teleopShiftA) +
+                this.parseFuel(entry.teleopShiftB);
+            let teleop = teleopFuel * fuelValue;
+
+            let endgame = 0;
+            if (entry.endgame?.level === 'level1') endgame = rules.endgameLevel1;
+            else if (entry.endgame?.level === 'level2') endgame = rules.endgameLevel2;
+            else if (entry.endgame?.level === 'level3') endgame = rules.endgameLevel3;
+
+            return {
+                auto,
+                teleop,
+                endgame,
+                totalFuel: teleopFuel + autoFuel,
+                total: auto + teleop + endgame
+            };
+        },
+
+        isVerified(role) {
+            return role && role !== 'new';
+        },
+
+        formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleString();
         }
     }));
 });

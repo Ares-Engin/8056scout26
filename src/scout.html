@@ -17,239 +17,217 @@
 </head>
 
 <body class="page-body" x-data="scoutApp">
-  <!-- Top Bar -->
-  <header class="scout-header border-b border-orange-500/10">
-    <div class="nav-bar__inner--centered h-32">
-      <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
-        <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-          </path>
-        </svg>
-      </button>
+  </svg>
+  </template>
+  <template x-if="$store.theme.isLight">
+    <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+    </svg>
+  </template>
+  </button>
+  </div>
+  </nav>
 
-      <div class="brand--stack">
-        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
-        <span class="brand__subtitle--tiny">Laissez Faire</span>
-        <h1 class="brand__title--lg">Match Scouting</h1>
-      </div>
+  <div class="container--sm">
 
-      <button @click="$store.theme.toggle()" class="scout-theme-toggle absolute right-0">
-        <template x-if="!$store.theme.isLight">
-          <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
-            </path>
-          </svg>
-        </template>
-        <template x-if="$store.theme.isLight">
-          <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-          </svg>
-        </template>
-      </button>
-    </div>
-    </nav>
-
-    <div class="container--sm">
-
-      <!-- PRE-MATCH -->
-      <section class="card">
-        <h2 class="section-title">
-          <span class="section-number">01</span>
-          Match Information
-        </h2>
-        <div class="stack-spacing--6 text-slate-400">
-          <div class="form-grid">
-            <div>
-              <label class="form-label">Year / Season</label>
-              <select x-model="selectedYear" @change="init()" class="form-select">
-                <template x-for="year in availableSeasons" :key="year">
-                  <option :value="year" x-text="year"></option>
-                </template>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">Regional / Event</label>
-              <select x-model="regional" class="form-select">
-                <template x-for="event in filteredEvents" :key="event.key">
-                  <option :value="event.key" x-text="event.name"></option>
-                </template>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div>
-              <label class="form-label">Match Number</label>
-              <input x-model="matchNumber" type="number" placeholder="Enter #" class="form-input">
-            </div>
-            <div>
-              <label class="form-label">Team Number</label>
-              <input x-model="teamNumber" type="number" placeholder="Enter #" class="form-input">
-            </div>
-          </div>
-
+    <!-- PRE-MATCH -->
+    <section class="card">
+      <h2 class="section-title">
+        <span class="section-number">01</span>
+        Match Information
+      </h2>
+      <div class="stack-spacing--6 text-slate-400">
+        <div class="form-grid">
           <div>
-            <label class="form-label--simple">Match Type</label>
-            <div class="form-grid--3col">
-              <template x-for="type in ['Practice', 'Qualification', 'Playoffs']">
-                <button @click="matchType = type" class="btn-match-type"
-                  :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
-                  x-text="type"></button>
+            <label class="form-label">Year / Season</label>
+            <select x-model="selectedYear" @change="init()" class="form-select">
+              <template x-for="year in availableSeasons" :key="year">
+                <option :value="year" x-text="year"></option>
               </template>
-            </div>
-          </div>
-
-          <div>
-            <label class="form-label">Alliance Color</label>
-            <div class="form-grid">
-              <button @click="alliance = 'Red'" class="btn-alliance"
-                :class="alliance === 'Red' ? 'btn-alliance-red--active' : 'btn-alliance-red--inactive'">Red
-                Alliance</button>
-              <button @click="alliance = 'Blue'" class="btn-alliance"
-                :class="alliance === 'Blue' ? 'btn-alliance-blue--active' : 'btn-alliance-blue--inactive'">Blue
-                Alliance</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- AUTONOMOUS -->
-      <section class="card">
-        <h2 class="section-title--orange">
-          <span class="section-number">02</span>
-          Autonomous
-        </h2>
-
-        <div class="stack-spacing--4">
-          <div>
-            <label class="form-label">Level 1</label>
-            <select x-model="auto.level1" class="form-select">
-              <option value="none">Not Attempted</option>
-              <option value="success">Successful</option>
-              <option value="failed">Failed</option>
             </select>
           </div>
-
-          <label class="toggle-label">
-            <div class="toggle-wrap">
-              <input type="checkbox" x-model="auto.taxi" class="toggle-input">
-              <span class="toggle-track"></span>
-              <span class="toggle-thumb"></span>
-            </div>
-            <span class="toggle-text">Auto Leave / Taxi</span>
-          </label>
+          <div>
+            <label class="form-label">Regional / Event</label>
+            <select x-model="regional" class="form-select">
+              <template x-for="event in filteredEvents" :key="event.key">
+                <option :value="event.key" x-text="event.name"></option>
+              </template>
+            </select>
+          </div>
         </div>
-      </section>
 
-      <!-- SHIFTS (Transition, Teleop A, Teleop B) -->
-      <template x-for="shift in [
+        <div class="form-grid">
+          <div>
+            <label class="form-label">Match Number</label>
+            <input x-model="matchNumber" type="number" placeholder="Enter #" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">Team Number</label>
+            <input x-model="teamNumber" type="number" placeholder="Enter #" class="form-input">
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label--simple">Match Type</label>
+          <div class="form-grid--3col">
+            <template x-for="type in ['Practice', 'Qualification', 'Playoffs']">
+              <button @click="matchType = type" class="btn-match-type"
+                :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
+                x-text="type"></button>
+            </template>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Alliance Color</label>
+          <div class="form-grid">
+            <button @click="alliance = 'Red'" class="btn-alliance"
+              :class="alliance === 'Red' ? 'btn-alliance-red--active' : 'btn-alliance-red--inactive'">Red
+              Alliance</button>
+            <button @click="alliance = 'Blue'" class="btn-alliance"
+              :class="alliance === 'Blue' ? 'btn-alliance-blue--active' : 'btn-alliance-blue--inactive'">Blue
+              Alliance</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTONOMOUS -->
+    <section class="card">
+      <h2 class="section-title--orange">
+        <span class="section-number">02</span>
+        Autonomous
+      </h2>
+
+      <div class="stack-spacing--4">
+        <div>
+          <label class="form-label">Level 1</label>
+          <select x-model="auto.level1" class="form-select">
+            <option value="none">Not Attempted</option>
+            <option value="success">Successful</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        <label class="toggle-label">
+          <div class="toggle-wrap">
+            <input type="checkbox" x-model="auto.taxi" class="toggle-input">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </div>
+          <span class="toggle-text">Auto Leave / Taxi</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- SHIFTS (Transition, Teleop A, Teleop B) -->
+    <template x-for="shift in [
       { key: 'transitionShift', label: 'Transition Shift', color: 'orange' },
       { key: 'teleopShiftA', label: 'Teleop Shift A', color: 'blue' },
       { key: 'teleopShiftB', label: 'Teleop Shift B', color: 'blue' }
     ]">
-        <section :class="'card--' + shift.color">
-          <h2 :class="'section-title--' + shift.color">
-            <span :class="'section-number--' + shift.color"
-              x-text="shift.label.includes('Transition') ? '03' : (shift.key === 'teleopShiftA' ? '04' : '05')"></span>
-            <span x-text="shift.label"></span>
-          </h2>
-          <div class="gap-grid">
-            <template x-for="i in 20">
-              <button @click="$data[shift.key] = (i-1)*5 + '-' + i*5" class="gap-btn"
-                :class="$data[shift.key] === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
-                <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
-              </button>
-            </template>
-          </div>
-        </section>
-      </template>
-
-
-      <!-- ENDGAME & RATINGS -->
-      <section class="card--purple">
-        <h2 class="section-title--purple">
-          <span class="section-number--purple">07</span>
-          Endgame &amp; Ratings
+      <section :class="'card--' + shift.color">
+        <h2 :class="'section-title--' + shift.color">
+          <span :class="'section-number--' + shift.color"
+            x-text="shift.label.includes('Transition') ? '03' : (shift.key === 'teleopShiftA' ? '04' : '05')"></span>
+          <span x-text="shift.label"></span>
         </h2>
+        <div class="gap-grid">
+          <template x-for="i in 20">
+            <button @click="$data[shift.key] = (i-1)*5 + '-' + i*5" class="gap-btn"
+              :class="$data[shift.key] === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
+              <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
+            </button>
+          </template>
+        </div>
+      </section>
+    </template>
 
+
+    <!-- ENDGAME & RATINGS -->
+    <section class="card--purple">
+      <h2 class="section-title--purple">
+        <span class="section-number--purple">07</span>
+        Endgame &amp; Ratings
+      </h2>
+
+      <div class="stack-spacing--6">
+        <div>
+          <label class="form-label--muted">Climb Level</label>
+          <select x-model="endgame.level" class="form-select--purple">
+            <option value="none">Not Attempted</option>
+            <option value="level1">Level 1</option>
+            <option value="level2">Level 2</option>
+            <option value="level3">Level 3</option>
+            <option value="failed">Attempted but Failed</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Timer -->
+        <div class="timer-container">
+          <div class="timer-display" x-text="timerSeconds.toFixed(1)">0.0</div>
+          <div class="timer-controls">
+            <button @click="startTimer" class="btn-timer--record" v-if="!timerActive">Start Timer</button>
+            <button @click="stopTimer" class="btn-timer--record" v-if="timerActive">Pause</button>
+            <button @click="recordClimb" class="btn-timer--record">Record Time</button>
+            <button @click="resetTimer" class="btn-timer--reset">Reset</button>
+          </div>
+          <div class="timer-result" x-show="recordedClimbTime">
+            Recorded Time: <span class="timer-result__value" x-text="recordedClimbTime + 's'"></span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Ratings -->
         <div class="stack-spacing--6">
-          <div>
-            <label class="form-label--muted">Climb Level</label>
-            <select x-model="endgame.level" class="form-select--purple">
-              <option value="none">Not Attempted</option>
-              <option value="level1">Level 1</option>
-              <option value="level2">Level 2</option>
-              <option value="level3">Level 3</option>
-              <option value="failed">Attempted but Failed</option>
-            </select>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- Timer -->
-          <div class="timer-container">
-            <div class="timer-display" x-text="timerSeconds.toFixed(1)">0.0</div>
-            <div class="timer-controls">
-              <button @click="startTimer" class="btn-timer--record" v-if="!timerActive">Start Timer</button>
-              <button @click="stopTimer" class="btn-timer--record" v-if="timerActive">Pause</button>
-              <button @click="recordClimb" class="btn-timer--record">Record Time</button>
-              <button @click="resetTimer" class="btn-timer--reset">Reset</button>
-            </div>
-            <div class="timer-result" x-show="recordedClimbTime">
-              Recorded Time: <span class="timer-result__value" x-text="recordedClimbTime + 's'"></span>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- Ratings -->
-          <div class="stack-spacing--6">
-            <template x-for="(label, key) in { 
+          <template x-for="(label, key) in { 
             driver: 'Driver Skill', 
             speed: 'Robot Speed', 
             defense: 'Defensive Ability',
             stability: 'Stability' 
           }">
-              <div>
-                <div class="range-header">
-                  <label class="range-label" x-text="label"></label>
-                  <span class="range-value" x-text="(ratings[key] || 3) + '/5'"></span>
-                </div>
-                <input type="range" min="1" max="5" step="1" x-model="ratings[key]" class="range-input">
-              </div>
-            </template>
-
             <div>
-              <label class="form-label--muted">Comments</label>
-              <textarea x-model="ratings.comments" class="form-textarea" placeholder="Add match notes..."></textarea>
+              <div class="range-header">
+                <label class="range-label" x-text="label"></label>
+                <span class="range-value" x-text="(ratings[key] || 3) + '/5'"></span>
+              </div>
+              <input type="range" min="1" max="5" step="1" x-model="ratings[key]" class="range-input">
             </div>
+          </template>
+
+          <div>
+            <label class="form-label--muted">Comments</label>
+            <textarea x-model="ratings.comments" class="form-textarea" placeholder="Add match notes..."></textarea>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Final Submission -->
-      <button @click="submit" :disabled="loading" class="btn-submit">
-        <div class="btn-submit__overlay"></div>
-        <template x-if="loading">
-          <svg class="spinner" fill="none" viewBox="0 0 24 24">
-            <circle class="spinner__circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="spinner__path" fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-          </svg>
-        </template>
-        <span class="btn-submit__text" x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
-        <span class="btn-submit__subtext">Confirm and Send to Cloud</span>
-      </button>
+    <!-- Final Submission -->
+    <button @click="submit" :disabled="loading" class="btn-submit">
+      <div class="btn-submit__overlay"></div>
+      <template x-if="loading">
+        <svg class="spinner" fill="none" viewBox="0 0 24 24">
+          <circle class="spinner__circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="spinner__path" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+      </template>
+      <span class="btn-submit__text" x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
+      <span class="btn-submit__subtext">Confirm and Send to Cloud</span>
+    </button>
 
-    </div>
+  </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/custom-events.js"></script>
-    <script src="js/frc-config.js"></script>
-    <script src="js/scout-app.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/custom-events.js"></script>
+  <script src="js/frc-config.js"></script>
+  <script src="js/scout-app.js"></script>
 </body>
 
 </html>

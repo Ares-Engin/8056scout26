@@ -90,39 +90,57 @@ body {
     @apply bg-slate-950 text-white min-h-screen pb-20;
 }
 
-/* ---------- Top Bar ---------- */
-.top-bar {
-    @apply py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm;
+/* ---------- Two-Tier Navigation ---------- */
+.top-nav {
+    @apply sticky top-0 z-[100] border-b border-orange-500/10 backdrop-blur-md;
     background-color: var(--bg-main);
-    opacity: 0.9;
+    opacity: 1;
 }
 
-.top-bar--fixed {
-    @apply py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm;
-    background-color: var(--bg-main);
-    opacity: 0.9;
+.top-nav__inner {
+    @apply max-w-6xl mx-auto grid grid-cols-3 items-center px-4 py-2 h-20;
 }
 
-.top-bar__text {
-    @apply text-orange-500 font-black tracking-widest text-[10px] uppercase;
+.top-nav__left {
+    @apply flex items-center justify-start;
+}
+
+.top-nav__center {
+    @apply flex flex-col items-center justify-center gap-1;
+}
+
+.top-nav__right {
+    @apply flex items-center justify-end;
+}
+
+.brand__logo--nav {
+    @apply h-8 w-auto filter drop-shadow-[0_0_8px_#f9731666];
+}
+
+.brand__subtitle--orange {
+    @apply text-orange-500 font-black tracking-[0.25em] text-[9px] uppercase leading-none;
+}
+
+/* ---------- Page Hero ---------- */
+.page-hero {
+    @apply py-8 sm:py-12 flex flex-col items-center justify-center text-center px-4 overflow-hidden relative;
+}
+
+.page-hero__title {
+    @apply font-black text-4xl sm:text-7xl tracking-tighter uppercase relative;
+    background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.page-hero__title::after {
+    content: "";
+    @apply absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-orange-500 rounded-full opacity-50;
 }
 
 /* ---------- Navigation ---------- */
-.nav-bar {
-    @apply bg-slate-900 border-b border-orange-500/30 p-4 sticky top-0 z-50 backdrop-blur-md;
-    background-color: rgb(15 23 42 / 0.8);
-}
-
 .nav-bar__inner--centered {
     @apply max-w-4xl mx-auto flex items-center relative py-4;
-}
-
-.brand--stack {
-    @apply flex flex-col items-center gap-1 flex-1;
-}
-
-.brand__subtitle--tiny {
-    @apply text-orange-500 font-black tracking-widest text-[9px] uppercase mt-[-4px];
 }
 
 .nav-bar__left {

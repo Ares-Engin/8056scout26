@@ -17,32 +17,34 @@
 </head>
 
 <body class="page-body" x-data="teamsApp">
-    <header class="teams-header border-b border-orange-500/10">
-        <div class="nav-bar__inner--centered h-32">
-            <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
-                <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                    </path>
-                </svg>
-            </button>
-
-            <div class="brand--stack">
-                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
-                <span class="brand__subtitle--tiny">Laissez Faire</span>
-                <h1 class="brand__title--lg">Teams Explorer</h1>
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href='dashboard.html'" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    <span class="ml-2 text-[10px] font-black uppercase tracking-wider text-slate-500">Dashboard</span>
+                </button>
             </div>
 
-            <div class="absolute right-0 flex items-center">
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+
+            <div class="top-nav__right">
                 <button @click="$store.theme.toggle()" class="theme-toggle">
                     <template x-if="!$store.theme.isLight">
-                        <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
                             </path>
                         </svg>
                     </template>
                     <template x-if="$store.theme.isLight">
-                        <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
                             </path>
@@ -51,7 +53,11 @@
                 </button>
             </div>
         </div>
-    </header>
+    </nav>
+
+    <section class="page-hero">
+        <h1 class="page-hero__title">Teams Explorer</h1>
+    </section>
 
     <div class="pt-6 flex justify-end px-4">
         <button @click="location.href='pit-scout.html'"

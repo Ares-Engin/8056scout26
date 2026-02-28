@@ -17,22 +17,31 @@
 </head>
 
 <body class="page-body--padded" x-data="dashboardApp">
-  <header class="dashboard-header border-b border-orange-500/10">
-    <div class="nav-bar__inner--centered h-32">
-      <button @click="location.href='dashboard.html'"
-        class="back-btn--shadow absolute left-0 opacity-0 pointer-events-none">
-        <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-      </button>
-
-      <div class="brand--stack">
-        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
-        <span class="brand__subtitle--tiny">Laissez Faire</span>
-        <h1 class="brand__title--lg">REBUILT 2026</h1>
+  <nav class="top-nav">
+    <div class="top-nav__inner">
+      <div class="top-nav__left">
+        <div class="flex items-center gap-2">
+          <button @click="location.href='account.html'" class="back-btn--shadow p-2">
+            <svg class="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </button>
+          <button @click="auth.signOut().then(() => location.href = 'index.html')" class="back-btn--shadow p-2">
+            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="absolute right-0 flex items-center">
+      <div class="top-nav__center">
+        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--nav">
+        <span class="brand__subtitle--orange">Laissez Faire</span>
+      </div>
+
+      <div class="top-nav__right">
         <button @click="$store.theme.toggle()" class="theme-toggle">
           <template x-if="!$store.theme.isLight">
             <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,25 +57,13 @@
             </svg>
           </template>
         </button>
-        <div class="dashboard-actions__inner">
-          <button @click="location.href='account.html'" class="btn-account">
-            <svg class="icon-sm text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-            Account
-          </button>
-          <button @click="auth.signOut().then(() => location.href = 'index.html')" class="btn-logout">
-            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            Logout
-          </button>
-        </div>
       </div>
     </div>
-  </header>
+  </nav>
+
+  <section class="page-hero">
+    <h1 class="page-hero__title">REBUILT 2026</h1>
+  </section>
 
   <main class="dashboard-grid">
     <!-- Scout Match -->

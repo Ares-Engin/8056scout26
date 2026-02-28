@@ -60,7 +60,13 @@ document.addEventListener('alpine:init', () => {
                 this.frcMatches = allMatches.flatMap((matches, i) =>
                     matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
                 );
-                this.frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
+                this.frcMatches.sort((a, b) => {
+                    const weights = { 'p': 0, 'qm': 1, 'qf': 2, 'sf': 3, 'f': 4 };
+                    const wA = weights[a.compLevel] || 1;
+                    const wB = weights[b.compLevel] || 1;
+                    if (wA !== wB) return wA - wB;
+                    return a.matchNumber - b.matchNumber;
+                });
             } catch (e) {
                 console.error("Error fetching matches:", e);
                 this.errorMessage = 'Failed to fetch matches updates from API';
@@ -161,7 +167,14 @@ document.addEventListener('alpine:init', () => {
                     if (!matchNumMatch && !teamMatch) return false;
                 }
                 return true;
-            }).sort((a, b) => b.year - a.year || a.matchNumber - b.matchNumber);
+            }).sort((a, b) => {
+                if (b.year !== a.year) return b.year - a.year;
+                const weights = { 'p': 0, 'qm': 1, 'qf': 2, 'sf': 3, 'f': 4 };
+                const wA = weights[a.compLevel] || 1;
+                const wB = weights[b.compLevel] || 1;
+                if (wA !== wB) return wA - wB;
+                return a.matchNumber - b.matchNumber;
+            });
         },
 
         isHighlighted(teamNumber) {

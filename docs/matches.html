@@ -25,21 +25,19 @@
 
     <div class="container--lg">
         <header class="matches-header">
-            <div class="matches-header__row">
-                <div class="brand--gap6">
-                    <button @click="location.href='dashboard.html'" class="back-btn--shadow">
-                        <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div class="brand--gap3">
-                        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--md">
-                        <h1 class="brand__title--lg">Match Results</h1>
-                    </div>
+            <div class="nav-bar__inner--centered">
+                <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
+                    <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+                <div class="brand--centered">
+                    <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--md">
+                    <h1 class="brand__title--lg">Match Results</h1>
                 </div>
 
-                <button @click="$store.theme.toggle()" class="matches-theme-toggle">
+                <button @click="$store.theme.toggle()" class="matches-theme-toggle absolute right-0">
                     <template x-if="!$store.theme.isLight">
                         <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

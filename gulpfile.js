@@ -41,6 +41,12 @@ function assets() {
         .pipe(gulp.dest('./docs/img'));
 }
 
+// Data Task: Copy JSON data files to dist
+function data() {
+    return gulp.src('./src/data/*.json')
+        .pipe(gulp.dest('./docs/data'));
+}
+
 // Dev Task: Serve and watch
 function dev() {
     browserSync.init({
@@ -55,7 +61,7 @@ function dev() {
 }
 
 // Build Task: Run all tasks
-const build = gulp.series(gulp.parallel(html, css, js, assets));
+const build = gulp.series(gulp.parallel(html, css, js, assets, data));
 
 // Updated Dev: Build first, then serve and watch
 const devTask = gulp.series(build, dev);

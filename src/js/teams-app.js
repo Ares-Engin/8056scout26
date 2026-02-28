@@ -7,16 +7,33 @@ document.addEventListener('alpine:init', () => {
         searchQuery: '',
         loading: true,
 
-        // Targeted Regionals events for 2026
-        targetEvents: ["2026tuhc", "2026tuis", "2026marm", "2026bask"],
-
         async init() {
             this.loading = true;
             try {
-                // 1. Fetch teams from the target regionals
+                // 1. Discover all Turkish events from recent years
+                const years = [2024, 2025, 2026];
+                const turkishEvents = [];
+
+                for (const year of years) {
+                    const eventsUrl = `https://www.thebluealliance.com/api/v3/events/${year}`;
+                    const res = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                    if (res.ok) {
+                        const allEvents = await res.json();
+                        const yearEvents = allEvents.filter(e =>
+                            e.country === "Turkey" ||
+                            e.country === "Türkiye" ||
+                            e.city?.includes("Istanbul") ||
+                            e.city?.includes("Ankara") ||
+                            e.city?.includes("Izmir")
+                        );
+                        turkishEvents.push(...yearEvents);
+                    }
+                }
+
+                // 2. Fetch teams from all discovered events
                 const teamMap = new Map();
-                for (const eventKey of this.targetEvents) {
-                    const eventTeams = await this.fetchEventTeams(eventKey);
+                for (const event of turkishEvents) {
+                    const eventTeams = await this.fetchEventTeams(event.key);
                     eventTeams.forEach(t => teamMap.set(t.team_number, t));
                 }
 
@@ -77,16 +94,21 @@ document.addEventListener('alpine:init', () => {
                 const awardsRes = await fetch(awardsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
                 if (awardsRes.ok) {
                     const allAwards = await awardsRes.json();
-                    // Just take recent or major awards to avoid clutter
-                    team.awards = allAwards.slice(0, 5);
+                    team.awards = allAwards.slice(0, 8); // Show more awards
                 }
 
-                // Load 2026 Events
-                const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/2026`;
-                const eventsRes = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
-                if (eventsRes.ok) {
-                    team.events = await eventsRes.json();
+                // Load Events for 2024-2026
+                const years = [2024, 2025, 2026];
+                const allTeamEvents = [];
+                for (const year of years) {
+                    const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/${year}`;
+                    const eventsRes = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                    if (eventsRes.ok) {
+                        const yrEvents = await eventsRes.json();
+                        allTeamEvents.push(...yrEvents);
+                    }
                 }
+                team.events = allTeamEvents.sort((a, b) => b.year - a.year || b.start_date.localeCompare(a.start_date));
             } catch (e) {
                 console.error("Detail load failed for " + team.teamNumber, e);
             }

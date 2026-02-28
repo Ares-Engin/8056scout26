@@ -31,8 +31,7 @@ const FRC_CONFIG = {
     events: ALL_EVENTS,
     defaultSeason: 2026,
     apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",
-    apiKey: "kIarej54aLEjhvDFU7w4ky7cm3vsrhfi3zGZHU4Kbb0qgBV23gnlZ5coU6bz3ptJ",
-    level: "qm",
+    level: ["qf", "sf", "f", "p", "qm"],
     scoring: {
         2026: {
             fuelValue: 1,

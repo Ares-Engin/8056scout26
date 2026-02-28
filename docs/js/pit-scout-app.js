@@ -2,11 +2,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('pitScoutApp', () => ({
         form: {
             teamNumber: '',
-            weight: '',
-            dimensions: '',
-            motorType: '',
-            isSwerve: false,
-            hasGroundIntake: false,
+            teamName: '',
             images: [],
             comments: ''
         },
@@ -28,7 +24,7 @@ document.addEventListener('alpine:init', () => {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Simple Base64 conversion
+            // Simple Base64 conversion for development purposes
             const reader = new FileReader();
             reader.onload = (event) => {
                 this.form.images.push(event.target.result);
@@ -50,8 +46,10 @@ document.addEventListener('alpine:init', () => {
                 const userData = userDoc.data();
 
                 const report = {
-                    ...this.form,
                     teamNumber: Number(this.form.teamNumber),
+                    teamName: this.form.teamName,
+                    images: this.form.images,
+                    comments: this.form.comments,
                     meta: {
                         scouterName: userData?.name || 'Unknown',
                         scouterTeam: userData?.teamNumber || '',
@@ -80,11 +78,7 @@ document.addEventListener('alpine:init', () => {
         resetForm() {
             this.form = {
                 teamNumber: '',
-                weight: '',
-                dimensions: '',
-                motorType: '',
-                isSwerve: false,
-                hasGroundIntake: false,
+                teamName: '',
                 images: [],
                 comments: ''
             };

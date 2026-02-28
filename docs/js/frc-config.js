@@ -40,7 +40,8 @@ const FRC_CONFIG = {
             endgameLevel2: 20,
             endgameLevel3: 30
         }
-    }
+    },
+    manualTeamsPath: "../data/teams-manual.json"
 };
 
 /* Fetches match results from The Blue Alliance API */
@@ -103,4 +104,52 @@ async function fetchFRCMatches(eventKey) {
             teams: [...redTeams, ...blueTeams]
         };
     });
+}
+
+/**
+ * Fetches team basic info from TBA
+ */
+async function fetchFRCTeamInfo(teamNumber) {
+    const url = `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}`;
+    try {
+        const res = await fetch(url, {
+            headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
+        });
+        if (!res.ok) return null;
+        return await res.json();
+    } catch (e) {
+        console.error("Error fetching team info:", e);
+        return null;
+    }
+}
+
+/**
+ * Fetches team media (logos) from TBA for a specific year
+ */
+async function fetchFRCTeamMedia(teamNumber, year = 2025) {
+    const url = `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/media/${year}`;
+    try {
+        const res = await fetch(url, {
+            headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
+        });
+        if (!res.ok) return [];
+        return await res.json();
+    } catch (e) {
+        console.error("Error fetching team media:", e);
+        return [];
+    }
+}
+
+/**
+ * Loads manual team data from JSON file
+ */
+async function loadManualTeams() {
+    try {
+        const res = await fetch(FRC_CONFIG.manualTeamsPath);
+        if (!res.ok) return {};
+        return await res.json();
+    } catch (e) {
+        console.warn("Manual teams file not found, using API only.");
+        return {};
+    }
 }

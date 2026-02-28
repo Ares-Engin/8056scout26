@@ -11,18 +11,15 @@ document.addEventListener('alpine:init', () => {
         loading: true,
         errorMessage: '',
         expandedMatches: [],
-
-        toggleMatch(key) {
-            if (this.expandedMatches.includes(key)) {
-                this.expandedMatches = this.expandedMatches.filter(k => k !== key);
-            } else {
-                this.expandedMatches.push(key);
-            }
-        },
+        expandedReports: [],
+        teamDataCache: {},
+        manualTeams: {},
 
         async init() {
             try {
+                this.manualTeams = await loadManualTeams();
                 this.loading = true;
+
                 // Fetch matches for all selected events
                 const allMatches = await Promise.all(
                     this.selectedEvents.map(key => fetchFRCMatches(key))
@@ -37,6 +34,7 @@ document.addEventListener('alpine:init', () => {
                     this.scoutEntries = {};
                     snapshot.forEach(doc => {
                         const data = doc.data();
+                        data.id = doc.id; // Store Firestore ID
                         if (data.matchNumber) {
                             const key = `${data.regional}_${data.matchNumber}`;
                             if (!this.scoutEntries[key]) this.scoutEntries[key] = [];
@@ -49,16 +47,32 @@ document.addEventListener('alpine:init', () => {
                     this.loading = false;
                 });
             } catch (err) {
-                this.errorMessage = 'Failed to load matches from API';
+                console.error(err);
+                this.errorMessage = 'Failed to initialize matches';
                 this.loading = false;
             }
         },
 
+        toggleMatch(key) {
+            if (this.expandedMatches.includes(key)) {
+                this.expandedMatches = this.expandedMatches.filter(k => k !== key);
+            } else {
+                this.expandedMatches.push(key);
+            }
+        },
+
+        toggleReport(id) {
+            if (this.expandedReports.includes(id)) {
+                this.expandedReports = this.expandedReports.filter(i => i !== id);
+            } else {
+                this.expandedReports.push(id);
+                this.loadScouterTeamData(id);
+            }
+        },
+
         filteredMatches() {
-            // Get all unique match keys from scoutEntries
             const scoutedKeys = Object.keys(this.scoutEntries);
 
-            // Start with API matches
             let list = this.frcMatches.map(m => {
                 const type = m.description.includes('Qual') ? 'Qualification' :
                     m.description.includes('Practice') ? 'Practice' : 'Playoffs';
@@ -74,7 +88,6 @@ document.addEventListener('alpine:init', () => {
                 };
             });
 
-            // Add scouted matches that are NOT in the API list
             scoutedKeys.forEach(key => {
                 const [regional, matchNum] = key.split('_');
                 const alreadyInList = list.some(m => m.eventKey === regional && m.matchNumber.toString() === matchNum);
@@ -91,7 +104,7 @@ document.addEventListener('alpine:init', () => {
                         year: eventObj?.season || '',
                         type: firstEntry.meta?.matchType || 'Scouted',
                         description: `${firstEntry.meta?.matchType || 'Match'} ${matchNum}`,
-                        teams: [], // We don't have the full alliance from API, but we'll highlight the scouted teams
+                        teams: [],
                         isManual: true,
                         scoutedTeams: entries.map(e => e.teamNumber)
                     });
@@ -99,20 +112,14 @@ document.addEventListener('alpine:init', () => {
             });
 
             return list.filter(m => {
-                // Event Filter
                 if (this.selectedEvents.length > 0 && !this.selectedEvents.includes(m.eventKey)) return false;
-
-                // Match Type Filter
                 if (this.selectedTypes.length > 0 && !this.selectedTypes.includes(m.type)) return false;
-
-                // Search Filter (Team Number or Match Number)
                 if (this.searchQuery) {
                     const matchNumMatch = m.matchNumber.toString() === this.searchQuery;
                     const teamMatch = m.teams?.some(t => t.teamNumber.toString().includes(this.searchQuery)) ||
                         m.scoutedTeams?.some(t => t.toString().includes(this.searchQuery));
                     if (!matchNumMatch && !teamMatch) return false;
                 }
-
                 return true;
             }).sort((a, b) => b.year - a.year || a.matchNumber - b.matchNumber);
         },
@@ -122,14 +129,12 @@ document.addEventListener('alpine:init', () => {
             return teamNumber.toString().includes(this.searchQuery);
         },
 
-        // --- NEW HELPERS ---
         getScoringRules(year) {
             return FRC_CONFIG.scoring[year] || FRC_CONFIG.scoring[FRC_CONFIG.defaultSeason];
         },
 
         parseFuel(val) {
             if (!val || typeof val !== 'string') return 0;
-            // "5-10" -> 5
             const part = val.split('-')[0];
             return parseInt(part) || 0;
         },
@@ -138,7 +143,7 @@ document.addEventListener('alpine:init', () => {
             const rules = this.getScoringRules(year);
             const fuelValue = rules.fuelValue || 1;
 
-            let autoFuel = this.parseFuel(entry.auto?.fuel); // In case it exists in old data
+            let autoFuel = this.parseFuel(entry.auto?.fuel);
             let auto = (entry.auto?.level1 === 'success' ? rules.autoLevel1 : 0) + (autoFuel * fuelValue);
 
             let teleopFuel = this.parseFuel(entry.transitionShift) +
@@ -168,6 +173,51 @@ document.addEventListener('alpine:init', () => {
             if (!timestamp) return 'N/A';
             const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
             return date.toLocaleString();
+        },
+
+        async loadScouterTeamData(id) {
+            const scout = this.findScoutById(id);
+            if (!scout || !scout.meta || !scout.meta.scouterTeam) return;
+
+            const tNum = scout.meta.scouterTeam;
+
+            if (this.teamDataCache[tNum]) {
+                scout.meta.scouterTeamData = this.teamDataCache[tNum];
+                return;
+            }
+
+            if (this.manualTeams[tNum]) {
+                this.teamDataCache[tNum] = this.manualTeams[tNum];
+                scout.meta.scouterTeamData = this.manualTeams[tNum];
+                return;
+            }
+
+            const info = await fetchFRCTeamInfo(tNum);
+            if (info) {
+                const data = {
+                    name: info.nickname || info.name,
+                    logo: null
+                };
+
+                const media = await fetchFRCTeamMedia(tNum, 2025);
+                const logo = media.find(m => m.type === 'avatar' || m.type === 'image');
+                if (logo && logo.direct_url) {
+                    data.logo = logo.direct_url;
+                } else if (logo && logo.base64Image) {
+                    data.logo = `data:image/png;base64,${logo.base64Image}`;
+                }
+
+                this.teamDataCache[tNum] = data;
+                scout.meta.scouterTeamData = data;
+            }
+        },
+
+        findScoutById(id) {
+            for (const key in this.scoutEntries) {
+                const s = this.scoutEntries[key].find(sc => sc.id === id);
+                if (s) return s;
+            }
+            return null;
         }
     }));
 });

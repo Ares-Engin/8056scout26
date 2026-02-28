@@ -88,7 +88,13 @@ document.addEventListener('alpine:init', () => {
                     team.scoutCount = reports.length;
 
                     // Merge Pit Data
-                    team.pitData = pitEntries[tNum] || null;
+                    const pitData = pitEntries[tNum] || null;
+                    team.pitData = pitData;
+
+                    // Prioritize name from Pit Scouting if provided
+                    if (pitData && pitData.teamName) {
+                        team.name = pitData.teamName;
+                    }
 
                     if (reports.length > 0) {
                         const totalScore = reports.reduce((acc, r) => acc + this.calculateEntryScore(r).total, 0);

@@ -35,11 +35,6 @@
           <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--sm">
           <h1 class="brand__title">SCOUTING</h1>
         </div>
-        <button @click="location.href='teams.html'" class="btn-teams-nav"
-          style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); color: #f97316; padding: 0.4rem 0.8rem; border-radius: 0.5rem; font-weight: bold; font-size: 11px; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s;">
-          <i class="fas fa-users"></i>
-          <span>Teams</span>
-        </button>
       </div>
       <button @click="$store.theme.toggle()" class="theme-toggle">
         <template x-if="!$store.theme.isLight">

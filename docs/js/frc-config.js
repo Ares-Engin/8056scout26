@@ -57,6 +57,10 @@ async function fetchFRCMatches(eventKey) {
     });
 
     if (!res.ok) {
+        if (res.status === 404) {
+            console.warn(`TBA API: Event ${key} not found (might be a future event).`);
+            return [];
+        }
         throw new Error(`TBA API error: ${res.status}`);
     }
 

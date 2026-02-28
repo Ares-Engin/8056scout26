@@ -94,14 +94,15 @@ document.addEventListener('alpine:init', () => {
                 const awardsRes = await fetch(awardsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
                 if (awardsRes.ok) {
                     const allAwards = await awardsRes.json();
-                    team.awards = allAwards.slice(0, 8); // Show more awards
+                    team.awards = allAwards.slice(0, 10); // Show more awards
                 }
 
-                // Load Events for 2024-2026
-                const years = [2024, 2025, 2026];
+                // Load Events for 2020-2026
+                const startYear = 2020;
+                const endYear = 2026;
                 const allTeamEvents = [];
-                for (const year of years) {
-                    const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/${year}`;
+                for (let yr = startYear; yr <= endYear; yr++) {
+                    const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/${yr}`;
                     const eventsRes = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
                     if (eventsRes.ok) {
                         const yrEvents = await eventsRes.json();

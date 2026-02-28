@@ -556,6 +556,9 @@
   .items-center {
     align-items: center;
   }
+  .items-end {
+    align-items: flex-end;
+  }
   .items-start {
     align-items: flex-start;
   }
@@ -1017,6 +1020,9 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
+  .text-\[9px\] {
+    font-size: 9px;
+  }
   .text-\[10px\] {
     font-size: 10px;
   }
@@ -1074,6 +1080,12 @@
   }
   .text-orange-500 {
     color: var(--color-orange-500);
+  }
+  .text-orange-500\/80 {
+    color: color-mix(in srgb, oklch(70.5% 0.213 47.604) 80%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-orange-500) 80%, transparent);
+    }
   }
   .text-purple-400 {
     color: var(--color-purple-400);

@@ -84,10 +84,16 @@ async function fetchFRCMatches(eventKey) {
             dq: false
         }));
 
-        const level = levelNames[match.comp_level] || 'Match';
-        const description = match.comp_level === 'qm'
-            ? `${level} ${match.match_number}`
-            : `${level} ${match.set_number}-${match.match_number}`;
+        let description = '';
+        if (match.comp_level === 'qm') {
+            description = `Qualification ${match.match_number}`;
+        } else if (match.comp_level === 'f') {
+            description = `Final ${match.match_number}`;
+        } else if (match.comp_level === 'sf' || match.comp_level === 'qf') {
+            description = `Match ${match.set_number}`;
+        } else {
+            description = `Match ${match.set_number}-${match.match_number}`;
+        }
 
         return {
             matchNumber: match.match_number,

@@ -18,17 +18,12 @@ document.addEventListener('alpine:init', () => {
         async init() {
             try {
                 this.manualTeams = await loadManualTeams();
-                this.loading = true;
 
-                // Fetch matches for all selected events
-                const allMatches = await Promise.all(
-                    this.selectedEvents.map(key => fetchFRCMatches(key))
-                );
-                // Flatten and add event key to each match for filtering
-                this.frcMatches = allMatches.flatMap((matches, i) =>
-                    matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
-                );
-                this.frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
+                this.$watch('selectedEvents', async () => {
+                    await this.fetchMatches();
+                });
+
+                await this.fetchMatches();
 
                 db.collection('scouting').onSnapshot(snapshot => {
                     this.scoutEntries = {};
@@ -74,8 +69,8 @@ document.addEventListener('alpine:init', () => {
             const scoutedKeys = Object.keys(this.scoutEntries);
 
             let list = this.frcMatches.map(m => {
-                const type = m.description.includes('Qual') ? 'Qualification' :
-                    m.description.includes('Practice') ? 'Practice' : 'Playoffs';
+                const type = m.compLevel === 'qm' ? 'Qualification' :
+                    m.compLevel === 'p' ? 'Practice' : 'Playoffs';
                 const eventShort = this.availableEvents.find(e => e.key === m.eventKey)?.name.split(' ')[0] || m.eventKey;
                 const year = this.availableEvents.find(e => e.key === m.eventKey)?.season || '';
 
@@ -92,9 +87,12 @@ document.addEventListener('alpine:init', () => {
                 const [regional, matchNum] = key.split('_');
                 const alreadyInList = list.some(m => m.eventKey === regional && m.matchNumber.toString() === matchNum);
 
+                // We must also infer if the scouted match belongs to Playoffs or Quals based on its meta
+                const entries = this.scoutEntries[key];
+                const firstEntry = entries[0];
+                const scoutType = firstEntry.meta?.matchType || 'Qualification';
+
                 if (!alreadyInList) {
-                    const entries = this.scoutEntries[key];
-                    const firstEntry = entries[0];
                     const eventObj = this.availableEvents.find(e => e.key === regional);
 
                     list.push({
@@ -102,12 +100,19 @@ document.addEventListener('alpine:init', () => {
                         eventKey: regional,
                         eventShort: eventObj?.name.split(' ')[0] || regional,
                         year: eventObj?.season || '',
-                        type: firstEntry.meta?.matchType || 'Scouted',
-                        description: `${firstEntry.meta?.matchType || 'Match'} ${matchNum}`,
+                        type: scoutType,
+                        description: `${scoutType} ${matchNum}`,
+                        compLevel: scoutType === 'Qualification' ? 'qm' : scoutType === 'Practice' ? 'p' : 'sf',
                         teams: [],
                         isManual: true,
                         scoutedTeams: entries.map(e => e.teamNumber)
                     });
+                } else {
+                    // Update type of existing match if it only exists in scout data with different type assumption (unlikely for API matches but good practice)
+                    const mInfo = list.find(m => m.eventKey === regional && m.matchNumber.toString() === matchNum);
+                    if (mInfo && mInfo.isManual) {
+                        mInfo.type = scoutType;
+                    }
                 }
             });
 
@@ -116,21 +121,14 @@ document.addEventListener('alpine:init', () => {
                 if (this.selectedEvents.length > 0 && !this.selectedEvents.includes(m.eventKey)) return false;
 
                 // Type Filter
-                const isPractice = m.comp_level === 'p' || m.type === 'Practice';
-                const isQual = m.comp_level === 'qm' || m.type === 'Qualification';
-                const isPlayoff = ['qf', 'sf', 'f'].includes(m.comp_level) || m.type === 'Playoffs';
+                const isPractice = m.compLevel === 'p' || m.type === 'Practice';
+                const isQual = m.compLevel === 'qm' || m.type === 'Qualification';
+                const isPlayoff = ['qf', 'sf', 'f'].includes(m.compLevel) || m.type === 'Playoffs';
 
                 let typeMatch = false;
                 if (this.selectedTypes.includes('Practice') && isPractice) typeMatch = true;
                 if (this.selectedTypes.includes('Qualification') && isQual) typeMatch = true;
                 if (this.selectedTypes.includes('Playoffs') && isPlayoff) typeMatch = true;
-
-                // If it's a manual scouted match without a specific comp_level set, 
-                // and no specific types are matched yet, show it if it's "Scouted" or similar
-                if (!typeMatch && m.isManual && this.selectedTypes.length > 0) {
-                    // If the user hasn't selected a specific type that excludes this, show it
-                    // Actually, if it's manual, it should respect the selectedTypes if set in meta
-                }
 
                 if (!typeMatch) return false;
 

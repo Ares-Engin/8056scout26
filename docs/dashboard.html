@@ -17,134 +17,133 @@
 </head>
 
 <body class="page-body--padded" x-data="dashboardApp">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <span class="top-bar__text">Laissez Faire</span>
-  </div>
+  <header class="dashboard-header border-b border-orange-500/10">
+    <div class="nav-bar__inner--centered h-32">
+      <button @click="location.href='dashboard.html'"
+        class="back-btn--shadow absolute left-0 opacity-0 pointer-events-none">
+        <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
 
-  <div class="container--lg">
-    <header class="dashboard-header">
-      <div class="nav-bar__inner--centered">
-        <div class="brand--centered">
-          <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
-          <div class="flex flex-col items-center">
-            <h1 class="brand__title--lg">REBUILT 2026</h1>
-            <p class="brand__subtitle">Command Center</p>
-          </div>
-        </div>
+      <div class="brand--stack">
+        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
+        <span class="brand__subtitle--tiny">Laissez Faire</span>
+        <h1 class="brand__title--lg">REBUILT 2026</h1>
+      </div>
 
-        <div class="dashboard-actions absolute right-0">
-          <button @click="$store.theme.toggle()" class="theme-toggle">
-            <template x-if="!$store.theme.isLight">
-              <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
-                </path>
-              </svg>
-            </template>
-            <template x-if="$store.theme.isLight">
-              <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-              </svg>
-            </template>
+      <div class="absolute right-0 flex items-center">
+        <button @click="$store.theme.toggle()" class="theme-toggle">
+          <template x-if="!$store.theme.isLight">
+            <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
+              </path>
+            </svg>
+          </template>
+          <template x-if="$store.theme.isLight">
+            <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+          </template>
+        </button>
+        <div class="dashboard-actions__inner">
+          <button @click="location.href='account.html'" class="btn-account">
+            <svg class="icon-sm text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Account
           </button>
-          <div class="dashboard-actions__inner">
-            <button @click="location.href='account.html'" class="btn-account">
-              <svg class="icon-sm text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-              </svg>
-              Account
-            </button>
-            <button @click="auth.signOut().then(() => location.href = 'index.html')" class="btn-logout">
-              <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-              </svg>
-              Logout
-            </button>
-          </div>
+          <button @click="auth.signOut().then(() => location.href = 'index.html')" class="btn-logout">
+            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+          </button>
         </div>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main class="dashboard-grid">
-      <!-- Scout Match -->
-      <button @click="location.href='scout.html'" class="dashboard-card">
-        <div class="dashboard-card__icon">
-          <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <h2 class="dashboard-card__title">Scout Match</h2>
-        <p class="dashboard-card__desc">Start recording data for a live match</p>
-        <div class="dashboard-card__link">
-          Open App <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </button>
+  <main class="dashboard-grid">
+    <!-- Scout Match -->
+    <button @click="location.href='scout.html'" class="dashboard-card">
+      <div class="dashboard-card__icon">
+        <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h2 class="dashboard-card__title">Scout Match</h2>
+      <p class="dashboard-card__desc">Start recording data for a live match</p>
+      <div class="dashboard-card__link">
+        Open App <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </button>
 
-      <!-- View Matches -->
-      <button @click="location.href='matches.html'" class="dashboard-card--blue">
-        <div class="dashboard-card__icon--blue">
-          <svg class="icon-lg--blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-            </path>
-          </svg>
-        </div>
-        <h2 class="dashboard-card__title">View Matches</h2>
-        <p class="dashboard-card__desc">Historical data and alliance scores</p>
-        <div class="dashboard-card__link--blue">
-          Open Results <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </button>
+    <!-- View Matches -->
+    <button @click="location.href='matches.html'" class="dashboard-card--blue">
+      <div class="dashboard-card__icon--blue">
+        <svg class="icon-lg--blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+          </path>
+        </svg>
+      </div>
+      <h2 class="dashboard-card__title">View Matches</h2>
+      <p class="dashboard-card__desc">Historical data and alliance scores</p>
+      <div class="dashboard-card__link--blue">
+        Open Results <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </button>
 
-      <!-- Teams & Pit Scouting -->
-      <button @click="location.href='teams.html'" class="dashboard-card--orange">
-        <div class="dashboard-card__icon--orange">
-          <svg class="icon-lg--orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-            </path>
-          </svg>
-        </div>
-        <h2 class="dashboard-card__title">Teams Explorer</h2>
-        <p class="dashboard-card__desc">Pit scouting and team analytics</p>
-        <div class="dashboard-card__link--orange">
-          Explore Teams <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </button>
+    <!-- Teams & Pit Scouting -->
+    <button @click="location.href='teams.html'" class="dashboard-card--orange">
+      <div class="dashboard-card__icon--orange">
+        <svg class="icon-lg--orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+          </path>
+        </svg>
+      </div>
+      <h2 class="dashboard-card__title">Teams Explorer</h2>
+      <p class="dashboard-card__desc">Pit scouting and team analytics</p>
+      <div class="dashboard-card__link--orange">
+        Explore Teams <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </button>
 
-      <!-- User Admin (Hidden if not admin) -->
-      <button x-show="isAdmin" @click="location.href='accept.html'" class="dashboard-card--admin">
-        <div class="dashboard-card__admin-inner">
-          <div class="dashboard-card__admin-content">
-            <div class="dashboard-card__icon--admin">
-              <svg class="icon-lg--purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm-4 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm8 0l1.1-.301 2.4 11.1-1.1.301-2.4-11.1z">
-                </path>
-              </svg>
-            </div>
-            <div>
-              <h2 class="dashboard-card__title">User Administration</h2>
-              <p class="dashboard-card__desc">Accept new scouts and manage roles</p>
-            </div>
+    <!-- User Admin (Hidden if not admin) -->
+    <button x-show="isAdmin" @click="location.href='accept.html'" class="dashboard-card--admin">
+      <div class="dashboard-card__admin-inner">
+        <div class="dashboard-card__admin-content">
+          <div class="dashboard-card__icon--admin">
+            <svg class="icon-lg--purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm-4 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm8 0l1.1-.301 2.4 11.1-1.1.301-2.4-11.1z">
+              </path>
+            </svg>
           </div>
-          <svg class="icon-arrow--admin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4 4H3"></path>
-          </svg>
+          <div>
+            <h2 class="dashboard-card__title">User Administration</h2>
+            <p class="dashboard-card__desc">Accept new scouts and manage roles</p>
+          </div>
         </div>
-      </button>
-    </main>
+        <svg class="icon-arrow--admin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4 4H3"></path>
+        </svg>
+      </div>
+    </button>
+  </main>
   </div>
 
   <!-- Firebase -->

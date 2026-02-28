@@ -18,139 +18,136 @@
 </head>
 
 <body class="page-body" x-data="pitScoutApp">
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <span class="top-bar__text">Laissez Faire</span>
-    </div>
+    <header class="pit-scout-header border-b border-orange-500/10 mb-6">
+        <div class="nav-bar__inner--centered h-32">
+            <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
+                <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                    </path>
+                </svg>
+            </button>
 
-    <div class="container--md">
-        <nav class="nav-bar">
-            <div class="nav-bar__inner--centered">
-                <button @click="location.href='dashboard.html'" class="back-btn absolute left-4">
-                    <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+            <div class="brand--stack">
+                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
+                <span class="brand__subtitle--tiny">Laissez Faire</span>
+                <h1 class="brand__title--lg">Pit Scouting</h1>
+            </div>
+
+            <button @click="$store.theme.toggle()" class="theme-toggle absolute right-0">
+                <template x-if="!$store.theme.isLight">
+                    <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
                         </path>
                     </svg>
-                </button>
-                <div class="brand--centered">
-                    <img src="img/logo.png" alt="Logo" class="brand__logo--sm">
-                    <h1 class="brand__title">PIT SCOUTING</h1>
-                </div>
-                <button @click="$store.theme.toggle()" class="theme-toggle absolute right-4">
-                    <template x-if="!$store.theme.isLight">
-                        <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
-                            </path>
-                        </svg>
-                    </template>
-                    <template x-if="$store.theme.isLight">
-                        <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-                            </path>
-                        </svg>
-                    </template>
-                </button>
-            </div>
-        </nav>
+                </template>
+                <template x-if="$store.theme.isLight">
+                    <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                        </path>
+                    </svg>
+                </template>
+            </button>
+        </div>
+    </header>
 
-        <form @submit.prevent="submit" class="space-y-6">
-            <!-- Metadata Section -->
-            <div class="card p-6 border-l-4 border-orange-500">
-                <h3 class="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">Report Context</h3>
+    <form @submit.prevent="submit" class="space-y-6">
+        <!-- Metadata Section -->
+        <div class="card p-6 border-l-4 border-orange-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">Report Context</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Season</label>
+                    <select x-model="selectedYear" class="form-input--search w-full">
+                        <template x-for="year in availableSeasons">
+                            <option :value="year" x-text="year"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Competition</label>
+                    <select x-model="regional" class="form-input--search w-full">
+                        <template x-for="event in filteredEvents">
+                            <option :value="event.key" x-text="event.name"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="space-y-1 col-span-2">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Team Number</label>
+                    <input x-model="teamNumber" type="number" placeholder="Enter Team #"
+                        class="form-input--search w-full text-lg font-black" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Data Section -->
+        <div class="card p-6 border-l-4 border-blue-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-blue-500 mb-4">Robot Technical Data</h3>
+            <div class="space-y-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Drive Base</label>
+                    <select x-model="data.driveBase" class="form-input--search w-full">
+                        <option value="Swerve">Swerve</option>
+                        <option value="Tank">Tank / West Coast</option>
+                        <option value="Mecanum">Mecanum</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Season</label>
-                        <select x-model="selectedYear" class="form-input--search w-full">
-                            <template x-for="year in availableSeasons">
-                                <option :value="year" x-text="year"></option>
-                            </template>
-                        </select>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Intake System</label>
+                        <input x-model="data.intake" type="text" placeholder="e.g. Under-bumper"
+                            class="form-input--search w-full">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Competition</label>
-                        <select x-model="regional" class="form-input--search w-full">
-                            <template x-for="event in filteredEvents">
-                                <option :value="event.key" x-text="event.name"></option>
-                            </template>
-                        </select>
-                    </div>
-                    <div class="space-y-1 col-span-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Team Number</label>
-                        <input x-model="teamNumber" type="number" placeholder="Enter Team #"
-                            class="form-input--search w-full text-lg font-black" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical Data Section -->
-            <div class="card p-6 border-l-4 border-blue-500">
-                <h3 class="text-xs font-black uppercase tracking-widest text-blue-500 mb-4">Robot Technical Data</h3>
-                <div class="space-y-6">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Drive Base</label>
-                        <select x-model="data.driveBase" class="form-input--search w-full">
-                            <option value="Swerve">Swerve</option>
-                            <option value="Tank">Tank / West Coast</option>
-                            <option value="Mecanum">Mecanum</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase">Intake System</label>
-                            <input x-model="data.intake" type="text" placeholder="e.g. Under-bumper"
-                                class="form-input--search w-full">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase">Shooter Mechanism</label>
-                            <input x-model="data.shooter" type="text" placeholder="e.g. Pivoting single fly"
-                                class="form-input--search w-full">
-                        </div>
-                    </div>
-
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Ball / Fuel Capacity</label>
-                        <input x-model="data.ballCapacity" type="number" placeholder="Max capacity"
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Shooter Mechanism</label>
+                        <input x-model="data.shooter" type="text" placeholder="e.g. Pivoting single fly"
                             class="form-input--search w-full">
                     </div>
                 </div>
-            </div>
 
-            <!-- Strategy Section -->
-            <div class="card p-6 border-l-4 border-green-500">
-                <h3 class="text-xs font-black uppercase tracking-widest text-green-500 mb-4">Strategy & Goals</h3>
-                <div class="space-y-6">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Autonomous Strategy</label>
-                        <textarea x-model="data.autoStrategy" placeholder="Describe their autonomous routines..."
-                            class="form-input--search w-full h-24 p-3"></textarea>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Tele-op Strategy</label>
-                        <textarea x-model="data.teleopStrategy" placeholder="Primary role (Scorer, Defender, Linker)..."
-                            class="form-input--search w-full h-24 p-3"></textarea>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Endgame Goal</label>
-                        <input x-model="data.endgameGoal" type="text" placeholder="e.g. Level 3 Reliable"
-                            class="form-input--search w-full">
-                    </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Ball / Fuel Capacity</label>
+                    <input x-model="data.ballCapacity" type="number" placeholder="Max capacity"
+                        class="form-input--search w-full">
                 </div>
             </div>
+        </div>
 
-            <!-- Submit -->
-            <button type="submit"
-                class="btn-submit w-full py-4 text-lg font-black uppercase tracking-widest flex items-center justify-center gap-3"
-                :disabled="loading">
-                <template x-if="loading">
-                    <div class="loading-spinner-sm"></div>
-                </template>
-                <span x-text="loading ? 'Submitting...' : 'Save Pit Report'"></span>
-            </button>
-        </form>
+        <!-- Strategy Section -->
+        <div class="card p-6 border-l-4 border-green-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-green-500 mb-4">Strategy & Goals</h3>
+            <div class="space-y-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Autonomous Strategy</label>
+                    <textarea x-model="data.autoStrategy" placeholder="Describe their autonomous routines..."
+                        class="form-input--search w-full h-24 p-3"></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Tele-op Strategy</label>
+                    <textarea x-model="data.teleopStrategy" placeholder="Primary role (Scorer, Defender, Linker)..."
+                        class="form-input--search w-full h-24 p-3"></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Endgame Goal</label>
+                    <input x-model="data.endgameGoal" type="text" placeholder="e.g. Level 3 Reliable"
+                        class="form-input--search w-full">
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+            class="btn-submit w-full py-4 text-lg font-black uppercase tracking-widest flex items-center justify-center gap-3"
+            :disabled="loading">
+            <template x-if="loading">
+                <div class="loading-spinner-sm"></div>
+            </template>
+            <span x-text="loading ? 'Submitting...' : 'Save Pit Report'"></span>
+        </button>
+    </form>
     </div>
 
     <!-- Application Logic -->

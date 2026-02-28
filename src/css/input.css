@@ -92,13 +92,15 @@ body {
 
 /* ---------- Top Bar ---------- */
 .top-bar {
-    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm;
-    background-color: rgb(2 6 23 / 0.9);
+    @apply py-2 border-b border-orange-500/10 text-center relative z-[60] backdrop-blur-sm;
+    background-color: var(--bg-main);
+    opacity: 0.9;
 }
 
 .top-bar--fixed {
-    @apply bg-slate-950 py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm;
-    background-color: rgb(2 6 23 / 0.9);
+    @apply py-2 border-b border-orange-500/10 text-center fixed top-0 left-0 right-0 z-[60] backdrop-blur-sm;
+    background-color: var(--bg-main);
+    opacity: 0.9;
 }
 
 .top-bar__text {
@@ -111,12 +113,16 @@ body {
     background-color: rgb(15 23 42 / 0.8);
 }
 
-.nav-bar__inner {
-    @apply max-w-4xl mx-auto flex items-center justify-between;
+.nav-bar__inner--centered {
+    @apply max-w-4xl mx-auto flex items-center relative py-4;
 }
 
-.nav-bar__inner--centered {
-    @apply max-w-4xl mx-auto flex items-center relative py-2;
+.brand--stack {
+    @apply flex flex-col items-center gap-1 flex-1;
+}
+
+.brand__subtitle--tiny {
+    @apply text-orange-500 font-black tracking-widest text-[9px] uppercase mt-[-4px];
 }
 
 .nav-bar__left {

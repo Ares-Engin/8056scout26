@@ -116,14 +116,22 @@ document.addEventListener('alpine:init', () => {
                 if (this.selectedEvents.length > 0 && !this.selectedEvents.includes(m.eventKey)) return false;
 
                 // Type Filter
-                const isPractice = m.comp_level === 'p';
-                const isQual = m.comp_level === 'qm';
-                const isPlayoff = ['qf', 'sf', 'f'].includes(m.comp_level);
+                const isPractice = m.comp_level === 'p' || m.type === 'Practice';
+                const isQual = m.comp_level === 'qm' || m.type === 'Qualification';
+                const isPlayoff = ['qf', 'sf', 'f'].includes(m.comp_level) || m.type === 'Playoffs';
 
                 let typeMatch = false;
                 if (this.selectedTypes.includes('Practice') && isPractice) typeMatch = true;
                 if (this.selectedTypes.includes('Qualification') && isQual) typeMatch = true;
                 if (this.selectedTypes.includes('Playoffs') && isPlayoff) typeMatch = true;
+
+                // If it's a manual scouted match without a specific comp_level set, 
+                // and no specific types are matched yet, show it if it's "Scouted" or similar
+                if (!typeMatch && m.isManual && this.selectedTypes.length > 0) {
+                    // If the user hasn't selected a specific type that excludes this, show it
+                    // Actually, if it's manual, it should respect the selectedTypes if set in meta
+                }
+
                 if (!typeMatch) return false;
 
                 // Search Query Filter

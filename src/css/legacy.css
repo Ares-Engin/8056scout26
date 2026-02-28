@@ -1,7 +1,7 @@
 /* ---------- GLOBAL ---------- */
 body {
-  background: #000000;
-  color: white;
+  /* background: #000000; */
+  /* color: white; */
   font-family: Arial, sans-serif;
   padding: 16px;
   margin: 0;
@@ -191,7 +191,7 @@ select {
   text-align: center;
 }
 
-.radio-group input[type="radio"]:checked + label {
+.radio-group input[type="radio"]:checked+label {
   background: #ff8400;
   color: black;
 }
@@ -239,8 +239,15 @@ select {
   min-width: 0;
 }
 
-.alliance-red  { background: #3b0000; border: 1px solid #7f1d1d; }
-.alliance-blue { background: #00103b; border: 1px solid #1e3a8a; }
+.alliance-red {
+  background: #3b0000;
+  border: 1px solid #7f1d1d;
+}
+
+.alliance-blue {
+  background: #00103b;
+  border: 1px solid #1e3a8a;
+}
 
 .alliance-header {
   display: flex;
@@ -408,4 +415,3 @@ select {
     margin-right: 8px;
   }
 }
-

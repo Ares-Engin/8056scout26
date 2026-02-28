@@ -18,26 +18,23 @@
 </head>
 
 <body class="page-body" x-data="matchesApp">
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <span class="top-bar__text">Laissez Faire</span>
-    </div>
-
     <div class="container--lg">
-        <header class="matches-header">
-            <div class="nav-bar__inner--centered">
+        <header class="matches-header border-b border-orange-500/10 mb-6">
+            <div class="nav-bar__inner--centered h-32">
                 <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
                     <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
                         </path>
                     </svg>
                 </button>
-                <div class="brand--centered">
-                    <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--md">
+
+                <div class="brand--stack">
+                    <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
+                    <span class="brand__subtitle--tiny">Laissez Faire</span>
                     <h1 class="brand__title--lg">Match Results</h1>
                 </div>
 
-                <button @click="$store.theme.toggle()" class="matches-theme-toggle absolute right-0">
+                <button @click="$store.theme.toggle()" class="theme-toggle absolute right-0">
                     <template x-if="!$store.theme.isLight">
                         <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -17,282 +17,276 @@
 </head>
 
 <body class="page-body" x-data="teamsApp">
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <span class="top-bar__text">Laissez Faire</span>
-    </div>
+    <header class="teams-header border-b border-orange-500/10">
+        <div class="nav-bar__inner--centered h-32">
+            <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
+                <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                    </path>
+                </svg>
+            </button>
 
-    <div class="container--lg">
-        <header class="teams-header">
-            <div class="nav-bar__inner--centered">
-                <button @click="location.href='dashboard.html'" class="back-btn--shadow absolute left-0">
-                    <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
-                    </svg>
-                </button>
-                <div class="brand--centered">
-                    <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--md">
-                    <h1 class="brand__title--lg">Teams Explorer</h1>
-                </div>
-
-                <div class="absolute right-0 flex items-center gap-4">
-                    <button @click="location.href='pit-scout.html'"
-                        class="btn-submit py-2 px-6 text-xs font-black uppercase tracking-widest min-w-[140px]">New Pit
-                        Scout</button>
-                    <button @click="$store.theme.toggle()" class="matches-theme-toggle">
-                        <template x-if="!$store.theme.isLight">
-                            <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
-                                </path>
-                            </svg>
-                        </template>
-                        <template x-if="$store.theme.isLight">
-                            <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-                                </path>
-                            </svg>
-                        </template>
-                    </button>
-                </div>
+            <div class="brand--stack">
+                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--lg">
+                <span class="brand__subtitle--tiny">Laissez Faire</span>
+                <h1 class="brand__title--lg">Teams Explorer</h1>
             </div>
-        </header>
 
-        <!-- Search -->
-        <div class="filter-panel pt-4">
-            <div class="filter-group w-full">
-                <label class="form-label--filter text-orange-500 font-black">Find Official Tournament Teams</label>
-                <input x-model="searchQuery" type="text" placeholder="Team # or Name..." class="form-input--search">
+            <div class="absolute right-0 flex items-center">
+                <button @click="$store.theme.toggle()" class="theme-toggle">
+                    <template x-if="!$store.theme.isLight">
+                        <svg class="theme-icon--sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
+                            </path>
+                        </svg>
+                    </template>
+                    <template x-if="$store.theme.isLight">
+                        <svg class="theme-icon--moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                            </path>
+                        </svg>
+                    </template>
+                </button>
             </div>
         </div>
+    </header>
 
-        <!-- Main Loading -->
-        <template x-if="loading">
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Loading Competition Teams...</p>
-            </div>
-        </template>
+    <div class="pt-6 flex justify-end px-4">
+        <button @click="location.href='pit-scout.html'"
+            class="btn-submit py-2 px-6 text-xs font-black uppercase tracking-widest min-w-[140px]">New Pit
+            Scout</button>
+    </div>
 
-        <!-- Team List -->
-        <div class="match-grid">
-            <template x-for="team in filteredTeams" :key="team.teamNumber">
-                <div class="match-card-new"
-                    :class="expandedTeams.includes(team.teamNumber) ? 'ring-2 ring-orange-500/50' : ''">
-                    <!-- Team Header (Summary) -->
-                    <div @click="toggleTeam(team.teamNumber)" class="match-card__header cursor-pointer">
-                        <div class="flex items-center gap-4">
+    <!-- Search -->
+    <div class="filter-panel pt-4">
+        <div class="filter-group w-full">
+            <label class="form-label--filter text-orange-500 font-black">Find Official Tournament Teams</label>
+            <input x-model="searchQuery" type="text" placeholder="Team # or Name..." class="form-input--search">
+        </div>
+    </div>
+
+    <!-- Main Loading -->
+    <template x-if="loading">
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Loading Competition Teams...</p>
+        </div>
+    </template>
+
+    <!-- Team List -->
+    <div class="match-grid">
+        <template x-for="team in filteredTeams" :key="team.teamNumber">
+            <div class="match-card-new"
+                :class="expandedTeams.includes(team.teamNumber) ? 'ring-2 ring-orange-500/50' : ''">
+                <!-- Team Header (Summary) -->
+                <div @click="toggleTeam(team.teamNumber)" class="match-card__header cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <template x-if="team.logoUrl">
+                            <img :src="team.logoUrl" class="w-12 h-12 object-contain rounded-lg bg-white/5 p-1"
+                                alt="Logo">
+                        </template>
+                        <template x-if="!team.logoUrl">
+                            <div class="scout-report__team-badge" x-text="'#' + team.teamNumber"></div>
+                        </template>
+                        <div class="flex flex-col">
                             <template x-if="team.logoUrl">
-                                <img :src="team.logoUrl" class="w-12 h-12 object-contain rounded-lg bg-white/5 p-1"
-                                    alt="Logo">
+                                <span class="text-[10px] text-orange-500 font-black uppercase"
+                                    x-text="'#' + team.teamNumber"></span>
                             </template>
-                            <template x-if="!team.logoUrl">
-                                <div class="scout-report__team-badge" x-text="'#' + team.teamNumber"></div>
-                            </template>
-                            <div class="flex flex-col">
-                                <template x-if="team.logoUrl">
-                                    <span class="text-[10px] text-orange-500 font-black uppercase"
-                                        x-text="'#' + team.teamNumber"></span>
-                                </template>
-                                <span class="font-black text-white text-lg leading-tight" x-text="team.name"></span>
-                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"
-                                    x-text="team.city + ', ' + team.country"></span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <template x-if="pitReports[team.teamNumber]?.length">
-                                <span
-                                    class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Pit
-                                    Scouted</span>
-                            </template>
-                            <svg class="match-card__chevron"
-                                :class="expandedTeams.includes(team.teamNumber) ? 'rotate-180' : ''" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                    d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
+                            <span class="font-black text-white text-lg leading-tight" x-text="team.name"></span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"
+                                x-text="team.city + ', ' + team.country"></span>
                         </div>
                     </div>
+                    <div class="flex items-center gap-3">
+                        <template x-if="pitReports[team.teamNumber]?.length">
+                            <span
+                                class="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Pit
+                                Scouted</span>
+                        </template>
+                        <svg class="match-card__chevron"
+                            :class="expandedTeams.includes(team.teamNumber) ? 'rotate-180' : ''" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
 
-                    <!-- Expanded Details -->
-                    <div x-show="expandedTeams.includes(team.teamNumber)"
-                        x-transition:enter="transition ease-out duration-200"
-                        x-transition:enter-start="opacity-0 -translate-y-2"
-                        x-transition:enter-end="opacity-100 translate-y-0" class="match-expanded">
+                <!-- Expanded Details -->
+                <div x-show="expandedTeams.includes(team.teamNumber)"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0" class="match-expanded">
 
-                        <!-- API Section (Orange Header) -->
-                        <div class="bg-orange-500/5 border-b border-orange-500/20 p-4 space-y-4">
-                            <div class="flex justify-between items-start">
-                                <div class="space-y-1">
-                                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-orange-500">Official
-                                        Honors</h3>
-                                    <div class="flex flex-wrap gap-2">
-                                        <template x-for="award in team.awards || []">
-                                            <div
-                                                class="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded text-slate-300 flex flex-col">
-                                                <span class="font-bold text-orange-400" x-text="award.name"></span>
-                                                <span class="text-white/80" x-text="award.event_name"></span>
-                                                <span class="text-[9px] text-slate-500" x-text="award.year"></span>
-                                            </div>
-                                        </template>
-                                        <template x-if="!(team.awards?.length)">
-                                            <span class="text-xs text-slate-500 italic">No awards listed on TBA</span>
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="text-right space-y-2 max-w-[150px] sm:max-w-none">
-                                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">Event
-                                        History</h3>
-
-                                    <!-- Default View (2026 & 2025) -->
-                                    <div class="flex flex-col gap-2">
-                                        <template x-for="event in (team.events || []).filter(e => e.year >= 2025)">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[10px] text-white font-bold text-right"
-                                                    x-text="event.name"></span>
-                                                <span class="text-[9px] text-orange-500/80 font-black uppercase"
-                                                    x-text="event.year + ' Season'"></span>
-                                            </div>
-                                        </template>
-                                    </div>
-
-                                    <!-- Hidden History (Older than 2025) -->
-                                    <template x-if="(team.events || []).some(e => e.year < 2025)">
-                                        <div class="pt-1">
-                                            <button @click="toggleHistory(team.teamNumber)"
-                                                class="text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-orange-500 transition-colors flex items-center gap-1 ml-auto">
-                                                <span
-                                                    x-text="expandedHistory.includes(team.teamNumber) ? 'Hide Past History' : 'View Past History'"></span>
-                                                <svg class="w-2 h-2 transition-transform"
-                                                    :class="expandedHistory.includes(team.teamNumber) ? 'rotate-180' : ''"
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M19 9l-7 7-7-7" stroke-width="4" />
-                                                </svg>
-                                            </button>
-
-                                            <div x-show="expandedHistory.includes(team.teamNumber)" x-transition
-                                                class="flex flex-col gap-2 mt-2 border-t border-white/5 pt-2">
-                                                <template
-                                                    x-for="event in (team.events || []).filter(e => e.year < 2025)">
-                                                    <div class="flex flex-col items-end opacity-70">
-                                                        <span class="text-[9px] text-slate-300 font-bold text-right"
-                                                            x-text="event.name"></span>
-                                                        <span class="text-[8px] text-slate-500 font-black"
-                                                            x-text="event.year"></span>
-                                                    </div>
-                                                </template>
-                                            </div>
+                    <!-- API Section (Orange Header) -->
+                    <div class="bg-orange-500/5 border-b border-orange-500/20 p-4 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div class="space-y-1">
+                                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-orange-500">Official
+                                    Honors</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="award in team.awards || []">
+                                        <div
+                                            class="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded text-slate-300 flex flex-col">
+                                            <span class="font-bold text-orange-400" x-text="award.name"></span>
+                                            <span class="text-white/80" x-text="award.event_name"></span>
+                                            <span class="text-[9px] text-slate-500" x-text="award.year"></span>
                                         </div>
+                                    </template>
+                                    <template x-if="!(team.awards?.length)">
+                                        <span class="text-xs text-slate-500 italic">No awards listed on TBA</span>
                                     </template>
                                 </div>
                             </div>
-                        </div>
+                            <div class="text-right space-y-2 max-w-[150px] sm:max-w-none">
+                                <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">Event
+                                    History</h3>
 
-                        <!-- Pit Scouting Section -->
-                        <div class="p-4 space-y-4">
-                            <h4
-                                class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-l-2 border-orange-500 pl-3">
-                                Pit Scouting Reports</h4>
-
-                            <div class="space-y-4">
-                                <template x-for="report in pitReports[team.teamNumber] || []" :key="report.id">
-                                    <div class="scout-report">
-                                        <div @click="togglePitReport(report.id)" class="scout-report__summary-header">
-                                            <div class="scout-report__summary-left">
-                                                <div class="flex flex-col">
-                                                    <div class="scout-report__scouter-summary">
-                                                        <span class="scout-report__scouter-label">SCOUTER TEAM</span>
-                                                        <span class="scout-report__scouter-team-val"
-                                                            x-text="'#' + report.meta.scouterTeam"></span>
-                                                        <template x-if="report.meta.jsVerrified">
-                                                            <svg class="scout-report__verified-tick w-3 h-3" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                        </template>
-                                                    </div>
-                                                    <span class="text-[9px] text-slate-500 font-bold mt-1 ml-1"
-                                                        x-text="new Date(report.meta.timestamp).toLocaleString()"></span>
-                                                </div>
-                                            </div>
-                                            <div class="scout-report__summary-right">
-                                                <span class="text-[10px] text-slate-500"
-                                                    x-text="formatDate(report.createdAt)"></span>
-                                                <svg class="h-4 w-4 transition-transform duration-200"
-                                                    :class="expandedPitReports.includes(report.id) ? 'rotate-180' : ''"
-                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                                </svg>
-                                            </div>
+                                <!-- Default View (2026 & 2025) -->
+                                <div class="flex flex-col gap-2">
+                                    <template x-for="event in (team.events || []).filter(e => e.year >= 2025)">
+                                        <div class="flex flex-col items-end">
+                                            <span class="text-[10px] text-white font-bold text-right"
+                                                x-text="event.name"></span>
+                                            <span class="text-[9px] text-orange-500/80 font-black uppercase"
+                                                x-text="event.year + ' Season'"></span>
                                         </div>
+                                    </template>
+                                </div>
 
-                                        <div x-show="expandedPitReports.includes(report.id)"
-                                            class="scout-report__details border-t border-slate-800/50 bg-slate-950/20">
-                                            <div class="grid grid-cols-2 gap-4 p-4">
-                                                <div class="space-y-3">
-                                                    <div class="flex flex-col">
-                                                        <span
-                                                            class="text-[10px] text-orange-500 font-black uppercase">Drive
-                                                            Base</span>
-                                                        <span class="text-sm text-white font-bold"
-                                                            x-text="report.data?.driveBase"></span>
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <span
-                                                            class="text-[10px] text-orange-500 font-black uppercase">Intake</span>
-                                                        <span class="text-xs text-slate-300"
-                                                            x-text="report.data?.intake"></span>
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <span
-                                                            class="text-[10px] text-orange-500 font-black uppercase">Shooter</span>
-                                                        <span class="text-xs text-slate-300"
-                                                            x-text="report.data?.shooter"></span>
-                                                    </div>
+                                <!-- Hidden History (Older than 2025) -->
+                                <template x-if="(team.events || []).some(e => e.year < 2025)">
+                                    <div class="pt-1">
+                                        <button @click="toggleHistory(team.teamNumber)"
+                                            class="text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-orange-500 transition-colors flex items-center gap-1 ml-auto">
+                                            <span
+                                                x-text="expandedHistory.includes(team.teamNumber) ? 'Hide Past History' : 'View Past History'"></span>
+                                            <svg class="w-2 h-2 transition-transform"
+                                                :class="expandedHistory.includes(team.teamNumber) ? 'rotate-180' : ''"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path d="M19 9l-7 7-7-7" stroke-width="4" />
+                                            </svg>
+                                        </button>
+
+                                        <div x-show="expandedHistory.includes(team.teamNumber)" x-transition
+                                            class="flex flex-col gap-2 mt-2 border-t border-white/5 pt-2">
+                                            <template x-for="event in (team.events || []).filter(e => e.year < 2025)">
+                                                <div class="flex flex-col items-end opacity-70">
+                                                    <span class="text-[9px] text-slate-300 font-bold text-right"
+                                                        x-text="event.name"></span>
+                                                    <span class="text-[8px] text-slate-500 font-black"
+                                                        x-text="event.year"></span>
                                                 </div>
-                                                <div class="space-y-3">
-                                                    <div class="flex flex-col">
-                                                        <span
-                                                            class="text-[10px] text-orange-500 font-black uppercase">Ball
-                                                            Capacity</span>
-                                                        <span class="text-sm text-white font-bold"
-                                                            x-text="report.data?.ballCapacity"></span>
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <span
-                                                            class="text-[10px] text-orange-500 font-black uppercase">Auto
-                                                            / Teleop Strategies</span>
-                                                        <p class="text-[11px] text-slate-400 italic"
-                                                            x-text="'Auto: ' + report.data?.autoStrategy"></p>
-                                                        <p class="text-[11px] text-slate-400 italic"
-                                                            x-text="'Teleop: ' + report.data?.teleopStrategy"></p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            </template>
                                         </div>
-                                    </div>
-                                </template>
-
-                                <template x-if="!(pitReports[team.teamNumber]?.length)">
-                                    <div
-                                        class="flex flex-col items-center justify-center py-6 bg-slate-900/40 rounded-xl border border-dashed border-slate-800">
-                                        <p class="text-xs text-slate-500 italic pb-3">No Pit Scouting reports for this
-                                            team</p>
-                                        <button @click="location.href='pit-scout.html?team=' + team.teamNumber"
-                                            class="btn-primary--sm">Scout This Team</button>
                                     </div>
                                 </template>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Pit Scouting Section -->
+                    <div class="p-4 space-y-4">
+                        <h4
+                            class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-l-2 border-orange-500 pl-3">
+                            Pit Scouting Reports</h4>
+
+                        <div class="space-y-4">
+                            <template x-for="report in pitReports[team.teamNumber] || []" :key="report.id">
+                                <div class="scout-report">
+                                    <div @click="togglePitReport(report.id)" class="scout-report__summary-header">
+                                        <div class="scout-report__summary-left">
+                                            <div class="flex flex-col">
+                                                <div class="scout-report__scouter-summary">
+                                                    <span class="scout-report__scouter-label">SCOUTER TEAM</span>
+                                                    <span class="scout-report__scouter-team-val"
+                                                        x-text="'#' + report.meta.scouterTeam"></span>
+                                                    <template x-if="report.meta.jsVerrified">
+                                                        <svg class="scout-report__verified-tick w-3 h-3" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                        </svg>
+                                                    </template>
+                                                </div>
+                                                <span class="text-[9px] text-slate-500 font-bold mt-1 ml-1"
+                                                    x-text="new Date(report.meta.timestamp).toLocaleString()"></span>
+                                            </div>
+                                        </div>
+                                        <div class="scout-report__summary-right">
+                                            <span class="text-[10px] text-slate-500"
+                                                x-text="formatDate(report.createdAt)"></span>
+                                            <svg class="h-4 w-4 transition-transform duration-200"
+                                                :class="expandedPitReports.includes(report.id) ? 'rotate-180' : ''"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <div x-show="expandedPitReports.includes(report.id)"
+                                        class="scout-report__details border-t border-slate-800/50 bg-slate-950/20">
+                                        <div class="grid grid-cols-2 gap-4 p-4">
+                                            <div class="space-y-3">
+                                                <div class="flex flex-col">
+                                                    <span class="text-[10px] text-orange-500 font-black uppercase">Drive
+                                                        Base</span>
+                                                    <span class="text-sm text-white font-bold"
+                                                        x-text="report.data?.driveBase"></span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-[10px] text-orange-500 font-black uppercase">Intake</span>
+                                                    <span class="text-xs text-slate-300"
+                                                        x-text="report.data?.intake"></span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span
+                                                        class="text-[10px] text-orange-500 font-black uppercase">Shooter</span>
+                                                    <span class="text-xs text-slate-300"
+                                                        x-text="report.data?.shooter"></span>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div class="flex flex-col">
+                                                    <span class="text-[10px] text-orange-500 font-black uppercase">Ball
+                                                        Capacity</span>
+                                                    <span class="text-sm text-white font-bold"
+                                                        x-text="report.data?.ballCapacity"></span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span class="text-[10px] text-orange-500 font-black uppercase">Auto
+                                                        / Teleop Strategies</span>
+                                                    <p class="text-[11px] text-slate-400 italic"
+                                                        x-text="'Auto: ' + report.data?.autoStrategy"></p>
+                                                    <p class="text-[11px] text-slate-400 italic"
+                                                        x-text="'Teleop: ' + report.data?.teleopStrategy"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="!(pitReports[team.teamNumber]?.length)">
+                                <div
+                                    class="flex flex-col items-center justify-center py-6 bg-slate-900/40 rounded-xl border border-dashed border-slate-800">
+                                    <p class="text-xs text-slate-500 italic pb-3">No Pit Scouting reports for this
+                                        team</p>
+                                    <button @click="location.href='pit-scout.html?team=' + team.teamNumber"
+                                        class="btn-primary--sm">Scout This Team</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                 </div>
-            </template>
-        </div>
+            </div>
+        </template>
+    </div>
     </div>
 
     <!-- Application Logic -->

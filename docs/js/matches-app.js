@@ -133,35 +133,50 @@ document.addEventListener('alpine:init', () => {
             return FRC_CONFIG.scoring[year] || FRC_CONFIG.scoring[FRC_CONFIG.defaultSeason];
         },
 
+        // Parses "5-10" or "10" into a numeric average or value
         parseFuel(val) {
-            if (!val || typeof val !== 'string') return 0;
-            const part = val.split('-')[0];
-            return parseInt(part) || 0;
+            if (!val) return 0;
+            if (typeof val === 'number') return val;
+            if (typeof val === 'string') {
+                if (val.includes('-')) {
+                    const parts = val.split('-').map(p => parseInt(p));
+                    return (parts[0] + parts[1]) / 2; // Use average for score estimation
+                }
+                return parseInt(val) || 0;
+            }
+            return 0;
         },
 
         calculateScores(entry, year) {
             const rules = this.getScoringRules(year);
             const fuelValue = rules.fuelValue || 1;
 
+            // Auto Fuel (if any) + Auto Level 1
             let autoFuel = this.parseFuel(entry.auto?.fuel);
-            let auto = (entry.auto?.level1 === 'success' ? rules.autoLevel1 : 0) + (autoFuel * fuelValue);
+            let autoPoints = (entry.auto?.level1 === 'success' ? rules.autoLevel1 : 0) + (autoFuel * fuelValue);
 
-            let teleopFuel = this.parseFuel(entry.transitionShift) +
-                this.parseFuel(entry.teleopShiftA) +
-                this.parseFuel(entry.teleopShiftB);
-            let teleop = teleopFuel * fuelValue;
+            // Teleop Fuel (Sum of shifts)
+            let fuelShifts = [
+                entry.transitionShift,
+                entry.teleopShiftA,
+                entry.teleopShiftB
+            ];
+            let totalFuel = fuelShifts.reduce((acc, val) => acc + this.parseFuel(val), 0);
+            let teleopPoints = totalFuel * fuelValue;
 
-            let endgame = 0;
-            if (entry.endgame?.level === 'level1') endgame = rules.endgameLevel1;
-            else if (entry.endgame?.level === 'level2') endgame = rules.endgameLevel2;
-            else if (entry.endgame?.level === 'level3') endgame = rules.endgameLevel3;
+            // Endgame
+            let endgamePoints = 0;
+            const level = entry.endgame?.level?.toLowerCase();
+            if (level === 'level1') endgamePoints = rules.endgameLevel1;
+            else if (level === 'level2') endgamePoints = rules.endgameLevel2;
+            else if (level === 'level3') endgamePoints = rules.endgameLevel3;
 
             return {
-                auto,
-                teleop,
-                endgame,
-                totalFuel: teleopFuel + autoFuel,
-                total: auto + teleop + endgame
+                auto: autoPoints,
+                teleop: teleopPoints,
+                endgame: endgamePoints,
+                totalFuel: totalFuel,
+                total: autoPoints + teleopPoints + endgamePoints
             };
         },
 
@@ -171,53 +186,18 @@ document.addEventListener('alpine:init', () => {
 
         formatDate(timestamp) {
             if (!timestamp) return 'N/A';
+            // Handle Firestore Timestamp vs Date
             const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            return date.toLocaleString();
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         },
 
         async loadScouterTeamData(id) {
-            const scout = this.findScoutById(id);
-            if (!scout || !scout.meta || !scout.meta.scouterTeam) return;
-
-            const tNum = scout.meta.scouterTeam;
-
-            if (this.teamDataCache[tNum]) {
-                scout.meta.scouterTeamData = this.teamDataCache[tNum];
-                return;
-            }
-
-            if (this.manualTeams[tNum]) {
-                this.teamDataCache[tNum] = this.manualTeams[tNum];
-                scout.meta.scouterTeamData = this.manualTeams[tNum];
-                return;
-            }
-
-            const info = await fetchFRCTeamInfo(tNum);
-            if (info) {
-                const data = {
-                    name: info.nickname || info.name,
-                    logo: null
-                };
-
-                const media = await fetchFRCTeamMedia(tNum, 2025);
-                const logo = media.find(m => m.type === 'avatar' || m.type === 'image');
-                if (logo && logo.direct_url) {
-                    data.logo = logo.direct_url;
-                } else if (logo && logo.base64Image) {
-                    data.logo = `data:image/png;base64,${logo.base64Image}`;
-                }
-
-                this.teamDataCache[tNum] = data;
-                scout.meta.scouterTeamData = data;
-            }
-        },
-
-        findScoutById(id) {
-            for (const key in this.scoutEntries) {
-                const s = this.scoutEntries[key].find(sc => sc.id === id);
-                if (s) return s;
-            }
-            return null;
+            // Optional: Fetch team logo/name for scouter team if needed
         }
     }));
 });

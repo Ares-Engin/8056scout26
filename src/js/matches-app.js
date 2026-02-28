@@ -42,8 +42,29 @@ document.addEventListener('alpine:init', () => {
                     this.loading = false;
                 });
             } catch (err) {
-                console.error(err);
-                this.errorMessage = 'Failed to initialize matches';
+                console.error("Init Error:", err);
+                this.errorMessage = 'Failed to initialize matches: ' + err.message;
+                this.loading = false;
+            }
+        },
+
+        async fetchMatches() {
+            this.loading = true;
+            this.errorMessage = '';
+            try {
+                // Fetch matches for all selected events
+                const allMatches = await Promise.all(
+                    this.selectedEvents.map(key => fetchFRCMatches(key))
+                );
+                // Flatten and add event key to each match for filtering
+                this.frcMatches = allMatches.flatMap((matches, i) =>
+                    matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
+                );
+                this.frcMatches.sort((a, b) => a.matchNumber - b.matchNumber);
+            } catch (e) {
+                console.error("Error fetching matches:", e);
+                this.errorMessage = 'Failed to fetch matches updates from API';
+            } finally {
                 this.loading = false;
             }
         },

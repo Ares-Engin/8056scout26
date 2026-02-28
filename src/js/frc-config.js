@@ -69,8 +69,9 @@ async function fetchFRCMatches(eventKey) {
     // Map TBA comp_levels to readable names
     const levelNames = {
         'qm': 'Qualification',
-        'qf': 'Quarterfinal',
-        'sf': 'Semifinal',
+        'p': 'Practice',
+        'qf': 'Playoffs',
+        'sf': 'Playoffs',
         'f': 'Playoffs'
     };
 
@@ -91,6 +92,8 @@ async function fetchFRCMatches(eventKey) {
         let description = '';
         if (match.comp_level === 'qm') {
             description = `Qualification ${match.match_number}`;
+        } else if (match.comp_level === 'p') {
+            description = `Practice ${match.match_number}`;
         } else if (match.comp_level === 'f') {
             description = `Final ${match.match_number}`;
         } else if (match.comp_level === 'sf' || match.comp_level === 'qf') {

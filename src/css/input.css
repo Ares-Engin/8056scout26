@@ -5,7 +5,7 @@
     --color-brand-orange: #f97316;
     --color-brand-orange-light: #fb923c;
     --color-brand-orange-dark: #ea580c;
-    --color-brand-orange-glow: rgba(249,115,22,0.4);
+    --color-brand-orange-glow: rgba(249, 115, 22, 0.4);
 }
 
 :root {
@@ -66,12 +66,12 @@ body {
 
 /* Search Highlighting */
 .highlight-search {
-    background-color: rgba(249,115,22,0.3);
+    background-color: rgba(249, 115, 22, 0.3);
     color: #fdba74;
     padding: 2px 4px;
     border-radius: 4px;
     font-weight: 800;
-    box-shadow: 0 0 10px rgba(249,115,22,0.4);
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
     transition: all 0.2s ease-in-out;
 }
 
@@ -176,7 +176,7 @@ body {
 }
 
 .brand__logo--lg {
-    @apply h-16 drop-shadow-[0_0_15px_rgba(249,115,22,0.3)];
+    @apply h-16 drop-shadow-[0_0_15px_rgba(249, 115, 22, 0.3)];
 }
 
 .brand__logo--xl {
@@ -184,7 +184,7 @@ body {
 }
 
 .brand__logo--hero {
-    @apply h-24 mb-6 drop-shadow-[0_0_20px_rgba(249,115,22,0.4)] animate-pulse;
+    @apply h-24 mb-6 drop-shadow-[0_0_20px_rgba(249, 115, 22, 0.4)] animate-pulse;
 }
 
 .brand__title {
@@ -679,7 +679,7 @@ body {
 }
 
 .filter-regional-list {
-    @apply flex flex-col gap-2 max-h-40 overflow-y-auto pr-2  ;
+    @apply flex flex-col gap-2 max-h-40 overflow-y-auto pr-2;
 }
 
 .filter-regional-btn {
@@ -821,140 +821,110 @@ body {
     @apply text-[9px] text-slate-600 italic;
 }
 
-/* Scout data in matches */
+/* ======================================================================
+   SCOUTING REPORTS V2 (MATCHES PAGE)
+   ====================================================================== */
+
 .scout-section {
-    @apply p-4 space-y-4;
+    @apply mt-8 border-t border-slate-800/50 pt-8;
 }
 
 .scout-section__title {
-    @apply text-[10px] font-black text-slate-500 uppercase tracking-widest;
+    @apply text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-4;
 }
 
-.scout-report {
-    @apply bg-slate-900/50 rounded-2xl p-4 border border-slate-800;
+.scout-section__title::after {
+    content: "";
+    @apply flex-1 h-px bg-slate-800/50;
 }
 
-.scout-report__header {
-    @apply flex justify-between items-start mb-4;
+.scout-report-v2 {
+    @apply bg-slate-900/40 rounded-[2.5rem] border border-slate-800/50 overflow-hidden transition-all duration-300 mb-4;
 }
 
-.scout-report__team-badge {
-    @apply w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-black text-orange-500 border border-slate-700;
+.scout-report--collapsed {
+    @apply hover:border-orange-500/30 hover:bg-slate-900/60;
 }
 
-.scout-report__team-name {
-    @apply text-xs font-black text-white block;
+.scout-report--expanded {
+    @apply border-orange-500/20 bg-slate-900/80 shadow-2xl;
+}
+
+.scout-report__summary-header {
+    @apply p-6 cursor-pointer flex items-center justify-between gap-4 select-none;
+}
+
+.scout-report__team-badge-sm {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm border shadow-inner;
+}
+
+.scout-report__scouter-summary {
+    @apply flex flex-col items-center sm:items-start;
 }
 
 .scout-report__scouter-label {
-    @apply text-slate-500 block;
+    @apply text-[10px] text-slate-500 uppercase font-black tracking-widest leading-none mb-1;
 }
 
-.scout-report__scouter-team {
-    @apply text-orange-500 font-bold;
+.scout-report__scouter-team-val {
+    @apply text-sm font-black text-white;
 }
 
-.scout-data-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+.scout-report__verified-tick {
+    @apply bg-green-500 text-white rounded-full p-0.5 shadow-[0_0_10px_rgba(34, 197, 94, 0.4)];
 }
 
-.scout-stat-grid {
-    @apply grid grid-cols-2 gap-2 text-[10px];
+.scout-report__details {
+    @apply border-t border-slate-800/50 bg-slate-950/20;
 }
 
-.scout-stat-box {
-    @apply bg-slate-950/50 p-2 rounded-xl border border-slate-800;
+.scout-report__details-inner {
+    @apply p-6 sm:p-8;
 }
 
-.scout-stat-box--endgame {
-    @apply bg-slate-950/50 p-2 rounded-xl border border-slate-800 flex justify-between items-center;
+.stats-box-dark {
+    @apply bg-slate-900/40 border border-slate-800/40 p-5 rounded-3xl shadow-sm hover:border-slate-700/50 transition-colors;
 }
 
-.scout-stat-label {
-    @apply text-slate-500 block text-[8px] uppercase font-black mb-1;
+.stat-pill {
+    @apply bg-slate-950/60 p-3 rounded-2xl border border-slate-800/30 flex flex-col gap-1;
 }
 
-.scout-stat-label--no-mb {
-    @apply text-slate-500 block text-[8px] uppercase font-black;
+.stat-pill__label {
+    @apply text-[9px] font-black text-slate-500 uppercase tracking-widest;
 }
 
-.scout-stat-row {
-    @apply flex justify-between;
+.stat-pill__value {
+    @apply text-xs font-black;
 }
 
-.scout-stat-key {
-    @apply text-slate-400;
+.stat-bar-row {
+    @apply flex justify-between items-center bg-slate-950/40 px-4 py-3 rounded-xl border border-slate-800/20;
 }
 
-.scout-stat-value {
-    @apply text-white font-bold;
+.stat-bar-row__label {
+    @apply text-[10px] font-bold text-slate-400;
 }
 
-.scout-endgame-result {
-    @apply text-white font-black text-xs uppercase;
+.stat-bar-row__value {
+    @apply text-xs font-black tracking-tight;
 }
 
-.scout-failed-badge {
-    @apply bg-red-500/20 text-red-500 text-[8px] font-black px-2 py-0.5 rounded-full border border-red-500/30 uppercase;
-}
-
-/* Ratings */
-.ratings-panel {
-    @apply bg-slate-950/50 p-3 rounded-xl border border-slate-800 space-y-3;
-}
-
-.ratings-label {
-    @apply text-slate-500 block text-[8px] uppercase font-black;
-}
-
-.ratings-rows {
-    @apply space-y-2;
-}
-
-.ratings-row {
-    @apply flex items-center gap-2;
-}
-
-.ratings-row__label {
-    @apply text-[9px] text-slate-400 w-10 uppercase;
-}
-
-.ratings-bar {
-    @apply flex-1 h-1 bg-slate-800 rounded-full overflow-hidden;
-}
-
-.ratings-bar__fill {
-    @apply h-full bg-orange-500;
-}
-
-.ratings-bar__value {
-    @apply text-[9px] font-black text-orange-500;
-}
-
-.ratings-reliability {
-    @apply pt-2 border-t border-slate-800/50;
-}
-
-.ratings-reliability__label {
-    @apply text-[8px] text-slate-500 uppercase font-black block mb-1;
-}
-
-.ratings-reliability__value {
-    @apply text-[10px] font-bold;
-}
-
-/* Detail button */
-.btn-detail {
-    @apply w-full mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors border border-slate-700;
+.ratings-card {
+    @apply bg-slate-950/40 border border-slate-800/40 p-6 rounded-[2rem] h-full;
 }
 
 /* Empty state */
 .empty-scout {
-    @apply text-center py-8 bg-slate-950/30 rounded-2xl border border-dashed border-slate-800;
+    @apply text-center py-12 bg-slate-950/20 rounded-[3rem] border-2 border-dashed border-slate-800/50 flex flex-col items-center gap-3;
+}
+
+.empty-scout__icon {
+    @apply w-16 h-16 bg-slate-900 rounded-3xl flex items-center justify-center border border-slate-800 text-slate-700;
 }
 
 .empty-scout__text {
-    @apply text-[10px] text-slate-600 font-black uppercase tracking-widest;
+    @apply text-[10px] text-slate-600 font-black uppercase tracking-[0.3em] mt-2;
 }
 
 /* ======================================================================

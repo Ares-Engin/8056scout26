@@ -37,7 +37,8 @@ document.addEventListener('alpine:init', () => {
                         const data = doc.data();
                         data.id = doc.id; // Store Firestore ID
                         if (data.matchNumber) {
-                            const matchType = data.meta?.matchType || 'Qualification';
+                            // Support both old flat format (data.matchType or data.data.matchType) and new meta format
+                            const matchType = data.meta?.matchType || data.data?.matchType || data.matchType || 'Qualification';
                             const key = `${data.regional}_${matchType}_${data.matchNumber}`;
                             if (!this.scoutEntries[key]) this.scoutEntries[key] = [];
                             this.scoutEntries[key].push(data);

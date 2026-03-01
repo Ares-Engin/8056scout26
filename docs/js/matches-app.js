@@ -19,8 +19,14 @@ document.addEventListener('alpine:init', () => {
             try {
                 this.manualTeams = await loadManualTeams();
 
-                this.$watch('selectedEvents', async () => {
-                    await this.fetchMatches();
+                this.$watch('selectedEvents', () => {
+                    this.fetchMatches(); // No longer awaited since Alpine handles the re-render reactivity 
+                });
+
+                this.$watch('selectedSeasons', () => {
+                    // Changing season can change the available events, but we just trigger a refetch
+                    // the filteredMatches computed function handles the visual filtering.
+                    this.fetchMatches();
                 });
 
                 await this.fetchMatches();
@@ -31,7 +37,8 @@ document.addEventListener('alpine:init', () => {
                         const data = doc.data();
                         data.id = doc.id; // Store Firestore ID
                         if (data.matchNumber) {
-                            const key = `${data.regional}_${data.matchNumber}`;
+                            const matchType = data.meta?.matchType || 'Qualification';
+                            const key = `${data.regional}_${matchType}_${data.matchNumber}`;
                             if (!this.scoutEntries[key]) this.scoutEntries[key] = [];
                             this.scoutEntries[key].push(data);
                         }
@@ -111,32 +118,45 @@ document.addEventListener('alpine:init', () => {
             });
 
             scoutedKeys.forEach(key => {
-                const [regional, matchNum] = key.split('_');
-                const alreadyInList = list.some(m => m.eventKey === regional && m.matchNumber.toString() === matchNum);
+                const [regional, scoutType, matchNumStr] = key.split('_');
+                const matchNum = Number(matchNumStr);
 
-                // We must also infer if the scouted match belongs to Playoffs or Quals based on its meta
+                // Map frontend scouted Type back to TBA compLevel
+                let scoutCompLevel = 'qm';
+                if (scoutType === 'Practice') scoutCompLevel = 'p';
+                if (scoutType === 'Playoffs') scoutCompLevel = 'sf';
+
+                // Look for an existing API match that is strictly matching BOTH event + matchNumber AND match type!
+                const existingApiMatchListIndex = list.findIndex(m =>
+                    m.eventKey === regional &&
+                    m.matchNumber === matchNum &&
+                    (
+                        (scoutType === 'Practice' && m.compLevel === 'p') ||
+                        (scoutType === 'Qualification' && m.compLevel === 'qm') ||
+                        (scoutType === 'Playoffs' && ['qf', 'sf', 'f'].includes(m.compLevel))
+                    )
+                );
+
                 const entries = this.scoutEntries[key];
-                const firstEntry = entries[0];
-                const scoutType = firstEntry.meta?.matchType || 'Qualification';
 
-                if (!alreadyInList) {
+                if (existingApiMatchListIndex === -1) {
                     const eventObj = this.availableEvents.find(e => e.key === regional);
 
                     list.push({
-                        matchNumber: Number(matchNum),
+                        matchNumber: matchNum,
                         eventKey: regional,
                         eventShort: eventObj?.name.split(' ')[0] || regional,
                         year: eventObj?.season || '',
                         type: scoutType,
                         description: `${scoutType} ${matchNum}`,
-                        compLevel: scoutType === 'Qualification' ? 'qm' : scoutType === 'Practice' ? 'p' : 'sf',
+                        compLevel: scoutCompLevel,
                         teams: [],
                         isManual: true,
                         scoutedTeams: entries.map(e => e.teamNumber)
                     });
                 } else {
-                    // Update type of existing match if it only exists in scout data with different type assumption (unlikely for API matches but good practice)
-                    const mInfo = list.find(m => m.eventKey === regional && m.matchNumber.toString() === matchNum);
+                    // Update type of existing match if it only exists in scout data with different type assumption
+                    const mInfo = list[existingApiMatchListIndex];
                     if (mInfo && mInfo.isManual) {
                         mInfo.type = scoutType;
                     }
@@ -201,34 +221,40 @@ document.addEventListener('alpine:init', () => {
         },
 
         calculateScores(entry, year) {
-            const rules = this.getScoringRules(year);
-            const fuelValue = rules.fuelValue || 1;
+            if (!entry) return { auto: 0, teleop: 0, endgame: 0, totalFuel: 0, total: 0 };
 
-            // Auto Fuel (if any) + Auto Level 1
-            let autoFuel = this.parseFuel(entry.auto?.fuel);
-            let autoPoints = (entry.auto?.level1 === 'success' ? rules.autoLevel1 : 0) + (autoFuel * fuelValue);
+            // In 2026, scoring rules might vary. Defaulting to points per action.
+            // L1/Net (2pts), L2/L3/Proc (3/4/6pts), L4 (5pts)
 
-            // Teleop Fuel (Sum of shifts)
-            let fuelShifts = [
-                entry.transitionShift,
-                entry.teleopShiftA,
-                entry.teleopShiftB
-            ];
-            let totalFuel = fuelShifts.reduce((acc, val) => acc + this.parseFuel(val), 0);
-            let teleopPoints = totalFuel * fuelValue;
+            // Auto
+            let autoPoints = 0;
+            autoPoints += (entry.auto?.l1 || 0) * 3;
+            autoPoints += (entry.auto?.l2 || 0) * 4;
+            autoPoints += (entry.auto?.l3 || 0) * 6;
+            autoPoints += (entry.auto?.l4 || 0) * 7;
+            autoPoints += (entry.auto?.net || 0) * 4;
+            autoPoints += (entry.auto?.processor || 0) * 6;
+            if (entry.auto?.level1 === 'success') autoPoints += 3; // Leave line
+
+            // Teleop (Shifts A/B logic -> Coral/Algae equivalent proxy mapping for now based on previous var reuse by user)
+            // Wait, looking at the code, in scout-app transitionShift is L1, teleopShiftA is L2, teleopShiftB is L3, etc.
+            let teleopPoints = 0;
+            teleopPoints += (entry.transitionShift || 0) * 2; // L1 Proxy
+            teleopPoints += (entry.teleopShiftA || 0) * 3; // L2 Proxy
+            teleopPoints += (entry.teleopShiftB || 0) * 4; // L3 Proxy
 
             // Endgame
             let endgamePoints = 0;
             const level = entry.endgame?.level?.toLowerCase();
-            if (level === 'level1') endgamePoints = rules.endgameLevel1;
-            else if (level === 'level2') endgamePoints = rules.endgameLevel2;
-            else if (level === 'level3') endgamePoints = rules.endgameLevel3;
+            if (level === 'park') endgamePoints = 2;
+            else if (level === 'shallow') endgamePoints = 6;
+            else if (level === 'deep') endgamePoints = 12;
 
             return {
                 auto: autoPoints,
                 teleop: teleopPoints,
                 endgame: endgamePoints,
-                totalFuel: totalFuel,
+                totalFuel: 0,
                 total: autoPoints + teleopPoints + endgamePoints
             };
         },

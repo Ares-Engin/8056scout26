@@ -35,22 +35,6 @@
             </div>
 
             <div class="top-nav__right">
-                <button @click="$store.theme.toggle()" class="theme-toggle">
-                    <template x-if="!$store.theme.isLight">
-                        <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z">
-                            </path>
-                        </svg>
-                    </template>
-                    <template x-if="$store.theme.isLight">
-                        <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-                            </path>
-                        </svg>
-                    </template>
-                </button>
             </div>
         </div>
     </nav>
@@ -253,7 +237,7 @@
                                             <div class="scout-report__score-badge">
                                                 <span class="scout-report__score-label">Total</span>
                                                 <span class="scout-report__score-value"
-                                                    x-text="calculateScores(entry, match.year).total"></span>
+                                                    x-text="calculateScores(entry.data, match.year).total"></span>
                                             </div>
                                             <svg class="h-4 w-4 transition-transform duration-200"
                                                 :class="expandedReports.includes(entry.id) ? 'rotate-180' : ''"
@@ -279,100 +263,94 @@
                                                 x-text="(entry.meta?.alliance || 'Unknown') + ' Alliance'"></span>
                                         </div>
 
-                                        <!-- Data Grids -->
-                                        <div class="scout-data-grid">
-                                            <!-- Performance Stats -->
-                                            <div class="stack-spacing--2">
-                                                <div class="scout-stat-grid">
-                                                    <div class="scout-stat-box">
-                                                        <span class="scout-stat-label">Autonomous</span>
-                                                        <div class="flex-col-gap">
-                                                            <div class="scout-stat-row">
-                                                                <span class="scout-stat-key">Level 1:</span>
-                                                                <span class="font-bold"
-                                                                    :class="entry.auto?.level1 === 'success' ? 'text-green-500' : 'text-red-500'"
-                                                                    x-text="entry.auto?.level1 === 'success' ? 'YES' : (entry.auto?.level1 || 'NO')"></span>
-                                                            </div>
-                                                            <div class="scout-stat-row">
-                                                                <span class="scout-stat-key">Taxi:</span>
-                                                                <span class="font-bold"
-                                                                    :class="entry.auto?.taxi ? 'text-green-500' : 'text-red-500'"
-                                                                    x-text="entry.auto?.taxi ? 'YES' : 'NO'"></span>
-                                                            </div>
-                                                        </div>
+                                        <div class="scout-stat-grid">
+                                            <!-- Autonomous Column -->
+                                            <div class="scout-stat-box">
+                                                <span class="scout-stat-label">Autonomous</span>
+                                                <div class="flex-col-gap">
+                                                    <div class="scout-stat-row">
+                                                        <span class="scout-stat-key">Coral (L1/L2/L3/L4)</span>
+                                                        <span class="font-bold text-white"
+                                                            x-text="`${entry.data?.auto?.l1 || 0}/${entry.data?.auto?.l2 || 0}/${entry.data?.auto?.l3 || 0}/${entry.data?.auto?.l4 || 0}`"></span>
                                                     </div>
-                                                    <div class="scout-stat-box">
-                                                        <span class="scout-stat-label">Tele-Operated</span>
-                                                        <div class="flex-col-gap">
-                                                            <div class="scout-stat-row">
-                                                                <span class="scout-stat-key">Fuel:</span>
-                                                                <span class="scout-stat-value"
-                                                                    x-text="calculateScores(entry, match.year).totalFuel"></span>
-                                                            </div>
-                                                            <div class="scout-stat-row">
-                                                                <span class="scout-stat-key">Defense:</span>
-                                                                <span class="scout-stat-value"
-                                                                    x-text="entry.teleop?.defense || entry.ratings?.defense || 0"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Endgame -->
-                                                <div class="scout-stat-box--endgame">
-                                                    <div class="flex justify-between items-center w-full">
-                                                        <div class="flex flex-col">
-                                                            <span class="scout-stat-label--no-mb">Endgame</span>
-                                                            <span class="scout-endgame-result"
-                                                                x-text="entry.endgame?.level || 'None'"></span>
-                                                        </div>
-                                                        <template x-if="entry.endgame?.climbTime">
-                                                            <span
-                                                                class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded"
-                                                                x-text="entry.endgame.climbTime + 's'"></span>
-                                                        </template>
+                                                    <div class="scout-stat-row">
+                                                        <span class="scout-stat-key">Algae (Net/Proc/L1)</span>
+                                                        <span class="font-bold text-white"
+                                                            x-text="`${entry.data?.auto?.net || 0}/${entry.data?.auto?.processor || 0}/${entry.data?.auto?.level1 === 'none' ? 0 : 1}`"></span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Ratings & Reliability -->
-                                            <div class="ratings-panel">
-                                                <span class="ratings-label">Scouter Ratings</span>
-                                                <div class="ratings-rows">
-                                                    <template
-                                                        x-for="(label, key) in { driver: 'Driver', speed: 'Speed', defense: 'Def', stability: 'Stability' }">
-                                                        <div class="ratings-row">
-                                                            <span class="ratings-row__label" x-text="label"></span>
-                                                            <div class="ratings-bar">
-                                                                <div class="ratings-bar__fill"
-                                                                    :style="'width: ' + ((entry.ratings?.[key] || 0) * 20) + '%'">
-                                                                </div>
-                                                            </div>
-                                                            <span class="ratings-bar__value"
-                                                                x-text="(entry.ratings?.[key] || 0) + '/5'"></span>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                                <div class="scout-report__comments" x-show="entry.ratings?.comments">
-                                                    <span
-                                                        class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Comments</span>
-                                                    <p class="text-xs text-slate-300 italic"
-                                                        x-text="entry.ratings?.comments"></p>
+                                            <!-- Teleop Column -->
+                                            <div class="scout-stat-box">
+                                                <span class="scout-stat-label">Teleop</span>
+                                                <div class="flex-col-gap">
+                                                    <div class="scout-stat-row">
+                                                        <span class="scout-stat-key">Coral (L1/L2/L3/L4)</span>
+                                                        <span class="font-bold text-white"
+                                                            x-text="`${entry.data?.transitionShift || 0}/${entry.data?.teleopShiftA || 0}/${entry.data?.teleopShiftB || 0}/${entry.data?.endgame?.level === 'l4' ? 1 : 0}`"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Endgame -->
+                                        <div class="scout-stat-box--endgame">
+                                            <div class="flex justify-between items-center w-full">
+                                                <div class="flex flex-col">
+                                                    <span class="scout-stat-label--no-mb">Endgame</span>
+                                                    <span class="scout-endgame-result"
+                                                        x-text="entry.data?.endgame?.level?.toUpperCase() || 'NONE'"></span>
+                                                </div>
+                                                <template x-if="entry.data?.endgame?.climbTime">
+                                                    <span
+                                                        class="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded"
+                                                        x-text="entry.data.endgame.climbTime + 's'"></span>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ratings & Reliability -->
+                                    <div class="ratings-panel">
+                                        <span class="ratings-label">Scouter Ratings</span>
+                                        <div class="ratings-rows">
+                                            <template
+                                                x-for="(label, key) in { driver: 'Driver', speed: 'Speed', defense: 'Def', stability: 'Stability' }">
+                                                <div class="ratings-row">
+                                                    <span class="ratings-row__label" x-text="label"></span>
+                                                    <div class="ratings-bar">
+                                                        <div class="ratings-bar__fill"
+                                                            :style="'width: ' + ((entry.data?.ratings?.[key] || 0) * 20) + '%'">
+                                                        </div>
+                                                    </div>
+                                                    <span class="ratings-bar__value"
+                                                        x-text="(entry.data?.ratings?.[key] || 0) + '/5'"></span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="scout-report__comments" x-show="entry.data?.ratings?.comments">
+                                            <span
+                                                class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Comments</span>
+                                            <p class="text-xs text-slate-300 italic"
+                                                x-text="entry.data?.ratings?.comments"></p>
+                                        </div>
                                     </div>
                                 </div>
-                            </template>
-                            <template x-if="!(scoutEntries[match.eventKey + '_' + match.matchNumber]?.length)">
-                                <div class="empty-scout">
-                                    <p class="empty-scout__text">No scouting reports available for this match</p>
-                                </div>
-                            </template>
                         </div>
                     </div>
                 </div>
+        </template>
+        <template x-if="!(scoutEntries[match.eventKey + '_' + match.matchNumber]?.length)">
+            <div class="empty-scout">
+                <p class="empty-scout__text">No scouting reports available for this match</p>
             </div>
         </template>
+    </div>
+    </div>
+    </div>
+    </div>
+    </template>
     </div>
     </div>
 

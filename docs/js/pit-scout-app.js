@@ -13,7 +13,8 @@ document.addEventListener('alpine:init', () => {
             ballCapacity: 0,
             autoStrategy: '',
             teleopStrategy: '',
-            endgameGoal: ''
+            endgameGoal: '',
+            comments: ''
         },
 
         get filteredEvents() {

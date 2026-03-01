@@ -26,7 +26,7 @@ document.addEventListener('alpine:init', () => {
         teamNumber: '',
         matchType: 'Qualification',
         alliance: '',
-        auto: { taxi: false, level1: 'none' }, // Removed fuelSuccess/Fail, added level1
+        auto: { level1: 'none' }, // Removed taxi & fuel
         transitionShift: 0,
         teleopShiftA: 0,
         teleopShiftB: 0,
@@ -85,19 +85,18 @@ document.addEventListener('alpine:init', () => {
                     meta: {
                         matchType: this.matchType,
                         alliance: this.alliance,
-                        scouterTeamNumber: Alpine.store('auth').profile?.teamNumber || 0,
-                        scouterRole: Alpine.store('auth').profile?.role || 'new',
-                        isVerified: !!(Alpine.store('auth').profile?.role && Alpine.store('auth').profile?.role !== 'new')
+                        scouterEmail: auth.currentUser?.email,
+                        scouterUID: auth.currentUser?.uid
                     },
-                    auto: { ...this.auto },
-                    transitionShift: this.transitionShift,
-                    teleopShiftA: this.teleopShiftA,
-                    teleopShiftB: this.teleopShiftB,
-                    endgame: { ...this.endgame },
-                    ratings: { ...this.ratings },
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    scoutEmail: auth.currentUser?.email,
-                    scoutUID: auth.currentUser?.uid
+                    data: {
+                        auto: { ...this.auto },
+                        transitionShift: this.transitionShift,
+                        teleopShiftA: this.teleopShiftA,
+                        teleopShiftB: this.teleopShiftB,
+                        endgame: { ...this.endgame },
+                        ratings: { ...this.ratings },
+                    },
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 await db.collection('scouting').add(data);
                 alert('Success!');

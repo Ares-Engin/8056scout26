@@ -285,6 +285,9 @@
                                                 <div class="scout-report__scouter-inline">
                                                     <span class="scout-report__scouter-team-text"
                                                         x-text="'Scouted by #' + (entry.meta?.scouterTeam || entry.meta?.scouterTeamNumber || '?')"></span>
+                                                    <span
+                                                        class="text-[9px] text-slate-500 font-bold ml-1 truncate max-w-[80px]"
+                                                        x-text="getTeamData(entry.meta?.scouterTeam || entry.meta?.scouterTeamNumber).nickname"></span>
                                                     <template x-if="isVerified(entry.meta?.scouterRole)">
                                                         <div class="scout-report__verified-tick">
                                                             <svg class="h-3 w-3" fill="none" stroke="currentColor"

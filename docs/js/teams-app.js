@@ -199,6 +199,14 @@ document.addEventListener('alpine:init', () => {
             if (!timestamp) return 'N/A';
             const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
             return date.toLocaleString();
+        },
+
+        getTeamData(teamNumber) {
+            if (!teamNumber) return { nickname: '' };
+            const team = this.teams.find(t => t.teamNumber === teamNumber);
+            return {
+                nickname: team ? team.name : ''
+            };
         }
     }));
 });

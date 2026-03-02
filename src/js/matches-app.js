@@ -85,6 +85,22 @@ document.addEventListener('alpine:init', () => {
                 this.frcMatches = allMatches.flatMap((matches, i) =>
                     matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
                 );
+
+                // Fetch and cache team names for all teams in these matches
+                this.selectedEvents.forEach(async eventKey => {
+                    const url = `https://www.thebluealliance.com/api/v3/event/${eventKey}/teams`;
+                    const res = await fetch(url, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                    if (res.ok) {
+                        const teams = await res.json();
+                        teams.forEach(t => {
+                            this.teamDataCache[t.team_number] = {
+                                nickname: t.nickname || t.name,
+                                city: t.city
+                            };
+                        });
+                    }
+                });
+
                 this.frcMatches.sort((a, b) => {
                     const weights = { 'p': 0, 'qm': 1, 'qf': 2, 'sf': 3, 'f': 4 };
                     const wA = weights[a.compLevel] || 1;
@@ -232,6 +248,29 @@ document.addEventListener('alpine:init', () => {
         isHighlighted(teamNumber) {
             if (!this.searchQuery) return false;
             return teamNumber.toString().includes(this.searchQuery);
+        },
+
+        getTeamData(teamNumber) {
+            if (!teamNumber) return { nickname: '', logoUrl: '' };
+
+            // Check manual teams first
+            if (this.manualTeams[teamNumber]) {
+                const mt = this.manualTeams[teamNumber];
+                return {
+                    nickname: mt.name || '',
+                    logoUrl: mt.logo || ''
+                };
+            }
+
+            // Check cache
+            if (this.teamDataCache[teamNumber]) {
+                return {
+                    nickname: this.teamDataCache[teamNumber].nickname || '',
+                    logoUrl: '' // Logo fetching is more expensive, using nickname for now
+                };
+            }
+
+            return { nickname: '', logoUrl: '' };
         },
 
         getScoringRules(year) {

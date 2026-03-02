@@ -52,6 +52,15 @@ document.addEventListener('alpine:init', () => {
                             this.scoutEntries[key].push(data);
                         }
                     });
+
+                    // Sort entries for each match by date (newest first)
+                    Object.keys(this.scoutEntries).forEach(key => {
+                        this.scoutEntries[key].sort((a, b) => {
+                            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                            return dateB - dateA;
+                        });
+                    });
                     this.loading = false;
                 }, err => {
                     this.errorMessage = 'Firestore connection failed';

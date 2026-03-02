@@ -65,6 +65,15 @@ document.addEventListener('alpine:init', () => {
                         }
                         this.pitReports[data.teamNumber].push(data);
                     });
+
+                    // Sort each team's reports by date (newest first)
+                    Object.keys(this.pitReports).forEach(teamNum => {
+                        this.pitReports[teamNum].sort((a, b) => {
+                            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                            return dateB - dateA;
+                        });
+                    });
                 });
 
                 this.loading = false;

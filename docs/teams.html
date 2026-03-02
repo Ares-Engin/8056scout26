@@ -256,20 +256,22 @@
                                                         x-text="report.data?.ballCapacity"></span>
                                                 </div>
                                                 <div class="flex flex-col">
-                                                    <span class="text-[10px] text-orange-500 font-black uppercase">Auto
-                                                        / Teleop Strategies</span>
-                                                    <p class="text-[11px] text-slate-400 italic"
+                                                    <span
+                                                        class="text-[10px] text-orange-500 font-black uppercase">Strategies</span>
+                                                    <p class="text-[10px] text-slate-400 italic"
                                                         x-text="'Auto: ' + report.data?.autoStrategy"></p>
-                                                    <p class="text-[11px] text-slate-400 italic"
-                                                        x-text="'Teleop: ' + report.data?.teleopStrategy"></p>
+                                                    <p class="text-[10px] text-slate-400 italic"
+                                                        x-text="'Teleop (Inactive): ' + report.data?.teleopInactive">
+                                                    </p>
+                                                    <p class="text-[10px] text-slate-400 italic"
+                                                        x-text="'Teleop (Active): ' + report.data?.teleopActive"></p>
                                                 </div>
                                                 <div class="flex flex-col">
                                                     <span
-                                                        class="text-[10px] text-orange-500 font-black uppercase">General
+                                                        class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">General
                                                         Comments</span>
-                                                    <p class="text-[11px] text-slate-300 bg-slate-900/40 p-2 rounded border border-white/5 mt-1"
-                                                        x-text="report.data?.generalComments || 'No comments provided.'">
-                                                    </p>
+                                                    <p class="text-[10px] text-slate-500 leading-tight"
+                                                        x-text="report.data?.generalComments || 'No comments'"></p>
                                                 </div>
                                             </div>
                                         </div>

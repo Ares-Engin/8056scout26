@@ -164,28 +164,28 @@
                             <div class="alliance-teams">
                                 <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Red'))"
                                     :key="t.teamNumber">
-                                    <div class="flex items-center gap-2 bg-slate-900 border border-red-500/20 px-2 py-1 rounded-lg"
-                                        :class="isHighlighted(t.teamNumber) ? 'ring-2 ring-orange-500/50' : ''">
-                                        <template x-if="getTeamData(t.teamNumber).logoUrl">
-                                            <img :src="getTeamData(t.teamNumber).logoUrl" class="w-4 h-4 object-contain"
-                                                alt="L">
-                                        </template>
-                                        <span class="text-[10px] font-black text-red-500" x-text="t.teamNumber"></span>
-                                        <span class="text-[8px] text-slate-500 font-bold truncate max-w-[60px]"
-                                            x-text="getTeamData(t.teamNumber).nickname"></span>
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-[10px] font-black text-red-500"
+                                                x-text="t.teamNumber"></span>
+                                            <span class="text-[9px] text-white font-bold truncate max-w-[100px]"
+                                                x-text="getTeamData(t.teamNumber).nickname || 'Team'"></span>
+                                        </div>
                                     </div>
                                 </template>
                                 <template x-if="match.scoreBreakdown?.red">
                                     <div
-                                        class="mt-2 pt-2 border-t border-red-500/10 grid grid-cols-2 gap-x-2 gap-y-0.5 text-[8px] uppercase font-bold text-red-400/80">
-                                        <div class="flex justify-between"><span>Auto:</span><span
+                                        class="mt-2 pt-2 border-t border-red-500/10 flex flex-col gap-1 text-[9px] uppercase font-bold text-red-400/90">
+                                        <div class="flex justify-between"><span>Auto Points:</span> <span
                                                 x-text="match.scoreBreakdown.red.autoPoints"></span></div>
-                                        <div class="flex justify-between"><span>Teleop:</span><span
+                                        <div class="flex justify-between"><span>Tele-op Points:</span> <span
                                                 x-text="match.scoreBreakdown.red.teleopPoints"></span></div>
-                                        <div class="flex justify-between"><span>Endgame:</span><span
+                                        <div class="flex justify-between"><span>Endgame Points:</span> <span
                                                 x-text="match.scoreBreakdown.red.endGamePoints"></span></div>
-                                        <div class="flex justify-between text-white"><span>Total:</span><span
-                                                x-text="match.scoreBreakdown.red.totalPoints"></span></div>
+                                        <div class="flex justify-between text-red-300"><span>Foul Points:</span> <span
+                                                x-text="match.scoreBreakdown.red.foulPoints"></span></div>
+                                        <div class="flex justify-between text-white border-t border-red-500/20 pt-1">
+                                            <span>Total Score:</span> <span x-text="match.scoreRedFinal"></span></div>
                                     </div>
                                 </template>
                                 <template x-if="match.isManual">
@@ -199,28 +199,28 @@
                             <div class="alliance-teams">
                                 <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Blue'))"
                                     :key="t.teamNumber">
-                                    <div class="flex items-center gap-2 bg-slate-900 border border-blue-500/20 px-2 py-1 rounded-lg"
-                                        :class="isHighlighted(t.teamNumber) ? 'ring-2 ring-orange-500/50' : ''">
-                                        <template x-if="getTeamData(t.teamNumber).logoUrl">
-                                            <img :src="getTeamData(t.teamNumber).logoUrl" class="w-4 h-4 object-contain"
-                                                alt="L">
-                                        </template>
-                                        <span class="text-[10px] font-black text-blue-500" x-text="t.teamNumber"></span>
-                                        <span class="text-[8px] text-slate-500 font-bold truncate max-w-[60px]"
-                                            x-text="getTeamData(t.teamNumber).nickname"></span>
+                                    <div class="flex flex-col">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-[10px] font-black text-blue-500"
+                                                x-text="t.teamNumber"></span>
+                                            <span class="text-[9px] text-white font-bold truncate max-w-[100px]"
+                                                x-text="getTeamData(t.teamNumber).nickname || 'Team'"></span>
+                                        </div>
                                     </div>
                                 </template>
                                 <template x-if="match.scoreBreakdown?.blue">
                                     <div
-                                        class="mt-2 pt-2 border-t border-blue-500/10 grid grid-cols-2 gap-x-2 gap-y-0.5 text-[8px] uppercase font-bold text-blue-400/80">
-                                        <div class="flex justify-between"><span>Auto:</span><span
+                                        class="mt-2 pt-2 border-t border-blue-500/10 flex flex-col gap-1 text-[9px] uppercase font-bold text-blue-400/90">
+                                        <div class="flex justify-between"><span>Auto Points:</span> <span
                                                 x-text="match.scoreBreakdown.blue.autoPoints"></span></div>
-                                        <div class="flex justify-between"><span>Teleop:</span><span
+                                        <div class="flex justify-between"><span>Tele-op Points:</span> <span
                                                 x-text="match.scoreBreakdown.blue.teleopPoints"></span></div>
-                                        <div class="flex justify-between"><span>Endgame:</span><span
+                                        <div class="flex justify-between"><span>Endgame Points:</span> <span
                                                 x-text="match.scoreBreakdown.blue.endGamePoints"></span></div>
-                                        <div class="flex justify-between text-white"><span>Total:</span><span
-                                                x-text="match.scoreBreakdown.blue.totalPoints"></span></div>
+                                        <div class="flex justify-between text-blue-300"><span>Foul Points:</span> <span
+                                                x-text="match.scoreBreakdown.blue.foulPoints"></span></div>
+                                        <div class="flex justify-between text-white border-t border-blue-500/20 pt-1">
+                                            <span>Total Score:</span> <span x-text="match.scoreBlueFinal"></span></div>
                                     </div>
                                 </template>
                                 <template x-if="match.isManual">

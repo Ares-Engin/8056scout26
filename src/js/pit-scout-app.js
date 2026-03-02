@@ -12,7 +12,8 @@ document.addEventListener('alpine:init', () => {
             shooter: '',
             ballCapacity: 0,
             autoStrategy: '',
-            teleopStrategy: '',
+            teleopInactive: '',
+            teleopActive: '',
             endgameGoal: '',
             generalComments: '',
             comments: ''

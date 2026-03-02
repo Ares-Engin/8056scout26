@@ -53,7 +53,7 @@ document.addEventListener('alpine:init', () => {
                     teamNumber: Number(this.teamNumber),
                     data: { ...this.data },
                     meta: {
-                        scouterTeamNumber: profile.teamNumber || 0,
+                        scouterTeam: profile.teamNumber || 0,
                         scouterRole: profile.role || 'new',
                         scouterEmail: auth.currentUser?.email || 'unknown',
                         isVerified: !!(profile && profile.role && profile.role !== 'new')

@@ -110,10 +110,11 @@ async function fetchFRCMatches(eventKey) {
                 : null,
             scoreRedFinal: match.alliances.red.score ?? 0,
             scoreBlueFinal: match.alliances.blue.score ?? 0,
-            scoreRedAuto: null,
-            scoreBlueAuto: null,
-            scoreRedFoul: null,
-            scoreBlueFoul: null,
+            scoreRedAuto: match.score_breakdown?.red?.autoPoints || null,
+            scoreBlueAuto: match.score_breakdown?.blue?.autoPoints || null,
+            scoreRedFoul: match.score_breakdown?.red?.foulPoints || null,
+            scoreBlueFoul: match.score_breakdown?.blue?.foulPoints || null,
+            scoreBreakdown: match.score_breakdown || null,
             teams: [...redTeams, ...blueTeams]
         };
     });

@@ -19,6 +19,14 @@ document.addEventListener('alpine:init', () => {
             try {
                 this.manualTeams = await loadManualTeams();
 
+                // Handle URL params like ?team=8056
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('team')) {
+                    this.searchQuery = params.get('team');
+                    // Ensure the year/event might need to be adjusted if matching a specific team, 
+                    // but for now just setting search query is safest for the user to see results.
+                }
+
                 this.$watch('selectedEvents', () => {
                     this.fetchMatches(); // No longer awaited since Alpine handles the re-render reactivity 
                 });
@@ -162,6 +170,20 @@ document.addEventListener('alpine:init', () => {
                         mInfo.type = scoutType;
                     }
                 }
+            });
+            // Sort logic: Newest year first, then Playoffs > Quals > Practice, then matchNumber DESC
+            const levelWeight = { 'f': 5, 'sf': 4, 'qf': 3, 'qm': 2, 'p': 1 };
+
+            list.sort((a, b) => {
+                const yearB = parseInt(b.year) || 0;
+                const yearA = parseInt(a.year) || 0;
+                if (yearB !== yearA) return yearB - yearA;
+
+                const weightA = levelWeight[a.compLevel] || 0;
+                const weightB = levelWeight[b.compLevel] || 0;
+                if (weightB !== weightA) return weightB - weightA;
+
+                return b.matchNumber - a.matchNumber;
             });
 
             return list.filter(m => {

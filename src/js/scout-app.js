@@ -78,6 +78,21 @@ document.addEventListener('alpine:init', () => {
             if (!this.matchNumber || !this.teamNumber) return alert('Match and Team numbers are required');
             this.loading = true;
             try {
+                // Fetch scouter's profile for team number and role
+                let scouterTeam = 0;
+                let scouterRole = 'new';
+                try {
+                    const uid = auth.currentUser?.uid;
+                    if (uid) {
+                        const profileSnap = await db.collection('users').doc(uid).get();
+                        if (profileSnap.exists) {
+                            const profile = profileSnap.data();
+                            scouterTeam = profile.teamNumber || 0;
+                            scouterRole = profile.role || 'new';
+                        }
+                    }
+                } catch (_) { }
+
                 const data = {
                     regional: this.regional,
                     matchNumber: Number(this.matchNumber),
@@ -86,7 +101,10 @@ document.addEventListener('alpine:init', () => {
                         matchType: this.matchType,
                         alliance: this.alliance,
                         scouterEmail: auth.currentUser?.email,
-                        scouterUID: auth.currentUser?.uid
+                        scouterUID: auth.currentUser?.uid,
+                        scouterTeam: scouterTeam,
+                        scouterRole: scouterRole,
+                        isVerified: scouterRole !== 'new'
                     },
                     data: {
                         auto: { ...this.auto },

@@ -201,8 +201,16 @@
                                                         </svg>
                                                     </template>
                                                 </div>
-                                                <span class="text-[9px] text-slate-500 font-bold mt-1 ml-1"
-                                                    x-text="new Date(report.meta.timestamp).toLocaleString()"></span>
+                                                <div class="flex flex-col">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[9px] text-orange-500 font-black"
+                                                            x-text="report.year"></span>
+                                                        <span class="text-[8px] text-slate-600 font-bold uppercase"
+                                                            x-text="report.regional"></span>
+                                                    </div>
+                                                    <span class="text-[9px] text-slate-500 font-bold mt-0.5 ml-1"
+                                                        x-text="new Date(report.meta.timestamp).toLocaleString()"></span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="scout-report__summary-right">

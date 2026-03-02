@@ -104,6 +104,27 @@
       </div>
     </button>
 
+    <!-- Info Section -->
+    <button @click="location.href='info.html'" class="dashboard-card--admin bg-slate-800/40 border-slate-700/50">
+      <div class="dashboard-card__admin-inner">
+        <div class="dashboard-card__admin-content">
+          <div class="dashboard-card__icon--admin bg-slate-700/30">
+            <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="dashboard-card__title">App Information</h2>
+            <p class="dashboard-card__desc">Usage guide and pro tips</p>
+          </div>
+        </div>
+        <svg class="icon-arrow--admin text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    </button>
+
     <!-- User Admin (Hidden if not admin) -->
     <button x-show="isAdmin" @click="location.href='accept.html'" class="dashboard-card--admin">
       <div class="dashboard-card__admin-inner">

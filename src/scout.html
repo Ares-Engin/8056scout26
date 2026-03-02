@@ -122,6 +122,18 @@
             <option value="failed">Failed</option>
           </select>
         </div>
+
+        <div>
+          <label class="form-label--simple">Auto Scored</label>
+          <div class="gap-grid">
+            <template x-for="i in 20">
+              <button @click="auto.scored = (i-1)*5 + '-' + i*5" class="gap-btn"
+                :class="auto.scored === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
+                <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
+              </button>
+            </template>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -137,24 +149,13 @@
             x-text="shift.label.includes('Transition') ? '03' : (shift.key === 'teleopShiftA' ? '04' : '05')"></span>
           <span x-text="shift.label"></span>
         </h2>
-        <div class="flex flex-col items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-white/5">
-          <div class="text-4xl font-black text-white" x-text="$data[shift.key] || 0"></div>
-          <div class="flex flex-wrap justify-center gap-2">
-            <button @click="$data[shift.key] = Math.max(0, ($data[shift.key] || 0) - 5)"
-              class="btn-counter--neg">-5</button>
-            <button @click="$data[shift.key] = Math.max(0, ($data[shift.key] || 0) - 1)"
-              class="btn-counter--neg">-1</button>
-            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 1)"
-              class="btn-counter--pos">+1</button>
-            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 5)"
-              class="btn-counter--pos">+5</button>
-            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 10)"
-              class="btn-counter--pos">+10</button>
-          </div>
-          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div class="h-full bg-orange-500 transition-all duration-300"
-              :style="'width: ' + ($data[shift.key] || 0) + '%'"></div>
-          </div>
+        <div class="gap-grid">
+          <template x-for="i in 20">
+            <button @click="$data[shift.key] = (i-1)*5 + '-' + i*5" class="gap-btn"
+              :class="$data[shift.key] === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
+              <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
+            </button>
+          </template>
         </div>
       </section>
     </template>

@@ -9,6 +9,13 @@ document.addEventListener('alpine:init', () => {
         loading: true,
 
         async init() {
+            // Check for team search in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const teamFilter = urlParams.get('team');
+            if (teamFilter) {
+                this.searchQuery = teamFilter;
+            }
+
             this.loading = true;
             try {
                 // 1. Discover all Turkish events from recent years

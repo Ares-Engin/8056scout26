@@ -115,22 +115,13 @@
 
       <div class="stack-spacing--4">
         <div>
-          <label class="form-label">Level 1</label>
+          <label class="form-label">Auto Climb</label>
           <select x-model="auto.level1" class="form-select">
             <option value="none">Not Attempted</option>
             <option value="success">Successful</option>
             <option value="failed">Failed</option>
           </select>
         </div>
-
-        <label class="toggle-label">
-          <div class="toggle-wrap">
-            <input type="checkbox" x-model="auto.taxi" class="toggle-input">
-            <span class="toggle-track"></span>
-            <span class="toggle-thumb"></span>
-          </div>
-          <span class="toggle-text">Auto Leave / Taxi</span>
-        </label>
       </div>
     </section>
 
@@ -146,13 +137,24 @@
             x-text="shift.label.includes('Transition') ? '03' : (shift.key === 'teleopShiftA' ? '04' : '05')"></span>
           <span x-text="shift.label"></span>
         </h2>
-        <div class="gap-grid">
-          <template x-for="i in 20">
-            <button @click="$data[shift.key] = (i-1)*5 + '-' + i*5" class="gap-btn"
-              :class="$data[shift.key] === ((i-1)*5 + '-' + i*5) ? 'gap-btn--active' : 'gap-btn--inactive'">
-              <span class="gap-btn__range" x-text="((i-1)*5) + '-' + (i*5)"></span>
-            </button>
-          </template>
+        <div class="flex flex-col items-center gap-4 bg-slate-900/50 p-6 rounded-2xl border border-white/5">
+          <div class="text-4xl font-black text-white" x-text="$data[shift.key] || 0"></div>
+          <div class="flex flex-wrap justify-center gap-2">
+            <button @click="$data[shift.key] = Math.max(0, ($data[shift.key] || 0) - 5)"
+              class="btn-counter--neg">-5</button>
+            <button @click="$data[shift.key] = Math.max(0, ($data[shift.key] || 0) - 1)"
+              class="btn-counter--neg">-1</button>
+            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 1)"
+              class="btn-counter--pos">+1</button>
+            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 5)"
+              class="btn-counter--pos">+5</button>
+            <button @click="$data[shift.key] = Math.min(100, ($data[shift.key] || 0) + 10)"
+              class="btn-counter--pos">+10</button>
+          </div>
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-orange-500 transition-all duration-300"
+              :style="'width: ' + ($data[shift.key] || 0) + '%'"></div>
+          </div>
         </div>
       </section>
     </template>

@@ -26,7 +26,7 @@ document.addEventListener('alpine:init', () => {
         teamNumber: '',
         matchType: 'Qualification',
         alliance: '',
-        auto: { level1: 'none' }, // Removed taxi & fuel
+        auto: { level1: 'none' },
         transitionShift: 0,
         teleopShiftA: 0,
         teleopShiftB: 0,

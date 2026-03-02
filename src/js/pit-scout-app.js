@@ -14,6 +14,7 @@ document.addEventListener('alpine:init', () => {
             autoStrategy: '',
             teleopStrategy: '',
             endgameGoal: '',
+            generalComments: '',
             comments: ''
         },
 

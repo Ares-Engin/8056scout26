@@ -119,16 +119,16 @@ async function fetchFRCMatches(eventKey) {
             // Normalized breakdown — always present if match was scored
             scoreBreakdown: match.score_breakdown ? {
                 red: {
-                    autoPoints: match.score_breakdown.red?.autoPoints ?? null,
-                    teleopPoints: match.score_breakdown.red?.teleopPoints ?? null,
-                    endGamePoints: match.score_breakdown.red?.endGamePoints ?? null,
-                    foulPoints: match.score_breakdown.red?.foulPoints ?? null,
+                    autoPoints: match.score_breakdown.red?.autoPoints ?? match.score_breakdown.red?.autoTotal ?? null,
+                    teleopPoints: match.score_breakdown.red?.teleopPoints ?? match.score_breakdown.red?.teleopTotal ?? null,
+                    endGamePoints: match.score_breakdown.red?.endGamePoints ?? match.score_breakdown.red?.endGameTotal ?? null,
+                    foulPoints: match.score_breakdown.red?.foulPoints ?? 0,
                 },
                 blue: {
-                    autoPoints: match.score_breakdown.blue?.autoPoints ?? null,
-                    teleopPoints: match.score_breakdown.blue?.teleopPoints ?? null,
-                    endGamePoints: match.score_breakdown.blue?.endGamePoints ?? null,
-                    foulPoints: match.score_breakdown.blue?.foulPoints ?? null,
+                    autoPoints: match.score_breakdown.blue?.autoPoints ?? match.score_breakdown.blue?.autoTotal ?? null,
+                    teleopPoints: match.score_breakdown.blue?.teleopPoints ?? match.score_breakdown.blue?.teleopTotal ?? null,
+                    endGamePoints: match.score_breakdown.blue?.endGamePoints ?? match.score_breakdown.blue?.endGameTotal ?? null,
+                    foulPoints: match.score_breakdown.blue?.foulPoints ?? 0,
                 }
             } : null,
             teams: [...redTeams, ...blueTeams]

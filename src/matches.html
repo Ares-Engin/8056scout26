@@ -208,13 +208,17 @@
                                     <div
                                         class="mt-2 pt-2 border-t border-red-500/10 flex flex-col gap-1 text-[9px] uppercase font-bold text-red-400/90">
                                         <div class="flex justify-between"><span>Auto Points:</span> <span
-                                                x-text="match.scoreBreakdown.red.autoPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.red.autoPoints !== null) ? match.scoreBreakdown.red.autoPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between"><span>Tele-op Points:</span> <span
-                                                x-text="match.scoreBreakdown.red.teleopPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.red.teleopPoints !== null) ? match.scoreBreakdown.red.teleopPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between"><span>Endgame Points:</span> <span
-                                                x-text="match.scoreBreakdown.red.endGamePoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.red.endGamePoints !== null) ? match.scoreBreakdown.red.endGamePoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between text-red-300"><span>Foul Points:</span> <span
-                                                x-text="match.scoreBreakdown.red.foulPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.red.foulPoints !== null) ? match.scoreBreakdown.red.foulPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between text-white border-t border-red-500/20 pt-1">
                                             <span>Total Score:</span> <span x-text="match.scoreRedFinal"></span>
                                         </div>
@@ -244,13 +248,17 @@
                                     <div
                                         class="mt-2 pt-2 border-t border-blue-500/10 flex flex-col gap-1 text-[9px] uppercase font-bold text-blue-400/90">
                                         <div class="flex justify-between"><span>Auto Points:</span> <span
-                                                x-text="match.scoreBreakdown.blue.autoPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.blue.autoPoints !== null) ? match.scoreBreakdown.blue.autoPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between"><span>Tele-op Points:</span> <span
-                                                x-text="match.scoreBreakdown.blue.teleopPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.blue.teleopPoints !== null) ? match.scoreBreakdown.blue.teleopPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between"><span>Endgame Points:</span> <span
-                                                x-text="match.scoreBreakdown.blue.endGamePoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.blue.endGamePoints !== null) ? match.scoreBreakdown.blue.endGamePoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between text-blue-300"><span>Foul Points:</span> <span
-                                                x-text="match.scoreBreakdown.blue.foulPoints ?? '—'"></span></div>
+                                                x-text="(match.scoreBreakdown.blue.foulPoints !== null) ? match.scoreBreakdown.blue.foulPoints : '—'"></span>
+                                        </div>
                                         <div class="flex justify-between text-white border-t border-blue-500/20 pt-1">
                                             <span>Total Score:</span> <span x-text="match.scoreBlueFinal"></span>
                                         </div>

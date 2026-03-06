@@ -112,11 +112,25 @@ async function fetchFRCMatches(eventKey) {
                 : null,
             scoreRedFinal: match.alliances.red.score ?? 0,
             scoreBlueFinal: match.alliances.blue.score ?? 0,
-            scoreRedAuto: match.score_breakdown?.red?.autoPoints || null,
-            scoreBlueAuto: match.score_breakdown?.blue?.autoPoints || null,
-            scoreRedFoul: match.score_breakdown?.red?.foulPoints || null,
-            scoreBlueFoul: match.score_breakdown?.blue?.foulPoints || null,
-            scoreBreakdown: match.score_breakdown || null,
+            scoreRedAuto: match.score_breakdown?.red?.autoPoints ?? null,
+            scoreBlueAuto: match.score_breakdown?.blue?.autoPoints ?? null,
+            scoreRedFoul: match.score_breakdown?.red?.foulPoints ?? null,
+            scoreBlueFoul: match.score_breakdown?.blue?.foulPoints ?? null,
+            // Normalized breakdown — always present if match was scored
+            scoreBreakdown: match.score_breakdown ? {
+                red: {
+                    autoPoints: match.score_breakdown.red?.autoPoints ?? null,
+                    teleopPoints: match.score_breakdown.red?.teleopPoints ?? null,
+                    endGamePoints: match.score_breakdown.red?.endGamePoints ?? null,
+                    foulPoints: match.score_breakdown.red?.foulPoints ?? null,
+                },
+                blue: {
+                    autoPoints: match.score_breakdown.blue?.autoPoints ?? null,
+                    teleopPoints: match.score_breakdown.blue?.teleopPoints ?? null,
+                    endGamePoints: match.score_breakdown.blue?.endGamePoints ?? null,
+                    foulPoints: match.score_breakdown.blue?.foulPoints ?? null,
+                }
+            } : null,
             teams: [...redTeams, ...blueTeams]
         };
     });

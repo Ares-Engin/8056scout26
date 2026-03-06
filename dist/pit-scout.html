@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pit Scouting - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Theme Manager -->
+    <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body" x-data="pitScoutApp">
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href='dashboard.html'" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+
+            <div class="top-nav__right">
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <h1 class="page-hero__title">Pit Scouting</h1>
+    </section>
+
+    <form @submit.prevent="submit" class="space-y-6">
+        <!-- Metadata Section -->
+        <div class="card p-6 border-l-4 border-orange-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-orange-500 mb-4">Report Context</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Season</label>
+                    <select x-model="selectedYear" class="form-input--search w-full">
+                        <template x-for="year in availableSeasons">
+                            <option :value="year" x-text="year"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Competition</label>
+                    <select x-model="regional" class="form-input--search w-full">
+                        <template x-for="event in filteredEvents">
+                            <option :value="event.key" x-text="event.name"></option>
+                        </template>
+                    </select>
+                </div>
+                <div class="space-y-1 col-span-2">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Team Number</label>
+                    <input x-model="teamNumber" type="number" placeholder="Enter Team #"
+                        class="form-input--search w-full text-lg font-black" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Data Section -->
+        <div class="card p-6 border-l-4 border-blue-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-blue-500 mb-4">Robot Technical Data</h3>
+            <div class="space-y-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Drive Base</label>
+                    <select x-model="data.driveBase" class="form-input--search w-full">
+                        <option value="Swerve">Swerve</option>
+                        <option value="Tank">Tank / West Coast</option>
+                        <option value="Mecanum">Mecanum</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Intake System</label>
+                        <input x-model="data.intake" type="text" placeholder="e.g. Under-bumper"
+                            class="form-input--search w-full">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Shooter Mechanism</label>
+                        <input x-model="data.shooter" type="text" placeholder="e.g. Pivoting single fly"
+                            class="form-input--search w-full">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Ball / Fuel Capacity</label>
+                    <input x-model="data.ballCapacity" type="number" placeholder="Max capacity"
+                        class="form-input--search w-full">
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy Section -->
+        <div class="card p-6 border-l-4 border-green-500">
+            <h3 class="text-xs font-black uppercase tracking-widest text-green-500 mb-4">Strategy & Goals</h3>
+            <div class="space-y-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Autonomous Strategy</label>
+                    <textarea x-model="data.autoStrategy" placeholder="Describe their autonomous routines..."
+                        class="form-input--search w-full h-24 p-3"></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Tele-op Strategy (Inactive
+                        Period)</label>
+                    <textarea x-model="data.teleopInactive" placeholder="What they do when not active..."
+                        class="form-input--search w-full h-20 p-3"></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Tele-op Strategy (Active
+                        Period)</label>
+                    <textarea x-model="data.teleopActive" placeholder="Primary scoring/defense roles..."
+                        class="form-input--search w-full h-20 p-3"></textarea>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Endgame Goal</label>
+                    <input x-model="data.endgameGoal" type="text" placeholder="e.g. Level 3 Reliable"
+                        class="form-input--search w-full">
+                </div>
+
+                <!-- NEW: General Comments -->
+                <div class="space-y-1 pt-4 border-t border-slate-800">
+                    <label class="text-[10px] font-bold text-orange-500 uppercase">General Comments / Notes</label>
+                    <textarea x-model="data.generalComments" placeholder="Any additional notes about this team..."
+                        class="form-input--search w-full h-24 p-3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+            class="btn-submit w-full py-4 text-lg font-black uppercase tracking-widest flex items-center justify-center gap-3"
+            :disabled="loading">
+            <template x-if="loading">
+                <div class="loading-spinner-sm"></div>
+            </template>
+            <span x-text="loading ? 'Submitting...' : 'Save Pit Report'"></span>
+        </button>
+    </form>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/pit-scout-app.js"></script>
+</body>
+
+</html>

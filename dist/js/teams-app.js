@@ -1,0 +1,212 @@
+document.addEventListener('alpine:init', () => {
+    Alpine.data('teamsApp', () => ({
+        teams: [],
+        pitReports: {},
+        expandedTeams: [],
+        expandedHistory: [],
+        expandedPitReports: [],
+        searchQuery: '',
+        loading: true,
+
+        async init() {
+            // Check for team search in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const teamFilter = urlParams.get('team');
+            if (teamFilter) {
+                this.searchQuery = teamFilter;
+            }
+
+            this.loading = true;
+            try {
+                // 1. Discover all Turkish events from recent years
+                const years = [2024, 2025, 2026];
+                const turkishEvents = [];
+
+                for (const year of years) {
+                    const eventsUrl = `https://www.thebluealliance.com/api/v3/events/${year}`;
+                    const res = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                    if (res.ok) {
+                        const allEvents = await res.json();
+                        const yearEvents = allEvents.filter(e =>
+                            e.country === "Turkey" ||
+                            e.country === "Türkiye" ||
+                            e.city?.includes("Istanbul") ||
+                            e.city?.includes("Ankara") ||
+                            e.city?.includes("Izmir")
+                        );
+                        turkishEvents.push(...yearEvents);
+                    }
+                }
+
+                // 2. Fetch teams from all discovered events
+                const teamMap = new Map();
+                for (const event of turkishEvents) {
+                    const eventTeams = await this.fetchEventTeams(event.key);
+                    eventTeams.forEach(t => teamMap.set(t.team_number, t));
+                }
+
+                this.teams = Array.from(teamMap.values()).map(t => ({
+                    teamNumber: t.team_number,
+                    name: t.nickname || t.name,
+                    city: t.city || 'Unknown',
+                    country: t.country || 'Turkey',
+                    awards: [],
+                    events: []
+                })).sort((a, b) => a.teamNumber - b.teamNumber);
+
+                // 2. Fetch Pit Reports from Firestore
+                db.collection('pitScouting').onSnapshot(snapshot => {
+                    this.pitReports = {};
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        if (!this.pitReports[data.teamNumber]) {
+                            this.pitReports[data.teamNumber] = [];
+                        }
+                        this.pitReports[data.teamNumber].push(data);
+                    });
+
+                    // Sort each team's reports by date (newest first)
+                    Object.keys(this.pitReports).forEach(teamNum => {
+                        this.pitReports[teamNum].sort((a, b) => {
+                            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                            return dateB - dateA;
+                        });
+                    });
+                });
+
+                this.loading = false;
+            } catch (err) {
+                console.error("Failed to load teams:", err);
+                this.loading = false;
+            }
+        },
+
+        async fetchEventTeams(eventKey) {
+            const url = `https://www.thebluealliance.com/api/v3/event/${eventKey}/teams`;
+            const res = await fetch(url, {
+                headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
+            });
+            return res.ok ? await res.json() : [];
+        },
+
+        async toggleTeam(teamNumber) {
+            if (this.expandedTeams.includes(teamNumber)) {
+                this.expandedTeams = this.expandedTeams.filter(t => t !== teamNumber);
+            } else {
+                this.expandedTeams.push(teamNumber);
+                // Load deep data if not already loaded
+                const team = this.teams.find(t => t.teamNumber === teamNumber);
+                if (team && (!team.awards.length || !team.events.length)) {
+                    await this.loadTeamDetail(team);
+                }
+            }
+        },
+
+        async loadTeamDetail(team) {
+            try {
+                // 1. Fetch Basic Info (Name/City) and Media (Logo)
+                const info = await fetchFRCTeamInfo(team.teamNumber);
+                if (info) {
+                    team.name = info.nickname || info.name;
+                    team.city = info.city || team.city;
+                }
+
+                const media = await fetchFRCTeamMedia(team.teamNumber, 2025);
+                const logo = media.find(m => m.type === 'avatar' || m.type === 'image');
+                if (logo) {
+                    team.logoUrl = logo.direct_url || (logo.details?.base64_avatar ? `data:image/png;base64,${logo.details.base64_avatar}` : null);
+                }
+
+                // 2. Load Awards (global history)
+                const awardsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/awards`;
+                const awardsRes = await fetch(awardsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                if (awardsRes.ok) {
+                    const allAwards = await awardsRes.json();
+                    // Map event keys to names
+                    for (const award of allAwards) {
+                        const event = FRC_CONFIG.events.find(e => e.key === award.event_key);
+                        award.event_name = event ? event.name : await this.getEventName(award.event_key);
+                    }
+                    team.awards = allAwards.slice(0, 10);
+                }
+
+                // 3. Load Events for 2020-2026
+                const startYear = 2020;
+                const endYear = 2026;
+                const allTeamEvents = [];
+                for (let yr = startYear; yr <= endYear; yr++) {
+                    const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/${yr}`;
+                    const eventsRes = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
+                    if (eventsRes.ok) {
+                        const yrEvents = await eventsRes.json();
+                        allTeamEvents.push(...yrEvents);
+                    }
+                }
+                team.events = allTeamEvents.sort((a, b) => b.year - a.year || b.start_date.localeCompare(a.start_date));
+            } catch (e) {
+                console.error("Detail load failed for " + team.teamNumber, e);
+            }
+        },
+
+        eventCache: {},
+        async getEventName(eventKey) {
+            if (this.eventCache[eventKey]) return this.eventCache[eventKey];
+            try {
+                const res = await fetch(`https://www.thebluealliance.com/api/v3/event/${eventKey}`, {
+                    headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.eventCache[eventKey] = data.name;
+                    return data.name;
+                }
+            } catch (e) { }
+            return eventKey;
+        },
+
+        toggleHistory(teamNumber) {
+            if (this.expandedHistory.includes(teamNumber)) {
+                this.expandedHistory = this.expandedHistory.filter(t => t !== teamNumber);
+            } else {
+                this.expandedHistory.push(teamNumber);
+            }
+        },
+
+        togglePitReport(id) {
+            if (this.expandedPitReports.includes(id)) {
+                this.expandedPitReports = this.expandedPitReports.filter(i => i !== id);
+            } else {
+                this.expandedPitReports.push(id);
+            }
+        },
+
+        get filteredTeams() {
+            if (!this.searchQuery) return this.teams;
+            const q = this.searchQuery.toLowerCase();
+            return this.teams.filter(t =>
+                t.teamNumber.toString().includes(q) ||
+                t.name.toLowerCase().includes(q)
+            );
+        },
+
+        isVerified(role) {
+            return role && role !== 'new';
+        },
+
+        formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleString();
+        },
+
+        getTeamData(teamNumber) {
+            if (!teamNumber) return { nickname: '' };
+            const team = this.teams.find(t => t.teamNumber === teamNumber);
+            return {
+                nickname: team ? team.name : ''
+            };
+        }
+    }));
+});

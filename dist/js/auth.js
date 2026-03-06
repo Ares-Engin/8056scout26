@@ -40,10 +40,23 @@ async function isAdmin(user) {
 document.addEventListener('alpine:init', () => {
   Alpine.store('auth', {
     user: null,
+    profile: null,
     loading: true,
-    init() {
-      auth.onAuthStateChanged(user => {
+    async init() {
+      auth.onAuthStateChanged(async (user) => {
         this.user = user;
+        if (user) {
+          try {
+            const doc = await db.collection("users").doc(user.uid).get();
+            if (doc.exists) {
+              this.profile = doc.data();
+            }
+          } catch (e) {
+            console.error("Failed to fetch profile", e);
+          }
+        } else {
+          this.profile = null;
+        }
         this.loading = false;
       });
     }

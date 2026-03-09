@@ -5,13 +5,14 @@ const tailwindcss = require('@tailwindcss/postcss');
 const atImport = require('postcss-import');
 const autoprefixer = require('autoprefixer');
 
-// HTML Task: Just copy to dist
+// HTML Task: Copy to docs and dist
 function html() {
     return gulp.src('./src/*.html')
-        .pipe(gulp.dest('./docs'));
+        .pipe(gulp.dest('./docs'))
+        .pipe(gulp.dest('./dist'));
 }
 
-// CSS Task: Process Tailwind WITHOUT minification
+// CSS Task: Process Tailwind and copy to both
 function css() {
     const rename = require('gulp-rename');
     return gulp.src('./src/css/input.css')
@@ -26,25 +27,29 @@ function css() {
         })
         .pipe(rename('style.css'))
         .pipe(gulp.dest('./docs/css'))
+        .pipe(gulp.dest('./dist/css'))
         .pipe(browserSync.stream());
 }
 
-// JS Task: Just copy to dist
+// JS Task: Copy to docs and dist
 function js() {
     return gulp.src('./src/js/*.js')
-        .pipe(gulp.dest('./docs/js'));
+        .pipe(gulp.dest('./docs/js'))
+        .pipe(gulp.dest('./dist/js'));
 }
 
-// Assets Task: Copy images to dist
+// Assets Task: Copy images to docs and dist
 function assets() {
     return gulp.src('./src/img/**/*.{png,jpg,jpeg,svg,gif,ico}', { encoding: false })
-        .pipe(gulp.dest('./docs/img'));
+        .pipe(gulp.dest('./docs/img'))
+        .pipe(gulp.dest('./dist/img'));
 }
 
-// Data Task: Copy JSON data files to dist
+// Data Task: Copy JSON data files to docs and dist
 function data() {
     return gulp.src('./src/data/*.json')
-        .pipe(gulp.dest('./docs/data'));
+        .pipe(gulp.dest('./docs/data'))
+        .pipe(gulp.dest('./dist/data'));
 }
 
 // Dev Task: Serve and watch

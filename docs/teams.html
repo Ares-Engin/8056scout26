@@ -60,7 +60,7 @@
             <div class="filter-chips">
                 <template x-for="year in availableSeasons">
                     <button
-                        @click="selectedSeasons.includes(year) ? selectedSeasons = selectedSeasons.filter(y => y !== year) : selectedSeasons.push(year); init()"
+                        @click="selectedSeasons.includes(year) ? selectedSeasons = selectedSeasons.filter(y => y !== year) : selectedSeasons.push(year)"
                         :class="selectedSeasons.includes(year) ? 'filter-chip--active' : 'filter-chip--inactive'"
                         class="filter-chip" x-text="year"></button>
                 </template>
@@ -73,23 +73,24 @@
                 <template x-for="event in availableEvents.filter(e => selectedSeasons.includes(e.season))"
                     :key="event.key">
                     <button
-                        @click="selectedEvents.includes(event.key) ? selectedEvents = selectedEvents.filter(k => k !== event.key) : selectedEvents.push(event.key); init()"
+                        @click="selectedEvents.includes(event.key) ? selectedEvents = selectedEvents.filter(k => k !== event.key) : selectedEvents.push(event.key)"
                         :class="selectedEvents.includes(event.key) ? 'filter-regional-btn--active' : 'filter-regional-btn--inactive'"
                         class="filter-regional-btn" x-text="event.name"></button>
                 </template>
             </div>
-            <div class="filter-group">
-                <label class="form-label--filter">Merge (Intersection)</label>
-                <div class="flex items-center gap-3">
-                    <button @click="mergeMode = !mergeMode"
-                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
-                        :class="mergeMode ? 'bg-orange-500' : 'bg-slate-700'">
-                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                            :class="mergeMode ? 'translate-x-6' : 'translate-x-1'"></span>
-                    </button>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
-                        x-text="mergeMode ? 'Show teams in ALL selected' : 'Show teams in ANY selected'"></span>
-                </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="form-label--filter">Merge (Intersection)</label>
+            <div class="flex items-center gap-3">
+                <button @click="mergeMode = !mergeMode"
+                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                    :class="mergeMode ? 'bg-orange-500' : 'bg-slate-700'">
+                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        :class="mergeMode ? 'translate-x-6' : 'translate-x-1'"></span>
+                </button>
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+                    x-text="mergeMode ? 'Show teams in ALL selected' : 'Show teams in ANY selected'"></span>
             </div>
         </div>
 

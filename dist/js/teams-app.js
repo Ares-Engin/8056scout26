@@ -12,6 +12,9 @@ document.addEventListener('alpine:init', () => {
         searchQuery: '',
         loading: true,
 
+        mergeMode: true,
+        teamEventMatrix: {}, // Tracks which team is in which selected event
+
         async init() {
             // Check for team search in URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -21,6 +24,43 @@ document.addEventListener('alpine:init', () => {
             }
 
             this.loading = true;
+
+            // Instant refresh on selection changes
+            this.$watch('selectedEvents', () => this.fetchEventTeams());
+            this.$watch('selectedSeasons', () => this.fetchEventTeams());
+
+            await this.fetchEventTeams();
+
+            // 3. Fetch Pit Reports from Firestore
+            db.collection('pitScouting').onSnapshot(snapshot => {
+                this.pitReports = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    if (!this.pitReports[data.teamNumber]) {
+                        this.pitReports[data.teamNumber] = [];
+                    }
+                    this.pitReports[data.teamNumber].push(data);
+                });
+
+                // Sort each team's reports by date (newest first)
+                Object.keys(this.pitReports).forEach(teamNum => {
+                    this.pitReports[teamNum].sort((a, b) => {
+                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                        return dateB - dateA;
+                    });
+                });
+            });
+
+            this.loading = false;
+        },
+
+        async fetchEventTeams() {
+            this.loading = true;
+            this.teamEventMatrix = {};
+            const teamMap = new Map();
+
             try {
                 // 1. Get events from config
                 const filteredEvents = FRC_CONFIG.events.filter(e =>
@@ -29,56 +69,29 @@ document.addEventListener('alpine:init', () => {
                 );
 
                 // 2. Fetch teams from selected events
-                const teamMap = new Map();
                 for (const event of filteredEvents) {
-                    const eventTeams = await this.fetchEventTeams(event.key);
+                    const eventTeams = await this.fetchTBARequest(`event/${event.key}/teams`);
                     eventTeams.forEach(t => {
-                        if (!teamMap.has(t.team_number)) {
-                            teamMap.set(t.team_number, {
-                                ...t,
-                                eventKeys: [event.key]
+                        const teamNum = t.team_number;
+                        if (!teamMap.has(teamNum)) {
+                            teamMap.set(teamNum, {
+                                teamNumber: teamNum,
+                                name: t.nickname || t.name,
+                                city: t.city || 'Unknown',
+                                country: t.country || 'Turkey',
+                                awards: [],
+                                events: [],
+                                logoUrl: null
                             });
-                        } else {
-                            const existing = teamMap.get(t.team_number);
-                            if (!existing.eventKeys.includes(event.key)) {
-                                existing.eventKeys.push(event.key);
-                            }
+                        }
+                        if (!this.teamEventMatrix[teamNum]) this.teamEventMatrix[teamNum] = [];
+                        if (!this.teamEventMatrix[teamNum].includes(event.key)) {
+                            this.teamEventMatrix[teamNum].push(event.key);
                         }
                     });
                 }
 
-                this.teams = Array.from(teamMap.values()).map(t => ({
-                    teamNumber: t.team_number,
-                    name: t.nickname || t.name,
-                    city: t.city || 'Unknown',
-                    country: t.country || 'Turkey',
-                    awards: [],
-                    events: [],
-                    eventKeys: t.eventKeys || []
-                })).sort((a, b) => a.teamNumber - b.teamNumber);
-
-                // 3. Fetch Pit Reports from Firestore
-                db.collection('pitScouting').onSnapshot(snapshot => {
-                    this.pitReports = {};
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        data.id = doc.id;
-                        if (!this.pitReports[data.teamNumber]) {
-                            this.pitReports[data.teamNumber] = [];
-                        }
-                        this.pitReports[data.teamNumber].push(data);
-                    });
-
-                    // Sort each team's reports by date (newest first)
-                    Object.keys(this.pitReports).forEach(teamNum => {
-                        this.pitReports[teamNum].sort((a, b) => {
-                            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-                            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
-                            return dateB - dateA;
-                        });
-                    });
-                });
-
+                this.teams = Array.from(teamMap.values()).sort((a, b) => a.teamNumber - b.teamNumber);
                 this.loading = false;
             } catch (err) {
                 console.error("Failed to load teams:", err);
@@ -86,8 +99,8 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        async fetchEventTeams(eventKey) {
-            const url = `https://www.thebluealliance.com/api/v3/event/${eventKey}/teams`;
+        async fetchTBARequest(endpoint) {
+            const url = `https://www.thebluealliance.com/api/v3/${endpoint}`;
             const res = await fetch(url, {
                 headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
             });
@@ -109,43 +122,27 @@ document.addEventListener('alpine:init', () => {
 
         async loadTeamDetail(team) {
             try {
-                // 1. Fetch Basic Info (Name/City) and Media (Logo)
-                const info = await fetchFRCTeamInfo(team.teamNumber);
-                if (info) {
-                    team.name = info.nickname || info.name;
-                    team.city = info.city || team.city;
-                }
-
-                const media = await fetchFRCTeamMedia(team.teamNumber, 2025);
+                // 1. Fetch Basic Info Media (Logo)
+                const media = await this.fetchTBARequest(`team/frc${team.teamNumber}/media/2025`);
                 const logo = media.find(m => m.type === 'avatar' || m.type === 'image');
                 if (logo) {
                     team.logoUrl = logo.direct_url || (logo.details?.base64_avatar ? `data:image/png;base64,${logo.details.base64_avatar}` : null);
                 }
 
-                // 2. Load Awards (global history)
-                const awardsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/awards`;
-                const awardsRes = await fetch(awardsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
-                if (awardsRes.ok) {
-                    const allAwards = await awardsRes.json();
-                    // Map event keys to names
-                    for (const award of allAwards) {
-                        const event = FRC_CONFIG.events.find(e => e.key === award.event_key);
-                        award.event_name = event ? event.name : await this.getEventName(award.event_key);
-                    }
-                    team.awards = allAwards.slice(0, 10);
+                // 2. Load Awards
+                const allAwards = await this.fetchTBARequest(`team/frc${team.teamNumber}/awards`);
+                for (const award of allAwards) {
+                    const event = FRC_CONFIG.events.find(e => e.key === award.event_key);
+                    award.event_name = event ? event.name : await this.getEventName(award.event_key);
                 }
+                team.awards = allAwards.slice(0, 10);
 
-                // 3. Load Events for 2020-2026
-                const startYear = 2020;
-                const endYear = 2026;
+                // 3. Load Events (2025-2026)
+                const years = [2025, 2026];
                 const allTeamEvents = [];
-                for (let yr = startYear; yr <= endYear; yr++) {
-                    const eventsUrl = `https://www.thebluealliance.com/api/v3/team/frc${team.teamNumber}/events/${yr}`;
-                    const eventsRes = await fetch(eventsUrl, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
-                    if (eventsRes.ok) {
-                        const yrEvents = await eventsRes.json();
-                        allTeamEvents.push(...yrEvents);
-                    }
+                for (const yr of years) {
+                    const yrEvents = await this.fetchTBARequest(`team/frc${team.teamNumber}/events/${yr}`);
+                    allTeamEvents.push(...yrEvents);
                 }
                 team.events = allTeamEvents.sort((a, b) => b.year - a.year || b.start_date.localeCompare(a.start_date));
             } catch (e) {
@@ -156,16 +153,11 @@ document.addEventListener('alpine:init', () => {
         eventCache: {},
         async getEventName(eventKey) {
             if (this.eventCache[eventKey]) return this.eventCache[eventKey];
-            try {
-                const res = await fetch(`https://www.thebluealliance.com/api/v3/event/${eventKey}`, {
-                    headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey }
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    this.eventCache[eventKey] = data.name;
-                    return data.name;
-                }
-            } catch (e) { }
+            const data = await this.fetchTBARequest(`event/${eventKey}`);
+            if (data && data.name) {
+                this.eventCache[eventKey] = data.name;
+                return data.name;
+            }
             return eventKey;
         },
 
@@ -188,11 +180,20 @@ document.addEventListener('alpine:init', () => {
         get filteredTeams() {
             let list = this.teams;
 
-            // 1. Regional / Event Filter
+            // 1. Logic intersection vs union
             if (this.selectedEvents.length > 0) {
-                list = list.filter(t =>
-                    t.eventKeys?.some(key => this.selectedEvents.includes(key))
-                );
+                if (this.mergeMode) {
+                    // INTERSECTION: Only teams in ALL selected regionals
+                    list = list.filter(t =>
+                        this.selectedEvents.every(key => this.teamEventMatrix[t.teamNumber]?.includes(key))
+                    );
+                } else {
+                    // UNION: Teams in ANY selected regional
+                    list = list.filter(t =>
+                        t.eventKeys?.some(key => this.selectedEvents.includes(key)) ||
+                        this.teamEventMatrix[t.teamNumber]?.some(key => this.selectedEvents.includes(key))
+                    );
+                }
             }
 
             // 2. Search Query Filter

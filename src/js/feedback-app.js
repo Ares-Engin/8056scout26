@@ -48,7 +48,7 @@ document.addEventListener('alpine:init', () => {
             this.submitting = true;
             try {
                 const feedbackData = {
-                    userName: this.currentUser.fullName || 'Anonymous Scout',
+                    userName: this.currentUser.name || 'Anonymous Scout',
                     userVerified: this.currentUser.role !== 'new',
                     fromTeam: this.currentUser.teamNumber || '0000',
                     fromTeamName: this.currentUser.teamNickname || 'Independent',

@@ -13,7 +13,6 @@ document.addEventListener('alpine:init', () => {
         loading: true,
         mergeMode: false,
         teamEventMatrix: {}, // Tracks which team is in which selected event
-        modalImage: null,
 
         async init() {
             // Check for team search in URL
@@ -232,16 +231,6 @@ document.addEventListener('alpine:init', () => {
                 console.error("Delete failed:", err);
                 alert("Failed to delete pit report: " + err.message);
             }
-        },
-
-        openPhoto(url) {
-            this.modalImage = url;
-            document.body.style.overflow = 'hidden';
-        },
-
-        closePhoto() {
-            this.modalImage = null;
-            document.body.style.overflow = '';
         }
     }));
 });

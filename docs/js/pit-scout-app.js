@@ -66,17 +66,40 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        async uploadImages() {
-            const storage = firebase.storage();
-            const uploadedUrls = [];
+        compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        let width = img.width;
+                        let height = img.height;
 
-            for (const file of this.images) {
-                const storageRef = storage.ref(`pit-scouting/${this.teamNumber}/${Date.now()}-${file.name}`);
-                const snapshot = await storageRef.put(file);
-                const url = await snapshot.ref.getDownloadURL();
-                uploadedUrls.push(url);
-            }
-            return uploadedUrls;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // 70% quality
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
         },
 
         async submit() {
@@ -84,9 +107,11 @@ document.addEventListener('alpine:init', () => {
 
             this.loading = true;
             try {
-                // 1. Upload Images first if any
-                if (this.images.length > 0) {
-                    this.imageUrls = await this.uploadImages();
+                // 1. Process and "upload" (convert to base64) images
+                const processedImages = [];
+                for (const file of this.images) {
+                    const base64 = await this.compressImage(file);
+                    processedImages.push(base64);
                 }
 
                 const profile = Alpine.store('auth').profile || {};
@@ -96,7 +121,7 @@ document.addEventListener('alpine:init', () => {
                     teamNumber: Number(this.teamNumber),
                     data: {
                         ...this.data,
-                        images: this.imageUrls // ADDED: include image URLs in data
+                        images: processedImages
                     },
                     meta: {
                         scouterTeam: profile.teamNumber || 0,

@@ -113,6 +113,17 @@
                         <!-- Score Preview -->
                         <div class="flex items-center gap-4">
                             <div class="match-card__scores">
+                                <!-- VIEW ON TBA -->
+                                <a :href="FRC_CONFIG.getTbaMatchUrl(match.eventKey, match.type, match.matchNumber)"
+                                    target="_blank"
+                                    class="mr-2 px-2 py-1 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white rounded border border-blue-500/20 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center gap-1.5">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                        </path>
+                                    </svg>
+                                    TBA
+                                </a>
                                 <div class="match-card__score-preview">
                                     <span class="match-card__score-red" x-text="match.scoreRedFinal || 0"></span>
                                     <div class="match-card__dot-red"></div>
@@ -430,6 +441,24 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- PHOTOS (If available) -->
+                                        <template x-if="entry.data?.images && entry.data?.images.length > 0">
+                                            <div class="px-3 pb-3">
+                                                <span
+                                                    class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Robot
+                                                    Photos</span>
+                                                <div class="flex flex-wrap gap-2">
+                                                    <template x-for="imgUrl in entry.data.images">
+                                                        <a :href="imgUrl" target="_blank"
+                                                            class="block w-16 h-16 rounded border border-slate-700 overflow-hidden bg-slate-900">
+                                                            <img :src="imgUrl"
+                                                                class="w-full h-full object-cover hover:scale-110 transition-transform">
+                                                        </a>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
 
                                         <!-- RATINGS -->
                                         <div class="px-3 pb-3">

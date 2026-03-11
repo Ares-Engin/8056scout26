@@ -33,6 +33,7 @@ document.addEventListener('alpine:init', () => {
         matchNumber: '',
         teamNumber: '',
         matchType: 'Qualification',
+        alliance: '', // ADDED
         // Counter Definitions
         get autoRanges() {
             // Up to 150 with expanding gaps

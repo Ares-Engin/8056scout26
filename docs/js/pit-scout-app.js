@@ -4,7 +4,30 @@ document.addEventListener('alpine:init', () => {
         availableSeasons: FRC_CONFIG.seasons,
         regional: '',
         teamNumber: '',
+        images: [], // Selected files
+        imagePreviews: [], // URLs for UI previews
+        imageUrls: [], // Final uploaded URLs
         loading: false,
+
+        handleImageSelect(event) {
+            const files = Array.from(event.target.files);
+            if (this.images.length + files.length > 5) {
+                alert('Maximum 5 images allowed');
+                return;
+            }
+
+            files.forEach(file => {
+                this.images.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => this.imagePreviews.push(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        },
+
+        removeImage(index) {
+            this.images.splice(index, 1);
+            this.imagePreviews.splice(index, 1);
+        },
 
         data: {
             driveBase: 'Swerve',
@@ -43,17 +66,38 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        async uploadImages() {
+            const storage = firebase.storage();
+            const uploadedUrls = [];
+
+            for (const file of this.images) {
+                const storageRef = storage.ref(`pit-scouting/${this.teamNumber}/${Date.now()}-${file.name}`);
+                const snapshot = await storageRef.put(file);
+                const url = await snapshot.ref.getDownloadURL();
+                uploadedUrls.push(url);
+            }
+            return uploadedUrls;
+        },
+
         async submit() {
             if (!this.teamNumber || !this.regional) return alert('Team and Regional are required');
 
             this.loading = true;
             try {
+                // 1. Upload Images first if any
+                if (this.images.length > 0) {
+                    this.imageUrls = await this.uploadImages();
+                }
+
                 const profile = Alpine.store('auth').profile || {};
                 const report = {
                     year: Number(this.selectedYear),
                     regional: this.regional,
                     teamNumber: Number(this.teamNumber),
-                    data: { ...this.data },
+                    data: {
+                        ...this.data,
+                        images: this.imageUrls // ADDED: include image URLs in data
+                    },
                     meta: {
                         scouterTeam: profile.teamNumber || 0,
                         scouterRole: profile.role || 'new',

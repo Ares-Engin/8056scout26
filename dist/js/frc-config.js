@@ -52,7 +52,15 @@ const FRC_CONFIG = {
     },
     manualTeamsPath: "data/teams-manual.json",
     // Auto-detected domain: identifies which deployment is active
-    currentDomain: window.location.hostname
+    currentDomain: window.location.hostname,
+
+    // TBA URL Helpers
+    getTbaTeamUrl: (teamNumber, year = 2026) => `https://www.thebluealliance.com/team/${teamNumber}/${year}`,
+    getTbaMatchUrl: (eventKey, type, matchNumber) => {
+        const typeMap = { 'Qualification': 'qm', 'Practice': 'p', 'Playoffs': 'sf', 'Final': 'f' };
+        const tbaType = typeMap[type] || 'qm';
+        return `https://www.thebluealliance.com/match/${eventKey}_${tbaType}${matchNumber}`;
+    }
 };
 
 /* Fetches match results from The Blue Alliance API */

@@ -352,6 +352,16 @@ document.addEventListener('alpine:init', () => {
 
         async loadScouterTeamData(id) {
             // Optional: Fetch team logo/name for scouter team if needed
+        },
+
+        async deleteReport(id) {
+            if (!confirm("Are you sure you want to delete this match report? This action cannot be undone.")) return;
+            try {
+                await db.collection('scouting').doc(id).delete();
+            } catch (err) {
+                console.error("Delete failed:", err);
+                alert("Failed to delete report: " + err.message);
+            }
         }
     }));
 });

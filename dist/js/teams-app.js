@@ -222,6 +222,15 @@ document.addEventListener('alpine:init', () => {
             return {
                 nickname: team ? team.name : ''
             };
+        },
+        async deletePitReport(id) {
+            if (!confirm("Are you sure you want to delete this pit report? This action cannot be undone.")) return;
+            try {
+                await db.collection('pitScouting').doc(id).delete();
+            } catch (err) {
+                console.error("Delete failed:", err);
+                alert("Failed to delete pit report: " + err.message);
+            }
         }
     }));
 });

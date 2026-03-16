@@ -49,24 +49,62 @@
         <div x-show="!loadingStats" x-transition.opacity>
             <!-- High Level Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-slate-900/40 border border-slate-700/30 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
+                <div
+                    class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 p-5 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="h-12 w-12 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
+                            <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" />
+                        </svg>
+                    </div>
+                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Reports
+                        Total</span>
                     <span
-                        class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Reports</span>
-                    <span class="text-2xl font-black text-white"
+                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400"
                         x-text="stats.scoutedMatches + stats.pitReports"></span>
                 </div>
-                <div class="bg-slate-900/40 border border-slate-700/30 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
-                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Users</span>
-                    <span class="text-2xl font-black text-white" x-text="stats.totalUsers"></span>
-                </div>
-                <div class="bg-slate-900/40 border border-slate-700/30 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
-                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Teams</span>
-                    <span class="text-2xl font-black text-white" x-text="stats.totalTeams"></span>
-                </div>
-                <div class="bg-slate-900/40 border border-slate-700/30 p-4 rounded-2xl backdrop-blur-sm shadow-xl">
+                <div
+                    class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 p-5 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="h-12 w-12 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Active
+                        Scouts</span>
                     <span
-                        class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Regionals</span>
-                    <span class="text-2xl font-black text-white" x-text="stats.totalRegionals"></span>
+                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400"
+                        x-text="stats.totalUsers"></span>
+                </div>
+                <div
+                    class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 p-5 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="h-12 w-12 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5s-3 1.34-3 3 1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg>
+                    </div>
+                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Teams
+                        Tracked</span>
+                    <span
+                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400"
+                        x-text="stats.totalTeams"></span>
+                </div>
+                <div
+                    class="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 p-5 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="h-12 w-12 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                        </svg>
+                    </div>
+                    <span class="block text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Events
+                        Open</span>
+                    <span
+                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400"
+                        x-text="stats.totalRegionals"></span>
                 </div>
             </div>
 

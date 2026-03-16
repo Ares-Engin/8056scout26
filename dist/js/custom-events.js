@@ -7,6 +7,8 @@
 
 const CUSTOM_EVENTS = [
     // Add your own events below this line
+    { key: "2026cnsh", name: "Shanghai Regional 2026", season: 2026 },
+    { key: "2026flor", name: "Orlando Regional 2026", season: 2026 },
     { key: "2026tuhc", name: "Haliç Regional 2026", season: 2026 },
     { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 },
     { key: "2026tuis3", name: "Marmara Regional 2026", season: 2026 },

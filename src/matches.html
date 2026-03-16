@@ -68,7 +68,7 @@
         <div class="filter-group">
             <label class="form-label--filter">Match Type</label>
             <div class="filter-chips">
-                <template x-for="type in ['Practice', 'Qualification', 'Playoffs']">
+                <template x-for="type in ['Practice', 'Qualification', 'Playoffs', 'Finals']">
                     <button
                         @click="selectedTypes.includes(type) ? selectedTypes = selectedTypes.filter(t => t !== type) : selectedTypes.push(type)"
                         :class="selectedTypes.includes(type) ? 'filter-chip-type--active' : 'filter-chip--inactive'"

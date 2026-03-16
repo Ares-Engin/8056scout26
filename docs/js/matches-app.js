@@ -6,7 +6,7 @@ document.addEventListener('alpine:init', () => {
         availableEvents: FRC_CONFIG.events,
         selectedSeasons: [...FRC_CONFIG.seasons],
         selectedEvents: FRC_CONFIG.events.filter(e => e.season === 2026).map(e => e.key),
-        selectedTypes: ['Qualification'],
+        selectedTypes: ['Qualification', 'Playoffs', 'Finals'],
         searchQuery: '',
         loading: true,
         errorMessage: '',
@@ -133,7 +133,8 @@ document.addEventListener('alpine:init', () => {
 
             let list = this.frcMatches.map(m => {
                 const type = m.compLevel === 'qm' ? 'Qualification' :
-                    m.compLevel === 'p' ? 'Practice' : 'Playoffs';
+                    m.compLevel === 'p' ? 'Practice' :
+                        m.compLevel === 'f' ? 'Finals' : 'Playoffs';
                 const eventShort = this.availableEvents.find(e => e.key === m.eventKey)?.name.split(' ')[0] || m.eventKey;
                 const year = this.availableEvents.find(e => e.key === m.eventKey)?.season || '';
 
@@ -150,26 +151,30 @@ document.addEventListener('alpine:init', () => {
                 const [regional, scoutType, matchNumStr] = key.split('_');
                 const matchNum = Number(matchNumStr);
 
-                // Map frontend scouted Type back to TBA compLevel
-                let scoutCompLevel = 'qm';
-                if (scoutType === 'Practice') scoutCompLevel = 'p';
-                if (scoutType === 'Playoffs') scoutCompLevel = 'sf';
+                // Map frontend scouted Type back to TBA compLevel array
+                // For matching existingApiMatchListIndex, check valid options.
+                const validCompLevels = scoutType === 'Practice' ? ['p'] :
+                    scoutType === 'Qualification' ? ['qm'] :
+                        scoutType === 'Finals' ? ['f'] :
+                            scoutType === 'Playoffs' ? ['qf', 'sf'] : [];
 
                 // Look for an existing API match that is strictly matching BOTH event + matchNumber AND match type!
                 const existingApiMatchListIndex = list.findIndex(m =>
                     m.eventKey === regional &&
                     m.matchNumber === matchNum &&
-                    (
-                        (scoutType === 'Practice' && m.compLevel === 'p') ||
-                        (scoutType === 'Qualification' && m.compLevel === 'qm') ||
-                        (scoutType === 'Playoffs' && ['qf', 'sf', 'f'].includes(m.compLevel))
-                    )
+                    validCompLevels.includes(m.compLevel)
                 );
 
                 const entries = this.scoutEntries[key];
 
                 if (existingApiMatchListIndex === -1) {
                     const eventObj = this.availableEvents.find(e => e.key === regional);
+
+                    // If the scout log was from an old format or an unreceived match, default to a compLevel equivalent
+                    let fallbackLevel = 'qm';
+                    if (scoutType === 'Practice') fallbackLevel = 'p';
+                    if (scoutType === 'Playoffs') fallbackLevel = 'sf';
+                    if (scoutType === 'Finals') fallbackLevel = 'f';
 
                     list.push({
                         matchNumber: matchNum,
@@ -178,7 +183,7 @@ document.addEventListener('alpine:init', () => {
                         year: eventObj?.season || '',
                         type: scoutType,
                         description: `${scoutType} ${matchNum}`,
-                        compLevel: scoutCompLevel,
+                        compLevel: fallbackLevel,
                         teams: [],
                         isManual: true,
                         scoutedTeams: entries.map(e => e.teamNumber)
@@ -213,12 +218,14 @@ document.addEventListener('alpine:init', () => {
                 // Type Filter
                 const isPractice = m.compLevel === 'p' || m.type === 'Practice';
                 const isQual = m.compLevel === 'qm' || m.type === 'Qualification';
-                const isPlayoff = ['qf', 'sf', 'f'].includes(m.compLevel) || m.type === 'Playoffs';
+                const isPlayoff = ['qf', 'sf'].includes(m.compLevel) || m.type === 'Playoffs';
+                const isFinals = m.compLevel === 'f' || m.type === 'Finals';
 
                 let typeMatch = false;
                 if (this.selectedTypes.includes('Practice') && isPractice) typeMatch = true;
                 if (this.selectedTypes.includes('Qualification') && isQual) typeMatch = true;
                 if (this.selectedTypes.includes('Playoffs') && isPlayoff) typeMatch = true;
+                if (this.selectedTypes.includes('Finals') && isFinals) typeMatch = true;
 
                 if (!typeMatch) return false;
 

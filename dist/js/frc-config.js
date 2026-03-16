@@ -4,6 +4,8 @@
    ============================================================ */
 
 const DEFAULT_EVENTS = [
+    { key: "2026cnsh", name: "Shanghai Regional 2026", season: 2026 },
+    { key: "2026flor", name: "Orlando Regional 2026", season: 2026 },
     { key: "2026tuis", name: "Istanbul Regional 2026", season: 2026 },
     { key: "2026tuis2", name: "Bosphorus Regional 2026", season: 2026 },
     { key: "2026tuis3", name: "Marmara Regional 2026", season: 2026 },
@@ -90,7 +92,7 @@ async function fetchFRCMatches(eventKey) {
         'p': 'Practice',
         'qf': 'Playoffs',
         'sf': 'Playoffs',
-        'f': 'Playoffs'
+        'f': 'Finals'
     };
 
     // Convert TBA format → FIRST API format (so your matches.js works unchanged)
@@ -108,20 +110,25 @@ async function fetchFRCMatches(eventKey) {
         }));
 
         let description = '';
+        let extractedMatchNumber = match.match_number; // Default to match_number
+
         if (match.comp_level === 'qm') {
             description = `Qualification ${match.match_number}`;
         } else if (match.comp_level === 'p') {
             description = `Practice ${match.match_number}`;
         } else if (match.comp_level === 'f') {
             description = `Final ${match.match_number}`;
+            extractedMatchNumber = match.match_number;
         } else if (match.comp_level === 'sf' || match.comp_level === 'qf') {
             description = `Match ${match.set_number}`;
+            extractedMatchNumber = match.set_number;
         } else {
             description = `Match ${match.set_number}-${match.match_number}`;
+            extractedMatchNumber = match.set_number;
         }
 
         return {
-            matchNumber: match.match_number,
+            matchNumber: extractedMatchNumber,
             description: description,
             compLevel: match.comp_level,
             actualStartTime: match.actual_time

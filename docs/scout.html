@@ -83,8 +83,9 @@
 
         <div>
           <label class="form-label--simple">Match Type</label>
-          <div class="form-grid--3col">
-            <template x-for="type in ['Practice', 'Qualification', 'Playoffs']">
+          <div class="form-grid--4col"
+            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.75rem;">
+            <template x-for="type in ['Practice', 'Qualification', 'Playoffs', 'Finals']">
               <button @click="matchType = type" class="btn-match-type"
                 :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
                 x-text="type"></button>

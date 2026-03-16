@@ -140,6 +140,8 @@ async function fetchFRCMatches(eventKey) {
             scoreBlueAuto: match.score_breakdown?.blue?.autoPoints ?? null,
             scoreRedFoul: match.score_breakdown?.red?.foulPoints ?? null,
             scoreBlueFoul: match.score_breakdown?.blue?.foulPoints ?? null,
+            // Full breakdown for detailed view
+            rawScoreBreakdown: match.score_breakdown || null,
             // Normalized breakdown — always present if match was scored
             scoreBreakdown: match.score_breakdown ? {
                 red: {

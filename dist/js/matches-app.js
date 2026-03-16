@@ -5,7 +5,7 @@ document.addEventListener('alpine:init', () => {
         availableSeasons: FRC_CONFIG.seasons,
         availableEvents: FRC_CONFIG.events,
         selectedSeasons: [...FRC_CONFIG.seasons],
-        selectedEvents: FRC_CONFIG.events.filter(e => e.season === 2026).map(e => e.key),
+        selectedEvents: [],
         selectedTypes: ['Qualification', 'Playoffs', 'Finals'],
         searchQuery: '',
         loading: true,

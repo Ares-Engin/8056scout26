@@ -76,17 +76,26 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
             this.errorMessage = '';
             try {
-                // Fetch matches for all selected events
+                // Fetch matches for all selected events + any events that have scouted data
+                const scoutedEvents = [...new Set(Object.keys(this.scoutEntries).map(k => k.split('_')[0]))];
+                const eventsToFetch = [...new Set([...this.selectedEvents, ...scoutedEvents])];
+
+                if (eventsToFetch.length === 0) {
+                    this.frcMatches = [];
+                    this.loading = false;
+                    return;
+                }
+
                 const allMatches = await Promise.all(
-                    this.selectedEvents.map(key => fetchFRCMatches(key))
+                    eventsToFetch.map(key => fetchFRCMatches(key))
                 );
                 // Flatten and add event key to each match for filtering
                 this.frcMatches = allMatches.flatMap((matches, i) =>
-                    matches.map(m => ({ ...m, eventKey: this.selectedEvents[i] }))
+                    matches.map(m => ({ ...m, eventKey: eventsToFetch[i] }))
                 );
 
                 // Fetch and cache team names for all teams in these matches
-                this.selectedEvents.forEach(async eventKey => {
+                eventsToFetch.forEach(async eventKey => {
                     const url = `https://www.thebluealliance.com/api/v3/event/${eventKey}/teams`;
                     const res = await fetch(url, { headers: { "X-TBA-Auth-Key": FRC_CONFIG.apiKey } });
                     if (res.ok) {
@@ -217,8 +226,13 @@ document.addEventListener('alpine:init', () => {
 
             return list.filter(m => {
                 // Event Filter - STRICT: Only show if event key is in selectedEvents
-                if (this.selectedEvents.length === 0) return false;
-                if (!this.selectedEvents.includes(m.eventKey)) return false;
+                // If NO events are selected, we ONLY show matches that have scouted data
+                if (this.selectedEvents.length === 0) {
+                    const isScouted = m.isManual || (m.scoutedTeams && m.scoutedTeams.length > 0) || this.scoutEntries[`${m.eventKey}_${m.type}_${m.matchNumber}`];
+                    if (!isScouted) return false;
+                } else {
+                    if (!this.selectedEvents.includes(m.eventKey)) return false;
+                }
 
                 // Type Filter
                 const isPractice = m.compLevel === 'p' || m.type === 'Practice';

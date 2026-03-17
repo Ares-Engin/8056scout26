@@ -131,6 +131,7 @@ async function fetchFRCMatches(eventKey) {
             matchNumber: extractedMatchNumber,
             description: description,
             compLevel: match.comp_level,
+            scheduledTime: match.time ? new Date(match.time * 1000).toISOString() : null,
             actualStartTime: match.actual_time
                 ? new Date(match.actual_time * 1000).toISOString()
                 : null,

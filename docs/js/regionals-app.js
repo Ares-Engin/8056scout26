@@ -1,17 +1,32 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('regionalsApp', () => ({
-        searchQuery: '', // Global regional search
-        teamSearchQuery: '', // Search inside expanded regional
+        searchQuery: '', // Unified global search
         expandedRegionals: [],
         regionalData: {}, // Map eventKey -> { matches: [], rankings: [], awards: [], loading: false, teams: [] }
+        eventTeamsMap: {}, // Map eventKey -> [teamNumbers] for global search
         pitReports: {}, // Map teamNumber -> [reports]
+        availableEvents: FRC_CONFIG.events,
+        availableSeasons: FRC_CONFIG.seasons,
         expandedMatches: [],
         expandedReports: [],
         expandedTeams: [],
         expandedHistory: [],
         expandedPitReports: [],
 
+        get isAdmin() {
+            return Alpine.store('auth').profile?.role === 'admin' ||
+                Alpine.store('auth').profile?.role === 'team8056';
+        },
+
         async init() {
+            // Background fetch all event team lists for global search
+            this.availableEvents.filter(e => e.season === 2026).forEach(async event => {
+                const teams = await this.fetchTBARequest(`event/${event.key}/teams/keys`);
+                if (teams) {
+                    this.eventTeamsMap[event.key] = teams.map(tk => parseInt(tk.replace('frc', '')));
+                }
+            });
+
             // Load ALL Pit Reports for the season (season-wide)
             db.collection('pitScouting').onSnapshot(snapshot => {
                 this.pitReports = {};
@@ -40,7 +55,8 @@ document.addEventListener('alpine:init', () => {
             const q = this.searchQuery.toLowerCase();
             return this.availableEvents.filter(e =>
                 e.name.toLowerCase().includes(q) ||
-                e.key.toLowerCase().includes(q)
+                e.key.toLowerCase().includes(q) ||
+                (this.eventTeamsMap[e.key] && this.eventTeamsMap[e.key].some(num => num.toString().includes(q)))
             );
         },
 
@@ -94,17 +110,21 @@ document.addEventListener('alpine:init', () => {
                     loadingDetails: false
                 })).sort((a, b) => a.teamNumber - b.teamNumber);
 
+                // Replace the whole entry to trigger Alpine reactivity
+                this.regionalData[eventKey] = { ...this.regionalData[eventKey] };
+
             } catch (err) {
                 console.error("Failed to load regional data:", err);
             } finally {
                 this.regionalData[eventKey].loading = false;
+                this.regionalData[eventKey] = { ...this.regionalData[eventKey] };
             }
         },
 
         getFilteredMatches(eventKey) {
             const matches = this.regionalData[eventKey]?.matches || [];
-            if (!this.teamSearchQuery) return matches;
-            const q = this.teamSearchQuery.toLowerCase();
+            if (!this.searchQuery) return matches;
+            const q = this.searchQuery.toLowerCase();
             const teams = this.regionalData[eventKey]?.teams || [];
 
             return matches.filter(m => {
@@ -126,7 +146,7 @@ document.addEventListener('alpine:init', () => {
             let list = [];
             if (data.rankings && data.rankings.rankings && data.rankings.rankings.length > 0) {
                 list = data.rankings.rankings;
-            } else {
+            } else if (data.teams) {
                 // Fallback: show teams if no rankings yet
                 list = data.teams.map((t, i) => ({
                     rank: '-',
@@ -136,19 +156,19 @@ document.addEventListener('alpine:init', () => {
                 }));
             }
 
-            if (!this.teamSearchQuery) return list;
-            const q = this.teamSearchQuery.toLowerCase();
+            if (!this.searchQuery) return list;
+            const q = this.searchQuery.toLowerCase();
             return list.filter(r => {
                 const teamNum = r.team_key.replace('frc', '');
-                const teamName = data.teams.find(t => t.teamNumber === parseInt(teamNum))?.name || '';
+                const teamName = data.teams?.find(t => t.teamNumber === parseInt(teamNum))?.name || '';
                 return teamNum.includes(q) || teamName.toLowerCase().includes(q);
             });
         },
 
         getFilteredAwards(eventKey) {
             const awards = this.regionalData[eventKey]?.awards || [];
-            if (!this.teamSearchQuery) return awards;
-            const q = this.teamSearchQuery.toLowerCase();
+            if (!this.searchQuery) return awards;
+            const q = this.searchQuery.toLowerCase();
             return awards.filter(a =>
                 a.name.toLowerCase().includes(q) ||
                 a.recipient_list?.some(r => r.team_key?.replace('frc', '').includes(q) || r.awardee?.toLowerCase().includes(q))
@@ -158,7 +178,7 @@ document.addEventListener('alpine:init', () => {
         getRankData(rank, label, eventKey) {
             if (!rank || !this.regionalData[eventKey]) return '-';
             const info = this.regionalData[eventKey].rankings?.sort_order_info;
-            if (!info) return '-';
+            if (!info || !rank.sort_orders) return '-';
             const index = info.findIndex(i => i.name === label);
             return index !== -1 ? (rank.sort_orders[index]?.toFixed(2) || '0') : '-';
         },
@@ -227,13 +247,19 @@ document.addEventListener('alpine:init', () => {
         },
 
         formatDate(timestamp) {
-            if (!timestamp) return 'Pending';
+            if (!timestamp) return 'No Time';
             const date = new Date(timestamp);
+            if (isNaN(date.getTime())) return 'No Time';
             return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         },
 
         isVerified(role) {
             return role && role !== 'new';
+        },
+
+        isHighlighted(teamNumber) {
+            if (!this.searchQuery) return false;
+            return teamNumber.toString().includes(this.searchQuery);
         }
     }));
 });

@@ -164,7 +164,9 @@
                             <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Red'))"
                                 :key="t.teamNumber">
                                 <div class="flex items-center gap-1">
-                                    <span class="text-[10px] font-black text-red-400" x-text="t.teamNumber"></span>
+                                    <span class="text-[10px] font-black rounded px-1 transition-all"
+                                        :class="isHighlighted(t.teamNumber) ? 'bg-orange-500 text-white ring-2 ring-orange-500/50' : 'text-red-400'"
+                                        x-text="t.teamNumber"></span>
                                     <span class="text-[9px] text-slate-400 font-bold max-w-[60px] truncate"
                                         x-text="getTeamData(t.teamNumber).nickname"></span>
                                 </div>
@@ -176,7 +178,9 @@
                             <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Blue'))"
                                 :key="t.teamNumber">
                                 <div class="flex items-center gap-1">
-                                    <span class="text-[10px] font-black text-blue-400" x-text="t.teamNumber"></span>
+                                    <span class="text-[10px] font-black rounded px-1 transition-all"
+                                        :class="isHighlighted(t.teamNumber) ? 'bg-orange-500 text-white ring-2 ring-orange-500/50' : 'text-blue-400'"
+                                        x-text="t.teamNumber"></span>
                                     <span class="text-[9px] text-slate-400 font-bold max-w-[60px] truncate"
                                         x-text="getTeamData(t.teamNumber).nickname"></span>
                                 </div>

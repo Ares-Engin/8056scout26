@@ -50,9 +50,13 @@ document.addEventListener('alpine:init', () => {
                         }
                     });
 
-                    // Sort entries for each match by date (newest first)
+                    // Sort: Verified first, then newest date
                     Object.keys(this.scoutEntries).forEach(key => {
                         this.scoutEntries[key].sort((a, b) => {
+                            const verifiedA = this.isVerified(a.meta?.role || a.role);
+                            const verifiedB = this.isVerified(b.meta?.role || b.role);
+                            if (verifiedA !== verifiedB) return verifiedB ? 1 : -1;
+
                             const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
                             const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
                             return dateB - dateA;

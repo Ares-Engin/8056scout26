@@ -6,6 +6,7 @@ document.addEventListener('alpine:init', () => {
         regionalData: {}, // Map eventKey -> { matches: [], rankings: [], awards: [], loading: false, teams: [] }
         eventTeamsMap: {}, // Map eventKey -> [teamNumbers] for global search
         pitReports: {}, // Map teamNumber -> [reports]
+        scoutEntries: {}, // Map matchKey -> [reports]
         availableEvents: FRC_CONFIG.events,
         availableSeasons: FRC_CONFIG.seasons,
         expandedMatches: [],
@@ -13,6 +14,7 @@ document.addEventListener('alpine:init', () => {
         expandedTeams: [],
         expandedHistory: [],
         expandedPitReports: [],
+        expandedIntel: [], // For full API JSON
 
         get isAdmin() {
             return Alpine.store('auth').profile?.role === 'admin' ||
@@ -40,14 +42,49 @@ document.addEventListener('alpine:init', () => {
                     this.pitReports[data.teamNumber].push(data);
                 });
 
-                // Sort by date newest first
+                // Sort: Verified first, then newest date
                 Object.keys(this.pitReports).forEach(num => {
                     this.pitReports[num].sort((a, b) => {
+                        const verifiedA = this.isVerified(a.meta?.role || a.role);
+                        const verifiedB = this.isVerified(b.meta?.role || b.role);
+                        if (verifiedA !== verifiedB) return verifiedB ? 1 : -1;
+
                         const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
                         const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
                         return dateB - dateA;
                     });
                 });
+            });
+
+            // Load Match Scouting Reports
+            db.collection('scouting').onSnapshot(snapshot => {
+                this.scoutEntries = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    if (data.matchNumber) {
+                        const matchType = data.meta?.matchType || data.data?.matchType || data.matchType || 'Qualification';
+                        const key = `${data.regional}_${matchType}_${data.matchNumber}`;
+                        if (!this.scoutEntries[key]) this.scoutEntries[key] = [];
+                        this.scoutEntries[key].push(data);
+                    }
+                });
+
+                // Sort: Verified first, then newest date
+                Object.keys(this.scoutEntries).forEach(key => {
+                    this.scoutEntries[key].sort((a, b) => {
+                        const verifiedA = this.isVerified(a.meta?.role || a.role);
+                        const verifiedB = this.isVerified(b.meta?.role || b.role);
+                        if (verifiedA !== verifiedB) return verifiedB ? 1 : -1;
+
+                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                        return dateB - dateA;
+                    });
+                });
+
+                // Trigger UI refresh
+                this.scoutEntries = { ...this.scoutEntries };
             });
         },
 
@@ -166,6 +203,14 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
+        getMatchReports(eventKey, compLevel, matchNumber) {
+            const scoutType = compLevel === 'qm' ? 'Qualification' :
+                compLevel === 'p' ? 'Practice' :
+                    compLevel === 'f' ? 'Finals' : 'Playoffs';
+            const key = `${eventKey}_${scoutType}_${matchNumber}`;
+            return this.scoutEntries[key] || [];
+        },
+
         getFilteredAwards(eventKey) {
             const awards = this.regionalData[eventKey]?.awards || [];
             const q = this.teamSearchQuery.toLowerCase();
@@ -252,6 +297,12 @@ document.addEventListener('alpine:init', () => {
             this.expandedPitReports.includes(id)
                 ? this.expandedPitReports = this.expandedPitReports.filter(i => i !== id)
                 : this.expandedPitReports.push(id);
+        },
+
+        toggleIntel(id) {
+            this.expandedIntel.includes(id)
+                ? this.expandedIntel = this.expandedIntel.filter(i => i !== id)
+                : this.expandedIntel.push(id);
         },
 
         formatDate(timestamp) {

@@ -6804,33 +6804,177 @@ body {
   background: rgba(34, 197, 94, 0.2);
   transform: translateY(-1px);
 }
+
 /* Desktop Mode Overrides */
 .desktop-mode {
-  --container-md: 64rem !important;
-  --container-xl: 80rem !important;
+  --container-md: 1600px !important;
+  --container-lg: 1600px !important;
+  --container-xl: 1600px !important;
 }
 
+/* Global Page Expansions */
+.desktop-mode .page-body,
 .desktop-mode .page-body--padded,
 .desktop-mode .page-body--centered {
-  max-width: none !important;
-  padding: 2rem !important;
-}
-
-.desktop-mode .top-nav__inner, 
-.desktop-mode .dashboard-grid,
-.desktop-mode .page-hero,
-.desktop-mode main {
-  max-width: 1200px !important;
+  max-width: 1600px !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  padding: 2rem 4rem !important;
 }
 
-.desktop-mode .dashboard-grid {
+.desktop-mode .top-nav__inner,
+.desktop-mode .page-hero {
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+}
+
+.desktop-mode .top-bar--fixed {
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Scout Forms (3 columns) */
+.desktop-mode .container--sm,
+.desktop-mode .container--lg,
+.desktop-mode .container--xl {
+  max-width: 100% !important;
+  display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 1.5rem !important;
+  align-items: start !important;
 }
 
+.desktop-mode .container--sm>.btn-submit,
+.desktop-mode .container--sm>button,
+.desktop-mode .container--lg>.admin-grid {
+  grid-column: 1 / -1 !important;
+}
+
+.desktop-mode .container--sm>.btn-submit {
+  margin-top: 1rem !important;
+}
+
+/* Pit Scout Form & Other forms */
+.desktop-mode form.space-y-6 {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+}
+
+.desktop-mode form.space-y-6>* {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.desktop-mode form.space-y-6 .btn-submit {
+  grid-column: 1 / -1 !important;
+  margin-top: 1rem !important;
+}
+
+/* Fix Pit Scout metadata spanning */
+.desktop-mode form.space-y-6 .card:first-child {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+  align-items: center;
+}
+
+.desktop-mode form.space-y-6 .card:first-child h3,
+.desktop-mode form.space-y-6 .card:first-child .grid-cols-2 {
+  grid-column: 1 / -1 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Dashboard Grid (3 columns) */
+.desktop-mode .dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 2rem !important;
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+}
+
+.desktop-mode .dashboard-card,
+.desktop-mode .dashboard-card--blue,
+.desktop-mode .dashboard-card--orange,
+.desktop-mode .dashboard-card--admin {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.desktop-mode .dashboard-card__link,
+.desktop-mode .dashboard-card__link--blue,
+.desktop-mode .dashboard-card__link--orange {
+  margin-top: auto !important;
+}
+
+/* Match & Regional Grid (Multiple columns) */
+.desktop-mode .match-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)) !important;
+  gap: 1.5rem !important;
+  align-items: start !important;
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+}
+
+.desktop-mode .match-card-new,
+.desktop-mode .card,
+.desktop-mode .team-card {
+  height: 100% !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Make inner cards push content properly */
+.desktop-mode .match-card-new .stack-spacing--4 {
+  margin-top: auto !important;
+}
+
+/* Filter Panels (Horizontal row) */
+.desktop-mode .filter-panel {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 1.5rem !important;
+  align-items: flex-end !important;
+  background: var(--color-slate-900) !important;
+  padding: 1.5rem !important;
+  border-radius: 1rem !important;
+  margin: 0 auto 2rem auto !important;
+  max-width: 1600px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.desktop-mode .filter-group {
+  flex: 1 !important;
+  min-width: 250px !important;
+  margin-bottom: 0 !important;
+}
+
+.desktop-mode .filter-group.col-span-full {
+  flex: 1 1 100% !important;
+}
+
+/* Authentication Cards */
 .desktop-mode .card--auth {
-  max-width: 450px !important;
-  margin: 2rem auto !important;
+  max-width: 500px !important;
+  margin: 4rem auto !important;
+}
+
+/* Extra Tweaks */
+.desktop-mode .page-hero__title {
+  font-size: 3.5rem !important;
+  letter-spacing: -0.05em !important;
+}
+
+.desktop-mode .scout-report {
+  height: auto !important;
 }

@@ -1181,181 +1181,216 @@ body {
 }
 
 /* ======================================================================
-   DESKTOP MODE REFINED OVERRIDES (v1.2)
+   ANTIGRAVITY PREMIUM DESKTOP ANALYTICS (v2.0)
+   "The Command Center"
    ====================================================================== */
 .desktop-mode {
-    --sidebar-width: 300px;
+    --glass-bg: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-glow: rgba(249, 115, 22, 0.2);
 }
 
-/* Global Structural Fixes */
+/* Global Shell & Container Expansion */
 .desktop-mode.page-body,
 .desktop-mode.page-body--padded {
     display: block !important;
-    /* Restore normal block flow */
-    height: auto !important;
-    overflow: visible !important;
-    /* Restore scrollability */
-    padding-bottom: 5rem !important;
+    background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    padding-bottom: 4rem !important;
 }
 
-/* Fixed Sidebar ONLY for Matches and Teams */
-body.desktop-mode[x-data="matchesApp"] .filter-panel,
-body.desktop-mode[x-data="teamsApp"] .filter-panel {
-    width: var(--sidebar-width) !important;
-    height: 100vh !important;
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    z-index: 101 !important;
-    overflow-y: auto !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: var(--bg-main) !important;
-    padding: 2rem 1.5rem !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-}
-
-/* Content Area Offset for Fixed Sidebar pages */
-body.desktop-mode[x-data="matchesApp"] main,
-body.desktop-mode[x-data="teamsApp"] main,
-body.desktop-mode[x-data="matchesApp"] .match-grid,
-body.desktop-mode[x-data="teamsApp"] .match-grid {
-    margin-left: var(--sidebar-width) !important;
-    width: calc(100% - var(--sidebar-width)) !important;
-    max-width: none !important;
-}
-
-/* Regionals Page: No Sidebar, Search on Top, Expanded Width */
-body.desktop-mode[x-data="regionalsApp"] .filter-panel {
-    position: relative !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 1.5rem !important;
-    background: var(--bg-secondary) !important;
-    padding: 2rem !important;
-    border-radius: 1.5rem !important;
-    margin-bottom: 2rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-
-body.desktop-mode[x-data="regionalsApp"] .filter-group {
-    flex: 1 !important;
-    min-width: 250px !important;
-}
-
-/* Expanded Global Width for Boxes */
 .desktop-mode .container--sm,
 .desktop-mode .container--lg,
 .desktop-mode .container--xl,
 .desktop-mode main {
-    max-width: 98vw !important;
-    width: 98vw !important;
+    max-width: 1700px !important;
+    width: 96vw !important;
     margin: 0 auto !important;
-    padding: 0 2rem !important;
+    padding: 0 1.5rem !important;
 }
 
-.desktop-mode .match-card-new,
+/* Glassmorphism System */
 .desktop-mode .card,
+.desktop-mode .match-card-new,
+.desktop-mode .regional-card,
 .desktop-mode .team-card,
-.desktop-mode .regional-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+.desktop-mode .dashboard-card,
+.desktop-mode .filter-panel {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Inside Boxes: Side-by-Side Alignments */
-.desktop-mode .match-card-new .grid-cols-1,
-.desktop-mode .regional-card-expanded .sections-wrapper {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important;
-    gap: 2.5rem !important;
-    align-items: start !important;
+.desktop-mode .card:hover,
+.desktop-mode .match-card-new:hover,
+.desktop-mode .dashboard-card:hover {
+    border-color: rgba(249, 115, 22, 0.3) !important;
+    box-shadow: 0 0 20px var(--accent-glow) !important;
+    transform: translateY(-2px) !important;
 }
 
-/* Regional Sections Side-by-Side with internal scrolling */
-.desktop-mode .regional-section-content {
-    max-height: 800px !important;
-    overflow-y: auto !important;
-    padding-right: 1rem !important;
-    scrollbar-width: thin;
-}
-
-/* Dashboard Special Layout */
+/* Dashboard: Premium Bento Layout */
 body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-rows: auto auto !important;
     gap: 2rem !important;
-    max-width: 1600px !important;
-    margin: 4rem auto !important;
+    margin-top: 3rem !important;
 }
 
-/* Dashboard Button Colors: Move Purple/Blue to Orange */
-.desktop-mode .dashboard-card--blue,
-.desktop-mode .dashboard-card--admin {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(249, 115, 22, 0.05) 100%) !important;
-    border: 1px solid rgba(249, 115, 22, 0.2) !important;
+/* Bento Sizing for Primary Actions */
+body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(1),
+body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(2) {
+    grid-column: span 2 !important;
+    min-height: 280px !important;
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
 }
 
-.desktop-mode .dashboard-card--blue:hover,
-.desktop-mode .dashboard-card--admin:hover {
-    border-color: rgba(249, 115, 22, 0.5) !important;
-    background: rgba(249, 115, 22, 0.15) !important;
+body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(n+3) {
+    grid-column: span 1 !important;
+    min-height: 200px !important;
 }
 
-.desktop-mode .dashboard-card__icon--blue,
-.desktop-mode .dashboard-card__icon--admin {
-    background: rgba(249, 115, 22, 0.15) !important;
-    color: var(--accent-orange) !important;
+/* Multi-Column Data Grids (The Grid View) */
+.desktop-mode .match-grid,
+body.desktop-mode[x-data="teamsApp"] .grid,
+body.desktop-mode[x-data="regionalsApp"] .grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)) !important;
+    gap: 2rem !important;
+    padding: 1rem 0 !important;
 }
 
-.desktop-mode .dashboard-card__icon--blue svg,
-.desktop-mode .dashboard-card__icon--admin svg {
-    color: var(--accent-orange) !important;
+/* Card Density Refinement */
+.desktop-mode .match-card-new,
+.desktop-mode .team-card {
+    height: fit-content !important;
 }
 
-.desktop-mode .dashboard-card__link--blue,
-.desktop-mode .dashboard-card__link--admin {
-    color: var(--accent-orange) !important;
+/* Expanded Card Internal side-by-side */
+.desktop-mode .match-card-new .grid-cols-1,
+.desktop-mode .regional-card-expanded .sections-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr 1.2fr !important;
+    gap: 2.5rem !important;
 }
 
-/* Simple Pages: Side-by-Side */
-body.desktop-mode[x-data="statsApp"] .statistics-content,
-body.desktop-mode[x-data="infoApp"] .info-grid,
-body.desktop-mode[x-data="authApp"] .auth-container {
+.desktop-mode .score-breakdown-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
-    gap: 3rem !important;
-    align-items: center !important;
-    min-height: 70vh !important;
+    gap: 1.5rem !important;
 }
 
-/* Top Nav Stickiness */
+/* Workflow Optimization: Side-by-Side Forms */
+body.desktop-mode[x-data*="scoutApp"] form.space-y-8 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 2rem !important;
+    align-items: start !important;
+}
+
+body.desktop-mode[x-data*="scoutApp"] .btn-primary,
+body.desktop-mode[x-data*="scoutApp"] .btn-submit {
+    grid-column: 1 / -1 !important;
+    max-width: 600px !important;
+    margin: 2rem auto 0 !important;
+}
+
+/* Sticky Header & Filters (Z-Layering) */
 .desktop-mode .top-nav {
     position: sticky !important;
     top: 0 !important;
     width: 100% !important;
     background: rgba(15, 23, 42, 0.8) !important;
     backdrop-filter: blur(12px) !important;
-    z-index: 100 !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    z-index: 200 !important;
 }
 
-/* Remove sidebars on mobile-sized desktop mode windows */
-@media (max-width: 1200px) {
+.desktop-mode .filter-panel {
+    position: sticky !important;
+    top: 90px !important;
+    /* Offset for top-nav */
+    z-index: 150 !important;
+    margin-bottom: 2.5rem !important;
+    padding: 1.5rem 2rem !important;
+    border-radius: 1.5rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 2rem !important;
+}
 
-    body.desktop-mode[x-data="matchesApp"] .filter-panel,
-    body.desktop-mode[x-data="teamsApp"] .filter-panel {
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        margin-left: 0 !important;
-    }
+.desktop-mode .filter-panel .filter-group {
+    flex: 1 !important;
+    min-width: 250px !important;
+}
 
-    body.desktop-mode[x-data="matchesApp"] main,
-    body.desktop-mode[x-data="teamsApp"] main {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
+/* Simple Pages: Side-by-Side Analytics */
+body.desktop-mode[x-data="statsApp"] .statistics-content,
+body.desktop-mode[x-data="infoApp"] .info-grid,
+body.desktop-mode[x-data="accountApp"] .account-grid,
+body.desktop-mode[x-data="authApp"] .auth-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)) !important;
+    gap: 4rem !important;
+    align-items: start !important;
+    padding-top: 2rem !important;
+}
+
+/* Typography & Visual Details */
+.desktop-mode h1,
+.desktop-mode h2 {
+    letter-spacing: -0.025em !important;
+}
+
+.desktop-mode *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.desktop-mode *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.desktop-mode *::-webkit-scrollbar-thumb {
+    background: rgba(249, 115, 22, 0.4);
+    border-radius: 10px;
+}
+
+.desktop-mode *::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-orange);
+}
+
+/* Dashboard Button Colors Sync (Ensuring Orange) */
+.desktop-mode .dashboard-card--blue,
+.desktop-mode .dashboard-card--admin,
+.desktop-mode .dashboard-card--orange {
+    border-color: var(--glass-border) !important;
+}
+
+.desktop-mode .dashboard-card__icon--blue,
+.desktop-mode .dashboard-card__icon--admin,
+.desktop-mode .dashboard-card__icon--orange {
+    background: rgba(249, 115, 22, 0.1) !important;
+    color: var(--accent-orange) !important;
+}
+
+.desktop-mode .dashboard-card__icon svg {
+    color: var(--accent-orange) !important;
+}
+
+/* Layout Balance */
+.desktop-mode .page-hero {
+    text-align: center !important;
+    padding: 4rem 1rem 2rem !important;
+}
+
+/* Anti-Flicker & Transition */
+.desktop-mode .transition-all {
+    transition-duration: 400ms !important;
 }

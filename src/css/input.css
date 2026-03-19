@@ -1181,29 +1181,31 @@ body {
 }
 
 /* ======================================================================
-   DESKTOP MODE ADVANCED OVERRIDES
+   DESKTOP MODE REFINED OVERRIDES (v1.2)
    ====================================================================== */
 .desktop-mode {
-    --sidebar-width: 350px;
+    --sidebar-width: 300px;
 }
 
-/* Global Layout: Sidebar + Content Area */
+/* Global Structural Fixes */
+.desktop-mode.page-body,
 .desktop-mode.page-body--padded {
-    display: flex !important;
-    flex-direction: row !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-    padding-bottom: 0 !important;
+    display: block !important;
+    /* Restore normal block flow */
+    height: auto !important;
+    overflow: visible !important;
+    /* Restore scrollability */
+    padding-bottom: 5rem !important;
 }
 
-/* Sidebar Styling */
-.desktop-mode .filter-panel {
+/* Fixed Sidebar ONLY for Matches and Teams */
+body.desktop-mode[x-data="matchesApp"] .filter-panel,
+body.desktop-mode[x-data="teamsApp"] .filter-panel {
     width: var(--sidebar-width) !important;
     height: 100vh !important;
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
-    bottom: 0 !important;
     z-index: 101 !important;
     overflow-y: auto !important;
     border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -1211,197 +1213,149 @@ body {
     padding: 2rem 1.5rem !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1.5rem !important;
 }
 
-/* Main Content Area */
+/* Content Area Offset for Fixed Sidebar pages */
+body.desktop-mode[x-data="matchesApp"] main,
+body.desktop-mode[x-data="teamsApp"] main,
+body.desktop-mode[x-data="matchesApp"] .match-grid,
+body.desktop-mode[x-data="teamsApp"] .match-grid {
+    margin-left: var(--sidebar-width) !important;
+    width: calc(100% - var(--sidebar-width)) !important;
+    max-width: none !important;
+}
+
+/* Regionals Page: No Sidebar, Search on Top, Expanded Width */
+body.desktop-mode[x-data="regionalsApp"] .filter-panel {
+    position: relative !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
+    background: var(--bg-secondary) !important;
+    padding: 2rem !important;
+    border-radius: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+body.desktop-mode[x-data="regionalsApp"] .filter-group {
+    flex: 1 !important;
+    min-width: 250px !important;
+}
+
+/* Expanded Global Width for Boxes */
 .desktop-mode .container--sm,
 .desktop-mode .container--lg,
 .desktop-mode .container--xl,
 .desktop-mode main {
-    flex: 1 !important;
-    margin-left: var(--sidebar-width) !important;
-    /* Offset for sidebar */
-    height: 100vh !important;
-    overflow-y: auto !important;
-    max-width: none !important;
-    padding: 3rem !important;
-    scrollbar-width: thin;
-}
-
-/* Top Nav Adjustments */
-.desktop-mode .top-nav {
-    position: fixed !important;
-    left: var(--sidebar-width) !important;
-    right: 0 !important;
-    width: auto !important;
-    z-index: 102 !important;
-}
-
-.desktop-mode .top-nav__inner {
-    max-width: none !important;
-    padding: 0 3rem !important;
-}
-
-/* List Stacks (Revert Grid to Column) */
-.desktop-mode .match-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 1.5rem !important;
-    max-width: 1100px !important;
+    max-width: 98vw !important;
+    width: 98vw !important;
     margin: 0 auto !important;
+    padding: 0 2rem !important;
 }
 
 .desktop-mode .match-card-new,
 .desktop-mode .card,
-.desktop-mode .team-card {
+.desktop-mode .team-card,
+.desktop-mode .regional-card {
     width: 100% !important;
-    margin-bottom: 0 !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
-/* INSIDE CARDS: Horizontal Alignments */
-.desktop-mode .match-card-new .grid-cols-1 {
+/* Inside Boxes: Side-by-Side Alignments */
+.desktop-mode .match-card-new .grid-cols-1,
+.desktop-mode .regional-card-expanded .sections-wrapper {
     display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    /* Forces side-by-side inside cards */
-    gap: 2rem !important;
-}
-
-.desktop-mode .match-card-new .grid-cols-1>h3 {
-    grid-column: 1 / -1 !important;
-}
-
-.desktop-mode .match-card-new .score-breakdown-container {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 2rem !important;
-}
-
-/* FORM PAGES: Multi-Column Grids */
-.desktop-mode .container--sm form,
-.desktop-mode .container--lg form,
-.desktop-mode .container--xl form,
-.desktop-mode form.space-y-8 {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 2rem !important;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important;
+    gap: 2.5rem !important;
     align-items: start !important;
 }
 
-/* Dashboard Refinement */
-.desktop-mode .dashboard-grid {
+/* Regional Sections Side-by-Side with internal scrolling */
+.desktop-mode .regional-section-content {
+    max-height: 800px !important;
+    overflow-y: auto !important;
+    padding-right: 1rem !important;
+    scrollbar-width: thin;
+}
+
+/* Dashboard Special Layout */
+body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 2.5rem !important;
-    max-width: 1400px !important;
-    margin: 0 auto !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 2rem !important;
+    max-width: 1600px !important;
+    margin: 4rem auto !important;
 }
 
-.desktop-mode .dashboard-card {
-    height: auto !important;
-    min-height: 250px !important;
+/* Dashboard Button Colors: Move Purple/Blue to Orange */
+.desktop-mode .dashboard-card--blue,
+.desktop-mode .dashboard-card--admin {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(249, 115, 22, 0.05) 100%) !important;
+    border: 1px solid rgba(249, 115, 22, 0.2) !important;
 }
 
-/* Fixed Overlays / Modals / Back buttons */
-.desktop-mode .back-btn {
-    position: sticky !important;
-    top: 0 !important;
+.desktop-mode .dashboard-card--blue:hover,
+.desktop-mode .dashboard-card--admin:hover {
+    border-color: rgba(249, 115, 22, 0.5) !important;
+    background: rgba(249, 115, 22, 0.15) !important;
 }
 
-/* Specific Page Overrides for "Wide" Look */
-.desktop-mode .account-grid,
-.desktop-mode .info-content,
-.desktop-mode .statistics-charts,
-.desktop-mode .feedback-container {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)) !important;
-    gap: 2.5rem !important;
-    max-width: 1500px !important;
-    margin: 0 auto !important;
+.desktop-mode .dashboard-card__icon--blue,
+.desktop-mode .dashboard-card__icon--admin {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: var(--accent-orange) !important;
 }
 
-/* Statistics Table Layout */
-.desktop-mode .stats-table-container {
-    grid-column: 1 / -1 !important;
-    width: 100% !important;
+.desktop-mode .dashboard-card__icon--blue svg,
+.desktop-mode .dashboard-card__icon--admin svg {
+    color: var(--accent-orange) !important;
 }
 
-/* Info Section Horizontal */
-.desktop-mode .info-section {
-    height: 100% !important;
+.desktop-mode .dashboard-card__link--blue,
+.desktop-mode .dashboard-card__link--admin {
+    color: var(--accent-orange) !important;
 }
 
-/* Buttons in forms */
-.desktop-mode .btn-submit,
-.desktop-mode .btn-primary {
-    grid-column: 1 / -1 !important;
-    max-width: 400px !important;
-    margin-top: 2rem !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}
-
-/* Auth Cards expansion for Account/Register */
-.desktop-mode .card--auth {
-    max-width: 1000px !important;
-    width: 90% !important;
+/* Simple Pages: Side-by-Side */
+body.desktop-mode[x-data="statsApp"] .statistics-content,
+body.desktop-mode[x-data="infoApp"] .info-grid,
+body.desktop-mode[x-data="authApp"] .auth-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 3rem !important;
-    align-items: center;
+    align-items: center !important;
+    min-height: 70vh !important;
 }
 
-.desktop-mode .card__header--account,
-.desktop-mode .card__header {
-    grid-column: 1 / -1 !important;
+/* Top Nav Stickiness */
+.desktop-mode .top-nav {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    z-index: 100 !important;
 }
 
-/* Header spacing */
-.desktop-mode .page-hero {
-    padding-top: 4rem !important;
-    padding-bottom: 2rem !important;
-}
+/* Remove sidebars on mobile-sized desktop mode windows */
+@media (max-width: 1200px) {
 
-/* Custom Scrollbar for better look */
-.desktop-mode *::-webkit-scrollbar {
-    width: 6px;
-}
-
-.desktop-mode *::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.desktop-mode *::-webkit-scrollbar-thumb {
-    background: var(--accent-orange);
-    border-radius: 10px;
-}
-
-/* Ensure body doesn't scroll when in sidebar mode */
-body.desktop-mode {
-    overflow: hidden !important;
-}
-
-/* Mobile check - if it's not .desktop-mode, revert all above */
-@media (max-width: 1024px) {
-    .desktop-mode .filter-panel {
+    body.desktop-mode[x-data="matchesApp"] .filter-panel,
+    body.desktop-mode[x-data="teamsApp"] .filter-panel {
         position: relative !important;
         width: 100% !important;
         height: auto !important;
-        border-right: none !important;
-    }
-
-    .desktop-mode .container--sm,
-    .desktop-mode .container--lg,
-    .desktop-mode .container--xl,
-    .desktop-mode main {
         margin-left: 0 !important;
     }
 
-    .desktop-mode.page-body--padded {
-        flex-direction: column !important;
-        overflow: auto !important;
+    body.desktop-mode[x-data="matchesApp"] main,
+    body.desktop-mode[x-data="teamsApp"] main {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
 }

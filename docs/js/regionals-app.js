@@ -317,8 +317,20 @@ document.addEventListener('alpine:init', () => {
         },
 
         isHighlighted(teamNumber) {
-            if (!this.searchQuery) return false;
-            return teamNumber.toString().includes(this.searchQuery);
+            const q = this.searchQuery?.toLowerCase() || '';
+            const tq = this.teamSearchQuery?.toLowerCase() || '';
+            if (!q && !tq) return false;
+            const num = teamNumber.toString();
+            return (q && num.includes(q)) || (tq && num.includes(tq));
+        },
+
+        getTeamData(teamNumber, eventKey) {
+            if (!teamNumber) return { nickname: '', logoUrl: '' };
+            const team = this.regionalData[eventKey]?.teams?.find(t => t.teamNumber === teamNumber);
+            return {
+                nickname: team?.name || '',
+                logoUrl: team?.logoUrl || ''
+            };
         }
     }));
 });

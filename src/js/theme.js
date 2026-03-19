@@ -16,12 +16,34 @@ document.addEventListener('alpine:init', () => {
 
         toggle() {
             // Feature removed. Always dark.
-            // This method now does nothing, as dark mode is continuously enforced.
+        }
+    });
+
+    Alpine.store('display', {
+        mode: localStorage.getItem('displayMode') || 'mobile',
+        init() {
+            if (this.mode === 'desktop') {
+                document.body.classList.add('desktop-mode');
+            }
+        },
+        toggle() {
+            this.mode = this.mode === 'mobile' ? 'desktop' : 'mobile';
+            localStorage.setItem('displayMode', this.mode);
+            if (this.mode === 'desktop') {
+                document.body.classList.add('desktop-mode');
+            } else {
+                document.body.classList.remove('desktop-mode');
+            }
         }
     });
 
     // Run this immediately rather than waiting for Alpine to init so flash is minimized
     document.documentElement.classList.add('dark');
-    document.documentElement.classList.remove('light'); // Ensure light mode is removed
-    localStorage.setItem('theme', 'dark'); // Persist dark mode preference
+    document.documentElement.classList.remove('light');
+    localStorage.setItem('theme', 'dark');
+
+    // Immediate display mode check
+    if (localStorage.getItem('displayMode') === 'desktop') {
+        document.body.classList.add('desktop-mode');
+    }
 });

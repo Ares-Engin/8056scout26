@@ -6804,3 +6804,33 @@ body {
   background: rgba(34, 197, 94, 0.2);
   transform: translateY(-1px);
 }
+/* Desktop Mode Overrides */
+.desktop-mode {
+  --container-md: 64rem !important;
+  --container-xl: 80rem !important;
+}
+
+.desktop-mode .page-body--padded,
+.desktop-mode .page-body--centered {
+  max-width: none !important;
+  padding: 2rem !important;
+}
+
+.desktop-mode .top-nav__inner, 
+.desktop-mode .dashboard-grid,
+.desktop-mode .page-hero,
+.desktop-mode main {
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.desktop-mode .dashboard-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+}
+
+.desktop-mode .card--auth {
+  max-width: 450px !important;
+  margin: 2rem auto !important;
+}

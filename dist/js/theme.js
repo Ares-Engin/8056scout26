@@ -46,4 +46,13 @@ document.addEventListener('alpine:init', () => {
     if (localStorage.getItem('displayMode') === 'desktop') {
         document.body.classList.add('desktop-mode');
     }
+
+    // Dynamic Header/Filter Shrinking Logic for Desktop
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            document.body.classList.add('header-scrolled');
+        } else {
+            document.body.classList.remove('header-scrolled');
+        }
+    });
 });

@@ -5441,7 +5441,7 @@ body {
   }
 }
 .desktop-mode {
-  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-bg: rgba(15, 23, 42, 0.75);
   --glass-border: rgba(255, 255, 255, 0.1);
   --accent-glow: rgba(249, 115, 22, 0.2);
 }
@@ -5451,16 +5451,23 @@ body {
   background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
   min-height: 100vh !important;
   overflow-x: hidden !important;
-  padding-bottom: 4rem !important;
+}
+body.desktop-mode[x-data="dashboardApp"],
+body.desktop-mode[x-data="statsApp"],
+body.desktop-mode[x-data="infoApp"],
+body.desktop-mode[x-data="authApp"],
+body.desktop-mode[x-data="loginApp"],
+body.desktop-mode[x-data="registerApp"] {
+  height: 100vh !important;
+  overflow: hidden !important;
 }
 .desktop-mode .container--sm,
 .desktop-mode .container--lg,
 .desktop-mode .container--xl,
 .desktop-mode main {
-  max-width: 1700px !important;
+  max-width: 1750px !important;
   width: 96vw !important;
   margin: 0 auto !important;
-  padding: 0 1.5rem !important;
 }
 .desktop-mode .card,
 .desktop-mode .match-card-new,
@@ -5469,145 +5476,126 @@ body {
 .desktop-mode .dashboard-card,
 .desktop-mode .filter-panel {
   background: var(--glass-bg) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid var(--glass-border) !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-.desktop-mode .card:hover,
-.desktop-mode .match-card-new:hover,
-.desktop-mode .dashboard-card:hover {
-  border-color: rgba(249, 115, 22, 0.3) !important;
-  box-shadow: 0 0 20px var(--accent-glow) !important;
-  transform: translateY(-2px) !important;
-}
-body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  grid-template-rows: auto auto !important;
-  gap: 2rem !important;
-  margin-top: 3rem !important;
-}
-body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(1),
-body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(2) {
-  grid-column: span 2 !important;
-  min-height: 280px !important;
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
-}
-body.desktop-mode[x-data="dashboardApp"] .dashboard-grid>button:nth-child(n+3) {
-  grid-column: span 1 !important;
-  min-height: 200px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .desktop-mode .match-grid,
 body.desktop-mode[x-data="teamsApp"] .grid,
 body.desktop-mode[x-data="regionalsApp"] .grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)) !important;
-  gap: 2rem !important;
-  padding: 1rem 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+  width: 100% !important;
 }
 .desktop-mode .match-card-new,
-.desktop-mode .team-card {
-  height: -moz-fit-content !important;
-  height: fit-content !important;
+.desktop-mode .team-card,
+.desktop-mode .regional-card {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 .desktop-mode .match-card-new .grid-cols-1,
 .desktop-mode .regional-card-expanded .sections-wrapper {
   display: grid !important;
-  grid-template-columns: 1fr 1.2fr !important;
-  gap: 2.5rem !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 3rem !important;
 }
-.desktop-mode .score-breakdown-container {
+body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1.5rem !important;
+  max-height: 75vh !important;
+  margin-top: 2rem !important;
+}
+body.desktop-mode[x-data="dashboardApp"] .dashboard-card {
+  min-height: 200px !important;
+  padding: 1.5rem !important;
+}
+body.desktop-mode[x-data="dashboardApp"] .dashboard-card__title {
+  font-size: 1.25rem !important;
+}
+.desktop-mode .top-nav {
+  position: sticky !important;
+  top: 0 !important;
+  height: 80px !important;
+  transition: height 0.3s ease !important;
+  z-index: 500 !important;
+}
+.header-scrolled .top-nav {
+  height: 60px !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+}
+body.desktop-mode[x-data="matchesApp"] .filter-panel,
+body.desktop-mode[x-data="teamsApp"] .filter-panel,
+body.desktop-mode[x-data="regionalsApp"] .filter-panel {
+  position: sticky !important;
+  top: 90px !important;
+  z-index: 400 !important;
+  padding: 1.2rem 2rem !important;
+  transition: all 0.3s ease !important;
+}
+.header-scrolled .filter-panel {
+  top: 70px !important;
+  padding: 0.6rem 2rem !important;
+  transform: scale(0.98) !important;
+  opacity: 0.95 !important;
+}
+body.desktop-mode[x-data="statsApp"] .statistics-content {
+  display: grid !important;
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 2rem !important;
+  height: 80vh !important;
+  overflow: hidden !important;
+}
+body.desktop-mode[x-data="statsApp"] .chart-container {
+  height: 100% !important;
+  max-height: 400px !important;
+}
+body.desktop-mode[x-data="infoApp"] .info-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 1.5rem !important;
+  gap: 3rem !important;
+  max-height: 80vh !important;
+}
+body.desktop-mode[x-data="authApp"] .auth-container,
+body.desktop-mode[x-data="loginApp"] .auth-container,
+body.desktop-mode[x-data="registerApp"] .auth-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: calc(100vh - 120px) !important;
 }
 body.desktop-mode[x-data*="scoutApp"] form.space-y-8 {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 2rem !important;
-  align-items: start !important;
 }
-body.desktop-mode[x-data*="scoutApp"] .btn-primary,
-body.desktop-mode[x-data*="scoutApp"] .btn-submit {
-  grid-column: 1 / -1 !important;
-  max-width: 600px !important;
-  margin: 2rem auto 0 !important;
+.desktop-mode h1 {
+  font-size: 2rem !important;
 }
-.desktop-mode .top-nav {
-  position: sticky !important;
-  top: 0 !important;
-  width: 100% !important;
-  background: rgba(15, 23, 42, 0.8) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid var(--glass-border) !important;
-  z-index: 200 !important;
-}
-.desktop-mode .filter-panel {
-  position: sticky !important;
-  top: 90px !important;
-  z-index: 150 !important;
-  margin-bottom: 2.5rem !important;
-  padding: 1.5rem 2rem !important;
-  border-radius: 1.5rem !important;
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  gap: 2rem !important;
-}
-.desktop-mode .filter-panel .filter-group {
-  flex: 1 !important;
-  min-width: 250px !important;
-}
-body.desktop-mode[x-data="statsApp"] .statistics-content,
-body.desktop-mode[x-data="infoApp"] .info-grid,
-body.desktop-mode[x-data="accountApp"] .account-grid,
-body.desktop-mode[x-data="authApp"] .auth-container {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)) !important;
-  gap: 4rem !important;
-  align-items: start !important;
-  padding-top: 2rem !important;
-}
-.desktop-mode h1,
 .desktop-mode h2 {
-  letter-spacing: -0.025em !important;
+  font-size: 1.5rem !important;
+}
+.desktop-mode p {
+  font-size: 0.95rem !important;
 }
 .desktop-mode *::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-.desktop-mode *::-webkit-scrollbar-track {
-  background: transparent;
+  width: 6px;
 }
 .desktop-mode *::-webkit-scrollbar-thumb {
   background: rgba(249, 115, 22, 0.4);
-  border-radius: 10px;
-}
-.desktop-mode *::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-orange);
-}
-.desktop-mode .dashboard-card--blue,
-.desktop-mode .dashboard-card--admin,
-.desktop-mode .dashboard-card--orange {
-  border-color: var(--glass-border) !important;
-}
-.desktop-mode .dashboard-card__icon--blue,
-.desktop-mode .dashboard-card__icon--admin,
-.desktop-mode .dashboard-card__icon--orange {
-  background: rgba(249, 115, 22, 0.1) !important;
-  color: var(--accent-orange) !important;
-}
-.desktop-mode .dashboard-card__icon svg {
-  color: var(--accent-orange) !important;
-}
-.desktop-mode .page-hero {
-  text-align: center !important;
-  padding: 4rem 1rem 2rem !important;
+  border-radius: 20px;
 }
 .desktop-mode .transition-all {
   transition-duration: 400ms !important;
+}
+body.desktop-mode[x-data="dashboardApp"] main {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-height: 80vh !important;
 }
 @property --tw-translate-x {
   syntax: "*";

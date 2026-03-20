@@ -343,17 +343,17 @@
                                                 </button>
 
                                                 <div x-show="expandedVideo" x-collapse x-transition.opacity class="mt-2">
-                                                    <template x-if="match.videos && match.videos.find(v => v.type === 'youtube')">
+                                                    <template x-if="match.videos && match.videos.find(v => v.type?.toLowerCase() === 'youtube')">
                                                         <div class="aspect-video w-full rounded-lg overflow-hidden bg-black border border-slate-700/50">
                                                             <iframe class="w-full h-full"
-                                                                :src="'https://www.youtube.com/embed/' + match.videos.find(v => v.type === 'youtube').key"
+                                                                :src="'https://www.youtube.com/embed/' + match.videos.find(v => v.type?.toLowerCase() === 'youtube').key"
                                                                 frameborder="0"
                                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                                 allowfullscreen>
                                                             </iframe>
                                                         </div>
                                                     </template>
-                                                    <template x-if="!(match.videos && match.videos.find(v => v.type === 'youtube'))">
+                                                    <template x-if="!(match.videos && match.videos.find(v => v.type?.toLowerCase() === 'youtube'))">
                                                         <div class="py-6 flex flex-col items-center justify-center bg-slate-900/40 rounded-lg border border-slate-700/30">
                                                             <svg class="w-8 h-8 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

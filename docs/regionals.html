@@ -233,36 +233,54 @@
                                 <div x-show="tab === 'rankings'" class="space-y-3">
                                     <template x-if="regionalData[event.key]?.rankings?.rankings?.length">
                                         <div class="space-y-3">
+                                            <!-- Ranking Column Header -->
+                                            <div
+                                                class="grid grid-cols-12 px-3 py-2 text-[8px] font-black text-slate-600 uppercase tracking-widest border-b border-slate-800">
+                                                <div class="col-span-1">RK</div>
+                                                <div class="col-span-3">Team</div>
+                                                <div class="col-span-2 text-right">W-L-T</div>
+                                                <div class="col-span-2 text-right text-orange-400">RP</div>
+                                                <div class="col-span-2 text-right">Avg</div>
+                                                <div class="col-span-2 text-right">Score</div>
+                                            </div>
+
                                             <template x-for="rank in getFilteredRankings(event.key)"
                                                 :key="rank.team_key">
                                                 <div
-                                                    class="bg-slate-800/20 border border-slate-700/30 rounded-lg overflow-hidden">
-                                                    <!-- Team Header -->
+                                                    class="bg-slate-800/20 border border-slate-700/30 rounded-lg overflow-hidden group hover:border-orange-500/30 transition-all">
+                                                    <!-- Team Row Header -->
                                                     <div @click="toggleTeam(rank.team_key.replace('frc',''), event.key)"
-                                                        class="p-3 flex items-center justify-between cursor-pointer hover:bg-slate-800/40">
-                                                        <div class="flex items-center gap-4">
-                                                            <div
-                                                                class="w-10 h-10 rounded-xl bg-slate-950 flex items-center justify-center border border-slate-800">
-                                                                <span class="text-xs font-black text-orange-500"
-                                                                    x-text="rank.rank"></span>
-                                                            </div>
-                                                            <div class="flex flex-col">
-                                                                <span class="text-lg font-black text-white"
-                                                                    x-text="'#' + rank.team_key.replace('frc','')"></span>
-                                                                <span
-                                                                    class="text-[9px] text-slate-500 font-bold uppercase truncate max-w-[120px]"
-                                                                    x-text="getTeamData(rank.team_key.replace('frc',''), event.key).nickname"></span>
-                                                            </div>
+                                                        class="p-3 grid grid-cols-12 items-center cursor-pointer hover:bg-slate-800/40 transition-colors">
+
+                                                        <div class="col-span-1 text-xs font-black text-orange-500"
+                                                            x-text="rank.rank"></div>
+
+                                                        <div class="col-span-3 flex flex-col">
+                                                            <span class="text-[11px] font-black text-white"
+                                                                x-text="'#' + rank.team_key.replace('frc','')"></span>
+                                                            <span
+                                                                class="text-[8px] text-slate-500 font-bold uppercase truncate max-w-[80px]"
+                                                                x-text="getTeamData(rank.team_key.replace('frc',''), event.key).nickname"></span>
                                                         </div>
-                                                        <div class="flex flex-col items-end">
-                                                            <span class="text-xs font-bold text-slate-200"
+
+                                                        <div class="col-span-2 text-right">
+                                                            <span class="text-[9px] text-slate-300 font-bold"
                                                                 x-text="rank.record ? `${rank.record.wins}-${rank.record.losses}-${rank.record.ties}` : '0-0-0'"></span>
-                                                            <span class="text-[8px] font-black text-orange-500"
-                                                                x-text="rank.sort_orders ? rank.sort_orders[0].toFixed(2) + ' RP' : '0 RP'"></span>
+                                                        </div>
+
+                                                        <div class="col-span-2 text-right font-black text-orange-500 text-[10px]"
+                                                            x-text="getRankData(rank, 'Ranking Points', event.key)">
+                                                        </div>
+
+                                                        <div class="col-span-2 text-right font-black text-white/60 text-[10px]"
+                                                            x-text="getRankData(rank, 'Avg Match', event.key)"></div>
+
+                                                        <div class="col-span-2 text-right font-black text-white text-[10px]"
+                                                            x-text="rank.sort_orders ? rank.sort_orders[0].toFixed(2) : '0.00'">
                                                         </div>
                                                     </div>
 
-                                                    <!-- Team Expansion -->
+                                                    <!-- Team Expansion Detail -->
                                                     <div x-show="expandedTeams.includes(event.key + '_' + rank.team_key.replace('frc',''))"
                                                         x-collapse
                                                         class="p-4 bg-slate-900/60 border-t border-slate-800 space-y-6">

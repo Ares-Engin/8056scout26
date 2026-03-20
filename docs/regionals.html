@@ -69,9 +69,9 @@
                             <span class="font-black text-white text-lg leading-tight" x-text="event.name"></span>
                             <a @click.stop="" :href="'https://www.thebluealliance.com/event/' + event.key"
                                 target="_blank"
-                                class="px-2.5 py-1 bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white rounded border border-blue-500/20 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center gap-1.5 ml-2">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded border border-blue-500/50 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center gap-1.5 shadow-lg shadow-blue-900/20">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                                 TBA
@@ -184,8 +184,10 @@
                                                             Alliance</span>
                                                         <template x-for="t in match.alliances.red.team_keys">
                                                             <div @click.stop="location.href='teams.html?team=' + t.replace('frc','')"
-                                                                class="text-[10px] text-white font-bold bg-slate-800/50 py-1.5 px-3 rounded border border-slate-700/50 cursor-pointer hover:bg-red-500/10 hover:border-red-500/30 transition-all flex items-center justify-between">
-                                                                <span x-text="'#' + t.replace('frc','')"></span>
+                                                                class="text-[10px] font-bold bg-slate-800/50 py-1.5 px-3 rounded border border-slate-700/50 cursor-pointer transition-all flex items-center justify-between"
+                                                                :class="isHighlighted(t.replace('frc','')) ? 'bg-orange-500/20 border-orange-500/50 ring-2 ring-orange-500/20' : 'text-white hover:bg-red-500/10 hover:border-red-500/30'">
+                                                                <span x-text="'#' + t.replace('frc','')"
+                                                                    :class="isHighlighted(t.replace('frc','')) ? 'text-orange-400' : ''"></span>
                                                                 <span
                                                                     class="text-[8px] opacity-40 font-bold truncate max-w-[60px]"
                                                                     x-text="getTeamData(t.replace('frc',''), event.key).nickname"></span>
@@ -198,8 +200,10 @@
                                                             Alliance</span>
                                                         <template x-for="t in match.alliances.blue.team_keys">
                                                             <div @click.stop="location.href='teams.html?team=' + t.replace('frc','')"
-                                                                class="text-[10px] text-white font-bold bg-slate-800/50 py-1.5 px-3 rounded border border-slate-700/50 cursor-pointer hover:bg-blue-500/10 hover:border-blue-500/30 transition-all flex items-center justify-between">
-                                                                <span x-text="'#' + t.replace('frc','')"></span>
+                                                                class="text-[10px] font-bold bg-slate-800/50 py-1.5 px-3 rounded border border-slate-700/50 cursor-pointer transition-all flex items-center justify-between"
+                                                                :class="isHighlighted(t.replace('frc','')) ? 'bg-orange-500/20 border-orange-500/50 ring-2 ring-orange-500/20' : 'text-white hover:bg-blue-500/10 hover:border-blue-500/30'">
+                                                                <span x-text="'#' + t.replace('frc','')"
+                                                                    :class="isHighlighted(t.replace('frc','')) ? 'text-orange-400' : ''"></span>
                                                                 <span
                                                                     class="text-[8px] opacity-40 font-bold truncate max-w-[60px]"
                                                                     x-text="getTeamData(t.replace('frc',''), event.key).nickname"></span>
@@ -208,15 +212,174 @@
                                                     </div>
                                                 </div>
 
+                                                <!-- Full API Match Breakdown (Ported) -->
+                                                <div class="mt-4 border-t border-slate-800/50 pt-3"
+                                                    x-data="{ expandedApi: false }">
+                                                    <button @click="expandedApi = !expandedApi"
+                                                        class="w-full flex items-center justify-between px-3 py-2 bg-slate-900/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-colors">
+                                                        <span
+                                                            class="text-[10px] font-black uppercase tracking-widest text-slate-400">Full
+                                                            API Match Breakdown</span>
+                                                        <svg class="w-3.5 h-3.5 text-slate-500 transition-transform duration-300"
+                                                            :class="expandedApi ? 'rotate-180' : ''" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                                        </svg>
+                                                    </button>
+
+                                                    <div x-show="expandedApi" x-collapse x-transition.opacity
+                                                        class="mt-2 grid grid-cols-2 gap-2">
+                                                        <template x-if="match.score_breakdown">
+                                                            <template x-for="alliance in ['red', 'blue']">
+                                                                <div :class="alliance === 'red' ? 'bg-red-500/5 border-red-500/10' : 'bg-blue-500/5 border-blue-500/10'"
+                                                                    class="rounded-lg border p-2.5">
+                                                                    <h5 :class="alliance === 'red' ? 'text-red-400' : 'text-blue-400'"
+                                                                        class="text-[9px] font-black uppercase tracking-tighter mb-2 border-b pb-1"
+                                                                        x-text="alliance + ' alliance'"></h5>
+
+                                                                    <div class="space-y-1.5">
+                                                                        <template x-for="item in [
+                                                                            { label: 'Auto Points', val: match.score_breakdown[alliance].autoPoints },
+                                                                            { label: 'Teleop Points', val: match.score_breakdown[alliance].teleopPoints },
+                                                                            { label: 'Foul Points', val: match.score_breakdown[alliance].foulPoints },
+                                                                            { label: 'Adjustments', val: match.score_breakdown[alliance].adjustPoints },
+                                                                            { label: 'Total Points', val: match.score_breakdown[alliance].totalPoints },
+                                                                            { label: 'RP Earned', val: match.score_breakdown[alliance].rp }
+                                                                        ]" :key="item.label">
+                                                                            <div
+                                                                                class="flex justify-between items-center text-[9px] font-bold">
+                                                                                <span class="text-slate-500"
+                                                                                    x-text="item.label"></span>
+                                                                                <span
+                                                                                    :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
+                                                                                    x-text="item.val || 0"></span>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template x-if="!match.score_breakdown">
+                                                            <div class="col-span-2 py-4 text-center">
+                                                                <span
+                                                                    class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">No
+                                                                    API breakdown available</span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Scouted Reports (Ported) -->
+                                                <div class="mt-2 space-y-3">
+                                                    <h4
+                                                        class="text-[9px] font-black uppercase tracking-[0.2em] text-orange-500 border-b border-orange-500/20 pb-1">
+                                                        Scouting Reports</h4>
+                                                    <div class="space-y-2">
+                                                        <template
+                                                            x-for="entry in getMatchReports(event.key, match.compLevel, match.matchNumber)"
+                                                            :key="entry.id">
+                                                            <div
+                                                                class="bg-slate-800/20 border border-slate-700/30 rounded-lg overflow-hidden">
+                                                                <div @click="toggleReport(entry.id)"
+                                                                    class="p-3 flex items-center justify-between cursor-pointer hover:bg-slate-800/40">
+                                                                    <div class="flex flex-col">
+                                                                        <div class="flex items-center gap-1.5">
+                                                                            <div class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[9px] font-black text-white"
+                                                                                x-text="'#' + entry.teamNumber"></div>
+                                                                            <span
+                                                                                class="text-[9px] font-bold text-slate-400"
+                                                                                x-text="getTeamData(entry.teamNumber, event.key).nickname"></span>
+                                                                            <template
+                                                                                x-if="isVerified(entry.meta?.role || entry.role)">
+                                                                                <div
+                                                                                    class="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                                                                                    <svg class="w-2 h-2 text-white"
+                                                                                        fill="none"
+                                                                                        stroke="currentColor"
+                                                                                        viewBox="0 0 24 24">
+                                                                                        <path stroke-linecap="round"
+                                                                                            stroke-linejoin="round"
+                                                                                            stroke-width="4"
+                                                                                            d="M5 13l4 4L19 7" />
+                                                                                    </svg>
+                                                                                </div>
+                                                                            </template>
+                                                                        </div>
+                                                                        <span
+                                                                            class="text-[8px] text-slate-500 font-bold"
+                                                                            x-text="'Scouted by #' + (entry.meta?.scouterTeam || '?')"></span>
+                                                                    </div>
+                                                                    <svg class="w-3.5 h-3.5 text-slate-600 transition-transform duration-200"
+                                                                        :class="expandedReports.includes(entry.id) ? 'rotate-180' : ''"
+                                                                        fill="none" stroke="currentColor"
+                                                                        viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2.5"
+                                                                            d="M19 9l-7 7-7-7" />
+                                                                    </svg>
+                                                                </div>
+
+                                                                <!-- Report Data Grid -->
+                                                                <div x-show="expandedReports.includes(entry.id)"
+                                                                    x-collapse
+                                                                    class="p-3 bg-slate-900/60 border-t border-slate-800 space-y-3">
+                                                                    <div class="grid grid-cols-3 gap-2">
+                                                                        <div
+                                                                            class="bg-green-500/5 p-2 rounded border border-green-500/10">
+                                                                            <span
+                                                                                class="text-[8px] font-black text-green-500 uppercase block mb-1">Auto</span>
+                                                                            <span
+                                                                                class="text-[10px] text-white font-bold"
+                                                                                x-text="entry.data?.auto?.scored || '0'"></span>
+                                                                        </div>
+                                                                        <div
+                                                                            class="bg-blue-500/5 p-2 rounded border border-blue-500/10">
+                                                                            <span
+                                                                                class="text-[8px] font-black text-blue-500 uppercase block mb-1">Teleop</span>
+                                                                            <span
+                                                                                class="text-[10px] text-white font-bold"
+                                                                                x-text="entry.data?.teleop?.scored || '0'"></span>
+                                                                        </div>
+                                                                        <div
+                                                                            class="bg-orange-500/5 p-2 rounded border border-orange-500/10">
+                                                                            <span
+                                                                                class="text-[8px] font-black text-orange-500 uppercase block mb-1">Climb</span>
+                                                                            <span
+                                                                                class="text-[10px] text-white font-bold"
+                                                                                x-text="entry.endgame?.level || 'None'"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p class="text-[9px] text-slate-400 italic"
+                                                                        x-text="entry.data?.generalComments || 'No comments'">
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template
+                                                            x-if="!getMatchReports(event.key, match.compLevel, match.matchNumber).length">
+                                                            <p class="text-[9px] text-slate-700 italic">No scout reports
+                                                                on file.</p>
+                                                        </template>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Actions -->
-                                                <div class="flex gap-2">
+                                                <div class="flex gap-2 pt-2">
                                                     <a :href="`scout.html?season=${event.season}&regional=${event.key}&type=${match.compLevel === 'qm' ? 'Qualification' : (match.compLevel === 'p' ? 'Practice' : (match.compLevel === 'f' ? 'Finals' : 'Playoffs'))}&match=${match.matchNumber}`"
                                                         class="flex-1 py-1.5 bg-orange-600 hover:bg-orange-500 text-white rounded text-[10px] font-black uppercase flex items-center justify-center gap-2 shadow-lg shadow-orange-900/20 transition-all">
                                                         Scout Match
                                                     </a>
+                                                    <!-- Match TBA Link Button (Blue Box Style) -->
                                                     <a :href="FRC_CONFIG.getTbaMatchUrl(event.key, match.compLevel === 'qm' ? 'Qualification' : (match.compLevel === 'p' ? 'Practice' : (match.compLevel === 'f' ? 'Finals' : 'Playoffs')), match.matchNumber)"
                                                         target="_blank"
-                                                        class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-[10px] font-black uppercase">
+                                                        class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded border border-blue-500/50 text-[10px] font-black uppercase flex items-center gap-1.5 transition-all shadow-lg shadow-blue-900/20">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2.5"
+                                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
                                                         TBA
                                                     </a>
                                                 </div>
@@ -256,7 +419,9 @@
                                                             x-text="rank.rank"></div>
 
                                                         <div class="col-span-3 flex flex-col">
-                                                            <span class="text-[11px] font-black text-white"
+                                                            <span
+                                                                class="text-[11px] font-black rounded-sm px-1 transition-all"
+                                                                :class="isHighlighted(rank.team_key.replace('frc','')) ? 'bg-orange-500 text-white ring-2 ring-orange-500/50' : 'text-white'"
                                                                 x-text="'#' + rank.team_key.replace('frc','')"></span>
                                                             <span
                                                                 class="text-[8px] text-slate-500 font-bold uppercase truncate max-w-[80px]"
@@ -358,11 +523,14 @@
                                                 x-text="award.name"></div>
                                             <div class="space-y-1.5">
                                                 <template x-for="recipient in award.recipient_list">
-                                                    <div class="flex items-center justify-between">
-                                                        <span class="text-[11px] font-black text-slate-200"
+                                                    <div class="flex items-center gap-2">
+                                                        <span
+                                                            class="text-[11px] font-black rounded-sm px-1 transition-all"
+                                                            :class="isHighlighted(recipient.team_key?.replace('frc', '') || '') ? 'bg-orange-500 text-white ring-2 ring-orange-500/50' : 'text-slate-200'"
                                                             x-text="recipient.team_key ? '#' + recipient.team_key.replace('frc', '') : 'Individual'"></span>
-                                                        <span class="text-[9px] text-slate-500 font-bold"
-                                                            x-text="recipient.awardee || ''"></span>
+                                                        <span x-show="recipient.team_key"
+                                                            class="text-[8px] text-slate-500 font-bold italic"
+                                                            x-text="getTeamData(recipient.team_key.replace('frc',''), event.key).nickname"></span>
                                                     </div>
                                                 </template>
                                             </div>

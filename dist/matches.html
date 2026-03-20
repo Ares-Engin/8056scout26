@@ -35,6 +35,7 @@
             </div>
 
             <div class="top-nav__right">
+                <span class="text-[8px] font-black text-slate-600 uppercase tracking-widest mr-2">v.1.3 - 20:32</span>
             </div>
         </div>
     </nav>
@@ -382,7 +383,16 @@
                                     <svg class="w-8 h-8 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
-                                    <p class="text-[10px] text-slate-500 italic uppercase tracking-widest">No match video available</p>
+                                    <p class="text-[10px] text-slate-500 italic uppercase tracking-widest mb-3">No match video available</p>
+                                    <!-- TBA Link Fallback -->
+                                    <a :href="FRC_CONFIG.getTbaMatchUrl(match.eventKey, match.type, match.matchNumber)"
+                                        target="_blank"
+                                        class="text-[10px] font-black text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-all flex items-center gap-2 shadow-lg shadow-blue-900/20">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        View Match on TBA
+                                    </a>
                                 </div>
                             </template>
                         </div>

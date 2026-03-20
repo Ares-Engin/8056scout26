@@ -335,6 +335,46 @@
                         </div>
                     </div>
 
+                    <!-- Watch Match Video -->
+                    <div class="mt-2 border-t border-slate-800/50 pt-3" x-data="{ expandedVideo: false }">
+                        <button @click="expandedVideo = !expandedVideo"
+                            class="w-full flex items-center justify-between px-3 py-2 bg-slate-900/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-colors">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Watch Match Video</span>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-slate-500 transition-transform duration-300"
+                                :class="expandedVideo ? 'rotate-180' : ''" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div x-show="expandedVideo" x-collapse x-transition.opacity class="mt-2">
+                            <template x-if="match.videos && match.videos.find(v => v.type === 'youtube')">
+                                <div class="aspect-video w-full rounded-lg overflow-hidden bg-black border border-slate-700/50">
+                                    <iframe class="w-full h-full"
+                                        :src="'https://www.youtube.com/embed/' + match.videos.find(v => v.type === 'youtube').key"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </template>
+                            <template x-if="!(match.videos && match.videos.find(v => v.type === 'youtube'))">
+                                <div class="py-6 flex flex-col items-center justify-center bg-slate-900/40 rounded-lg border border-slate-700/30">
+                                    <svg class="w-8 h-8 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-[10px] text-slate-500 italic uppercase tracking-widest">No match video available</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
                     <!-- Scouted Data (Bottom) -->
                     <div class="scout-section">
                         <!-- Pit Report Shortcuts -->

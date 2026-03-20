@@ -158,6 +158,7 @@ async function fetchFRCMatches(eventKey) {
                     foulPoints: match.score_breakdown.blue?.foulPoints || 0,
                 }
             } : null,
+            videos: match.videos || [],
             teams: [...redTeams, ...blueTeams]
         };
     });

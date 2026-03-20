@@ -67,6 +67,28 @@ document.addEventListener('alpine:init', () => {
                     this.pitReports[num] = this.sortReports(this.pitReports[num]);
                 });
             });
+
+            // Handle URL params
+            const params = new URLSearchParams(window.location.search);
+            const eventParam = params.get('event') || params.get('regionals');
+            const teamParam = params.get('team');
+            const matchParam = params.get('match');
+
+            if (eventParam) {
+                // Auto-expand the regional
+                this.toggleRegional(eventParam);
+                
+                // If there's a match, we need to wait for data to load then expand it
+                if (matchParam) {
+                    // We'll use a simple interval or a watch if needed, but for now let's hope data loads fast
+                    // Best way is to check in loadRegionalData
+                    this._pendingMatchExpand = matchParam;
+                }
+            }
+
+            if (teamParam) {
+                this.teamSearchQuery = teamParam;
+            }
         },
 
         sortReports(reports) {
@@ -144,6 +166,17 @@ document.addEventListener('alpine:init', () => {
 
                 // Replace the whole entry to trigger Alpine reactivity
                 this.regionalData[eventKey] = { ...this.regionalData[eventKey] };
+
+                // Handle deep-linked match expansion
+                if (this._pendingMatchExpand) {
+                    const matchNum = parseInt(this._pendingMatchExpand);
+                    const match = this.regionalData[eventKey].matches.find(m => m.matchNumber === matchNum);
+                    if (match) {
+                        const key = `${eventKey}_${match.compLevel === 'qm' ? 'Qualification' : (match.compLevel === 'f' ? 'Finals' : (['qf', 'sf'].includes(match.compLevel) ? 'Playoffs' : 'Practice'))}_${match.matchNumber}`;
+                        this.toggleMatch(key);
+                    }
+                    this._pendingMatchExpand = null;
+                }
 
             } catch (err) {
                 console.error("Failed to load regional data:", err);

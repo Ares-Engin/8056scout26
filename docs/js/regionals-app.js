@@ -6,15 +6,15 @@ document.addEventListener('alpine:init', () => {
         regionalData: {}, // Map eventKey -> { matches: [], rankings: [], awards: [], loading: false, teams: [] }
         eventTeamsMap: {}, // Map eventKey -> [teamNumbers] for global search
         pitReports: {}, // Map teamNumber -> [reports]
-        scoutEntries: {}, // Map matchKey -> [reports]
         availableEvents: FRC_CONFIG.events,
         availableSeasons: FRC_CONFIG.seasons,
         expandedMatches: [],
+        expandedApiMatches: [],
         expandedReports: [],
         expandedTeams: [],
         expandedHistory: [],
         expandedPitReports: [],
-        expandedIntel: [], // For full API JSON
+        scoutEntries: {}, // Map eventKey_matchType_matchNumber -> [reports]
 
         get isAdmin() {
             return Alpine.store('auth').profile?.role === 'admin' ||
@@ -30,33 +30,7 @@ document.addEventListener('alpine:init', () => {
                 }
             });
 
-            // Load ALL Pit Reports for the season (season-wide)
-            db.collection('pitScouting').onSnapshot(snapshot => {
-                this.pitReports = {};
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    data.id = doc.id;
-                    if (!this.pitReports[data.teamNumber]) {
-                        this.pitReports[data.teamNumber] = [];
-                    }
-                    this.pitReports[data.teamNumber].push(data);
-                });
-
-                // Sort: Verified first, then newest date
-                Object.keys(this.pitReports).forEach(num => {
-                    this.pitReports[num].sort((a, b) => {
-                        const verifiedA = this.isVerified(a.meta?.role || a.role);
-                        const verifiedB = this.isVerified(b.meta?.role || b.role);
-                        if (verifiedA !== verifiedB) return verifiedB ? 1 : -1;
-
-                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
-                        return dateB - dateA;
-                    });
-                });
-            });
-
-            // Load Match Scouting Reports
+            // Load ALL Match Scouting Reports
             db.collection('scouting').onSnapshot(snapshot => {
                 this.scoutEntries = {};
                 snapshot.forEach(doc => {
@@ -70,21 +44,41 @@ document.addEventListener('alpine:init', () => {
                     }
                 });
 
-                // Sort: Verified first, then newest date
+                // Sort match reports: Verified first, then newest
                 Object.keys(this.scoutEntries).forEach(key => {
-                    this.scoutEntries[key].sort((a, b) => {
-                        const verifiedA = this.isVerified(a.meta?.role || a.role);
-                        const verifiedB = this.isVerified(b.meta?.role || b.role);
-                        if (verifiedA !== verifiedB) return verifiedB ? 1 : -1;
+                    this.scoutEntries[key] = this.sortReports(this.scoutEntries[key]);
+                });
+            });
 
-                        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-                        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
-                        return dateB - dateA;
-                    });
+            // Load ALL Pit Reports for the season (season-wide)
+            db.collection('pitScouting').onSnapshot(snapshot => {
+                this.pitReports = {};
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    if (!this.pitReports[data.teamNumber]) {
+                        this.pitReports[data.teamNumber] = [];
+                    }
+                    this.pitReports[data.teamNumber].push(data);
                 });
 
-                // Trigger UI refresh
-                this.scoutEntries = { ...this.scoutEntries };
+                // Sort pit reports: Verified first, then newest
+                Object.keys(this.pitReports).forEach(num => {
+                    this.pitReports[num] = this.sortReports(this.pitReports[num]);
+                });
+            });
+        },
+
+        sortReports(reports) {
+            return reports.sort((a, b) => {
+                const isVerifiedA = this.isVerified(a.meta?.scouterRole);
+                const isVerifiedB = this.isVerified(b.meta?.scouterRole);
+                if (isVerifiedA && !isVerifiedB) return -1;
+                if (!isVerifiedA && isVerifiedB) return 1;
+
+                const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+                const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+                return dateB - dateA;
             });
         },
 
@@ -203,14 +197,6 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
-        getMatchReports(eventKey, compLevel, matchNumber) {
-            const scoutType = compLevel === 'qm' ? 'Qualification' :
-                compLevel === 'p' ? 'Practice' :
-                    compLevel === 'f' ? 'Finals' : 'Playoffs';
-            const key = `${eventKey}_${scoutType}_${matchNumber}`;
-            return this.scoutEntries[key] || [];
-        },
-
         getFilteredAwards(eventKey) {
             const awards = this.regionalData[eventKey]?.awards || [];
             const q = this.teamSearchQuery.toLowerCase();
@@ -299,15 +285,25 @@ document.addEventListener('alpine:init', () => {
                 : this.expandedPitReports.push(id);
         },
 
-        toggleIntel(id) {
-            this.expandedIntel.includes(id)
-                ? this.expandedIntel = this.expandedIntel.filter(i => i !== id)
-                : this.expandedIntel.push(id);
+        toggleApi(key) {
+            if (this.expandedApiMatches.includes(key)) {
+                this.expandedApiMatches = this.expandedApiMatches.filter(k => k !== key);
+            } else {
+                this.expandedApiMatches.push(key);
+            }
+        },
+
+        getTeamData(teamNumber, eventKey) {
+            if (!teamNumber || !this.regionalData[eventKey]) return { nickname: '' };
+            const team = this.regionalData[eventKey].teams.find(t => t.teamNumber === teamNumber);
+            return {
+                nickname: team?.name || ''
+            };
         },
 
         formatDate(timestamp) {
             if (!timestamp) return 'No Time';
-            const date = new Date(timestamp);
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
             if (isNaN(date.getTime())) return 'No Time';
             return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         },
@@ -317,20 +313,11 @@ document.addEventListener('alpine:init', () => {
         },
 
         isHighlighted(teamNumber) {
-            const q = this.searchQuery?.toLowerCase() || '';
-            const tq = this.teamSearchQuery?.toLowerCase() || '';
-            if (!q && !tq) return false;
-            const num = teamNumber.toString();
-            return (q && num.includes(q)) || (tq && num.includes(tq));
-        },
-
-        getTeamData(teamNumber, eventKey) {
-            if (!teamNumber) return { nickname: '', logoUrl: '' };
-            const team = this.regionalData[eventKey]?.teams?.find(t => t.teamNumber === teamNumber);
-            return {
-                nickname: team?.name || '',
-                logoUrl: team?.logoUrl || ''
-            };
+            if (!teamNumber) return false;
+            const tStr = teamNumber.toString();
+            const q1 = this.searchQuery ? this.searchQuery.toLowerCase() : '';
+            const q2 = this.teamSearchQuery ? this.teamSearchQuery.toLowerCase() : '';
+            return (q1 && tStr.includes(q1)) || (q2 && tStr.includes(q2));
         }
     }));
 });

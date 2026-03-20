@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Theme Manager -->
+    <script src="js/theme.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body--centered">
+    <!-- Top Bar -->
+    <div class="top-bar--fixed">
+        <span class="top-bar__text">Laissez Faire</span>
+    </div>
+
+    <div class="container--lg">
+        <header class="admin-header">
+            <div class="admin-header__buttons">
+                <button @click="location.href='dashboard.html'" class="admin-back-btn">
+                    <svg class="back-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <h1 class="admin-title">User Approvals</h1>
+        </header>
+
+        <div class="admin-grid">
+            <template x-for="u in pendingUsers" :key="u.id">
+                <div class="admin-card">
+                    <div class="admin-card__header">
+                        <div class="admin-card__avatar" x-text="u.name.substring(0,1).toUpperCase()"></div>
+                        <span class="admin-card__badge">NEW SCOUT</span>
+                    </div>
+
+                    <h2 class="admin-card__name" x-text="u.name"></h2>
+                    <p class="admin-card__email" x-text="u.email"></p>
+
+                    <div class="admin-card__details">
+                        <div class="admin-card__detail-row">
+                            <span class="admin-card__detail-label">Team Number</span>
+                            <span class="admin-card__detail-value" x-text="u.teamNumber || '—'"></span>
+                        </div>
+                        <div class="admin-card__detail-row">
+                            <span class="admin-card__detail-label">Secret Code</span>
+                            <span class="admin-card__detail-value" x-text="u.secretCode || '—'"></span>
+                        </div>
+                    </div>
+
+                    <div class="admin-card__actions">
+                        <button @click="setRole(u.id, 'normal')" class="btn-approve">Approve (Normal)</button>
+                        <button @click="setRole(u.id, 'admin')" class="btn-approve-admin">Approve (Admin)</button>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="pendingUsers.length === 0">
+                <div class="admin-empty">
+                    <div class="admin-empty__icon">
+                        <svg class="icon-lg--slate" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm-4 4.354l1.1-.301 2.4 11.1-1.1.301-2.4-11.1zm8 0l1.1-.301 2.4 11.1-1.1.301-2.4-11.1z">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="admin-empty__text">No pending approvals</p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-app.js"></script>
+
+</body>
+
+</html>

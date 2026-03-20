@@ -1181,16 +1181,16 @@ body {
 }
 
 /* ======================================================================
-   ANTIGRAVITY PREMIUM DESKTOP ANALYTICS (v2.1)
-   "Zero-Scroll & High-Density"
+   ANTIGRAVITY PREMIUM DESKTOP ANALYTICS (v2.2)
+   "Tri-Pane & Ultra-Compact"
    ====================================================================== */
 .desktop-mode {
-    --glass-bg: rgba(15, 23, 42, 0.75);
+    --glass-bg: rgba(15, 23, 42, 0.8);
     --glass-border: rgba(255, 255, 255, 0.1);
     --accent-glow: rgba(249, 115, 22, 0.2);
 }
 
-/* Global Shell & Container Expansion */
+/* Global Shell expansion */
 .desktop-mode.page-body,
 .desktop-mode.page-body--padded {
     display: block !important;
@@ -1199,15 +1199,10 @@ body {
     overflow-x: hidden !important;
 }
 
-/* ZERO-SCROLL HUBS: Dashboard, Stats, Info, Auth */
-body.desktop-mode[x-data="dashboardApp"],
-body.desktop-mode[x-data="statsApp"],
-body.desktop-mode[x-data="infoApp"],
-body.desktop-mode[x-data="authApp"],
-body.desktop-mode[x-data="loginApp"],
-body.desktop-mode[x-data="registerApp"] {
-    height: 100vh !important;
-    overflow: hidden !important;
+/* Restore scrollability but maintain high density */
+body.desktop-mode {
+    height: auto !important;
+    overflow: auto !important;
 }
 
 .desktop-mode .container--sm,
@@ -1225,162 +1220,160 @@ body.desktop-mode[x-data="registerApp"] {
 .desktop-mode .regional-card,
 .desktop-mode .team-card,
 .desktop-mode .dashboard-card,
-.desktop-mode .filter-panel {
+.desktop-mode .filter-panel,
+.desktop-mode .regional-section-pane {
     background: var(--glass-bg) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
     border: 1px solid var(--glass-border) !important;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Full-Width Horizontal List Cards (Reverted from Grid) */
+/* Regionals: Tri-Pane Layout (All sections side-by-side) */
+.desktop-mode .regional-sections-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.5rem !important;
+    padding: 1.5rem !important;
+    align-items: start !important;
+}
+
+.desktop-mode .regional-section-pane {
+    background: rgba(15, 23, 42, 0.4) !important;
+    border-radius: 1.25rem !important;
+    padding: 1.25rem !important;
+}
+
+.desktop-mode .pane-title {
+    font-size: 0.9rem !important;
+    font-weight: 950 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15em !important;
+    color: var(--accent-orange) !important;
+    margin-bottom: 1.25rem !important;
+    border-bottom: 1px solid rgba(249, 115, 22, 0.2) !important;
+    padding-bottom: 0.6rem !important;
+}
+
+/* Full-Width Filter Panels (Sticky Logic) */
+body.desktop-mode[x-data="matchesApp"] .filter-panel,
+body.desktop-mode[x-data="teamsApp"] .filter-panel {
+    position: sticky !important;
+    top: 90px !important;
+    z-index: 400 !important;
+    padding: 1rem 2rem !important;
+}
+
+.header-scrolled .filter-panel {
+    top: 65px !important;
+    padding: 0.4rem 2rem !important;
+    transform: scale(0.97) !important;
+    border-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+/* Regionals explicitly non-sticky */
+body.desktop-mode[x-data="regionalsApp"] .top-nav,
+body.desktop-mode[x-data="regionalsApp"] .filter-panel {
+    position: relative !important;
+    top: 0 !important;
+    transform: none !important;
+}
+
+/* Ultra-Thin Top Nav on Scroll */
+.desktop-mode .top-nav {
+    position: sticky !important;
+    top: 0 !important;
+    height: 80px !important;
+    transition: all 0.3s ease !important;
+    z-index: 500 !important;
+}
+
+.header-scrolled .top-nav {
+    height: 55px !important;
+    background: rgba(15, 23, 42, 0.98) !important;
+}
+
+/* Compact Lists (Horizontal Expansion) */
 .desktop-mode .match-grid,
-body.desktop-mode[x-data="teamsApp"] .grid,
-body.desktop-mode[x-data="regionalsApp"] .grid {
+body.desktop-mode[x-data="teamsApp"] .grid {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.5rem !important;
-    width: 100% !important;
+    gap: 1rem !important;
 }
 
 .desktop-mode .match-card-new,
 .desktop-mode .team-card,
 .desktop-mode .regional-card {
     width: 100% !important;
-    max-width: 100% !important;
 }
 
-/* Expanded Card Internal side-by-side (Enhanced Density) */
-.desktop-mode .match-card-new .grid-cols-1,
-.desktop-mode .regional-card-expanded .sections-wrapper {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1fr !important;
-    /* Triple density if screen allows */
-    gap: 3rem !important;
-}
-
-/* Dashboard: Precise 4x2 Single-View Grid */
+/* Dashboard: Compact 4x2 Logic */
 body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 1.5rem !important;
-    max-height: 75vh !important;
+    gap: 1.25rem !important;
+    padding-bottom: 5rem !important;
     margin-top: 2rem !important;
 }
 
 body.desktop-mode[x-data="dashboardApp"] .dashboard-card {
-    min-height: 200px !important;
-    padding: 1.5rem !important;
+    min-height: 180px !important;
+    padding: 1.25rem !important;
 }
 
-body.desktop-mode[x-data="dashboardApp"] .dashboard-card__title {
-    font-size: 1.25rem !important;
+/* Scaling down Typography & Icons */
+.desktop-mode h1 {
+    font-size: 1.75rem !important;
 }
 
-/* Shrinking Fixed UI (Dynamic scroll response) */
-.desktop-mode .top-nav {
-    position: sticky !important;
-    top: 0 !important;
-    height: 80px !important;
-    transition: height 0.3s ease !important;
-    z-index: 500 !important;
+.desktop-mode h2 {
+    font-size: 1.35rem !important;
 }
 
-.header-scrolled .top-nav {
-    height: 60px !important;
-    background: rgba(15, 23, 42, 0.95) !important;
+.desktop-mode p,
+.desktop-mode label {
+    font-size: 0.9rem !important;
 }
 
-/* Sticky Filters Pinned to Top */
-body.desktop-mode[x-data="matchesApp"] .filter-panel,
-body.desktop-mode[x-data="teamsApp"] .filter-panel,
-body.desktop-mode[x-data="regionalsApp"] .filter-panel {
-    position: sticky !important;
-    top: 90px !important;
-    z-index: 400 !important;
-    padding: 1.2rem 2rem !important;
-    transition: all 0.3s ease !important;
-}
-
-.header-scrolled .filter-panel {
-    top: 70px !important;
-    padding: 0.6rem 2rem !important;
-    transform: scale(0.98) !important;
-    opacity: 0.95 !important;
-}
-
-/* Zero-Scroll Statistics Scaling */
+/* Statistics & Analysis Compact view */
 body.desktop-mode[x-data="statsApp"] .statistics-content {
     display: grid !important;
     grid-template-columns: 1.2fr 1fr !important;
     gap: 2rem !important;
-    height: 80vh !important;
-    overflow: hidden !important;
 }
 
-body.desktop-mode[x-data="statsApp"] .chart-container {
-    height: 100% !important;
-    max-height: 400px !important;
-}
-
-/* Zero-Scroll Info Scaling */
-body.desktop-mode[x-data="infoApp"] .info-grid {
+/* Info & Auth Dual-Pane */
+body.desktop-mode[x-data="infoApp"] .info-grid,
+body.desktop-mode[x-data="authApp"] .auth-container {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 3rem !important;
-    max-height: 80vh !important;
 }
 
-/* Zero-Scroll Auth Scaling */
-body.desktop-mode[x-data="authApp"] .auth-container,
-body.desktop-mode[x-data="loginApp"] .auth-container,
-body.desktop-mode[x-data="registerApp"] .auth-container {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: calc(100vh - 120px) !important;
-}
-
-/* Workflow Optimization (Side-by-Side Forms) */
+/* Sidebar Forms side-by-side */
 body.desktop-mode[x-data*="scoutApp"] form.space-y-8 {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 2rem !important;
+    gap: 1.5rem !important;
 }
 
-/* Typography Scale Down for Zero-Scroll */
-.desktop-mode h1 {
-    font-size: 2rem !important;
-}
-
-.desktop-mode h2 {
-    font-size: 1.5rem !important;
-}
-
-.desktop-mode p {
-    font-size: 0.95rem !important;
-}
-
-/* Custom Floating Scrollbar */
+/* Floating thin scrollbar */
 .desktop-mode *::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 .desktop-mode *::-webkit-scrollbar-thumb {
-    background: rgba(249, 115, 22, 0.4);
-    border-radius: 20px;
+    background: rgba(249, 115, 22, 0.3);
+    border-radius: 10px;
+}
+
+.desktop-mode *::-webkit-scrollbar-thumb:hover {
+    background: rgba(249, 115, 22, 0.6);
 }
 
 /* Transitions */
 .desktop-mode .transition-all {
-    transition-duration: 400ms !important;
-}
-
-/* Hide redundant grid lines in Dashboard */
-body.desktop-mode[x-data="dashboardApp"] main {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    min-height: 80vh !important;
+    transition-duration: 300ms !important;
 }

@@ -162,6 +162,13 @@ async function fetchFRCMatches(eventKey) {
             teams: [...redTeams, ...blueTeams]
         };
     });
+    
+    // Diagnostic logging for local deployment issues
+    if (results.length > 0 && results[0].videos) {
+        console.log(`TBA API Data Check [${key}]: Match #1 has ${results[0].videos.length} videos.`);
+    }
+
+    return results;
 }
 
 /**

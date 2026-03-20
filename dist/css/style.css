@@ -357,6 +357,9 @@
   .col-span-full {
     grid-column: 1 / -1;
   }
+  .m-4 {
+    margin: calc(var(--spacing) * 4);
+  }
   .mx-auto {
     margin-inline: auto;
   }
@@ -1268,6 +1271,9 @@
   .pb-3 {
     padding-bottom: calc(var(--spacing) * 3);
   }
+  .pb-4 {
+    padding-bottom: calc(var(--spacing) * 4);
+  }
   .pb-12 {
     padding-bottom: calc(var(--spacing) * 12);
   }
@@ -1774,6 +1780,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-orange-500);
+      }
+    }
+  }
+  .hover\:text-slate-300 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-slate-300);
       }
     }
   }
@@ -5432,158 +5445,6 @@ body {
   &:focus {
     --tw-ring-color: var(--color-orange-500);
   }
-}
-.desktop-mode {
-  --glass-bg: rgba(15, 23, 42, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --accent-glow: rgba(249, 115, 22, 0.2);
-}
-.desktop-mode.page-body,
-.desktop-mode.page-body--padded {
-  display: block !important;
-  background: radial-gradient(circle at top right, #1e293b, #0f172a) !important;
-  min-height: 100vh !important;
-  overflow-x: hidden !important;
-}
-body.desktop-mode {
-  height: auto !important;
-  overflow: auto !important;
-}
-.desktop-mode .container--sm,
-.desktop-mode .container--lg,
-.desktop-mode .container--xl,
-.desktop-mode main {
-  max-width: 1750px !important;
-  width: 96vw !important;
-  margin: 0 auto !important;
-}
-.desktop-mode .card,
-.desktop-mode .match-card-new,
-.desktop-mode .regional-card,
-.desktop-mode .team-card,
-.desktop-mode .dashboard-card,
-.desktop-mode .filter-panel,
-.desktop-mode .regional-section-pane {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-.desktop-mode .regional-sections-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 1.5rem !important;
-  padding: 1.5rem !important;
-  align-items: start !important;
-}
-.desktop-mode .regional-section-pane {
-  background: rgba(15, 23, 42, 0.4) !important;
-  border-radius: 1.25rem !important;
-  padding: 1.25rem !important;
-}
-.desktop-mode .pane-title {
-  font-size: 0.9rem !important;
-  font-weight: 950 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.15em !important;
-  color: var(--accent-orange) !important;
-  margin-bottom: 1.25rem !important;
-  border-bottom: 1px solid rgba(249, 115, 22, 0.2) !important;
-  padding-bottom: 0.6rem !important;
-}
-body.desktop-mode[x-data="matchesApp"] .filter-panel,
-body.desktop-mode[x-data="teamsApp"] .filter-panel {
-  position: sticky !important;
-  top: 90px !important;
-  z-index: 400 !important;
-  padding: 1rem 2rem !important;
-}
-.header-scrolled .filter-panel {
-  top: 65px !important;
-  padding: 0.4rem 2rem !important;
-  transform: scale(0.97) !important;
-  border-color: rgba(249, 115, 22, 0.2) !important;
-}
-body.desktop-mode[x-data="regionalsApp"] .top-nav,
-body.desktop-mode[x-data="regionalsApp"] .filter-panel {
-  position: relative !important;
-  top: 0 !important;
-  transform: none !important;
-}
-.desktop-mode .top-nav {
-  position: sticky !important;
-  top: 0 !important;
-  height: 80px !important;
-  transition: all 0.3s ease !important;
-  z-index: 500 !important;
-}
-.header-scrolled .top-nav {
-  height: 55px !important;
-  background: rgba(15, 23, 42, 0.98) !important;
-}
-.desktop-mode .match-grid,
-body.desktop-mode[x-data="teamsApp"] .grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1rem !important;
-}
-.desktop-mode .match-card-new,
-.desktop-mode .team-card,
-.desktop-mode .regional-card {
-  width: 100% !important;
-}
-body.desktop-mode[x-data="dashboardApp"] .dashboard-grid {
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  gap: 1.25rem !important;
-  padding-bottom: 5rem !important;
-  margin-top: 2rem !important;
-}
-body.desktop-mode[x-data="dashboardApp"] .dashboard-card {
-  min-height: 180px !important;
-  padding: 1.25rem !important;
-}
-.desktop-mode h1 {
-  font-size: 1.75rem !important;
-}
-.desktop-mode h2 {
-  font-size: 1.35rem !important;
-}
-.desktop-mode p,
-.desktop-mode label {
-  font-size: 0.9rem !important;
-}
-body.desktop-mode[x-data="statsApp"] .statistics-content {
-  display: grid !important;
-  grid-template-columns: 1.2fr 1fr !important;
-  gap: 2rem !important;
-}
-body.desktop-mode[x-data="infoApp"] .info-grid,
-body.desktop-mode[x-data="authApp"] .auth-container {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 3rem !important;
-}
-body.desktop-mode[x-data*="scoutApp"] form.space-y-8 {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 1.5rem !important;
-}
-.desktop-mode *::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-.desktop-mode *::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.3);
-  border-radius: 10px;
-}
-.desktop-mode *::-webkit-scrollbar-thumb:hover {
-  background: rgba(249, 115, 22, 0.6);
-}
-.desktop-mode .transition-all {
-  transition-duration: 300ms !important;
 }
 @property --tw-translate-x {
   syntax: "*";

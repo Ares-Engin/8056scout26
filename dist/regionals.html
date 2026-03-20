@@ -23,24 +23,14 @@
                         </path>
                     </svg>
                 </button>
+                <div style="width: 40px;"></div>
             </div>
             <div class="top-nav__center">
                 <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
                 <span class="brand__subtitle--orange">Laissez Faire</span>
             </div>
             <div class="top-nav__right">
-                <button @click="$store.display.toggle()" class="back-btn--shadow p-2">
-                    <svg x-show="$store.display.mode === 'desktop'" class="h-5 w-5 text-slate-400" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    <svg x-show="$store.display.mode === 'mobile'" class="h-5 w-5 text-slate-400" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                </button>
+
             </div>
         </div>
     </nav>
@@ -120,10 +110,29 @@
                                 </div>
                             </div>
 
-                            <div class="regional-sections-grid">
+                            <!-- Tabs Switcher -->
+                            <div class="flex p-1 bg-slate-900/50 rounded-2xl border border-slate-800/50 m-4">
+                                <button @click="tab = 'matches'"
+                                    :class="tab === 'matches' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'"
+                                    class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300">
+                                    Matches
+                                </button>
+                                <button @click="tab = 'rankings'"
+                                    :class="tab === 'rankings' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'"
+                                    class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300">
+                                    Rankings
+                                </button>
+                                <button @click="tab = 'prizes'"
+                                    :class="tab === 'prizes' ? 'bg-orange-500 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'"
+                                    class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300">
+                                    Prizes
+                                </button>
+                            </div>
+
+                            <!-- Sections -->
+                            <div class="space-y-4 px-4 pb-4">
                                 <!-- Matches Section -->
-                                <div class="regional-section-pane">
-                                    <h3 class="pane-title">Matches</h3>
+                                <div x-show="tab === 'matches'" class="space-y-3">
                                     <template x-for="match in getFilteredMatches(event.key)"
                                         :key="match.matchNumber + match.compLevel">
                                         <div

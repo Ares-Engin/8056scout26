@@ -22,16 +22,40 @@ document.addEventListener('alpine:init', () => {
         },
 
         async init() {
+            // 1. Sync regional from global appState (populated via URL by auth.js)
+            const appState = Alpine.store('appState');
+            if (appState.regional) {
+                this.toggleRegional(appState.regional);
+            }
+
+            // 2. Link Chain Cleanup
+            setTimeout(() => {
+                const league = appState.league;
+                const season = appState.season;
+                const event = appState.regional;
+                
+                let cleanUrl = `/${league}/${season}`;
+                if (event) {
+                    cleanUrl += `/${event}/regionals`;
+                } else {
+                    cleanUrl += `/regionals`;
+                }
+                
+                if (window.location.pathname !== cleanUrl) {
+                    history.replaceState(null, '', cleanUrl);
+                }
+            }, 100);
+
             // Background fetch all event team lists for global search
-            this.availableEvents.filter(e => e.season === 2026).forEach(async event => {
+            this.availableEvents.filter(e => e.season === parseInt(appState.season)).forEach(async event => {
                 const teams = await this.fetchTBARequest(`event/${event.key}/teams/keys`);
                 if (teams) {
                     this.eventTeamsMap[event.key] = teams.map(tk => parseInt(tk.replace('frc', '')));
                 }
             });
 
-            // Load ALL Match Scouting Reports
-            const collectionName = Alpine.store('appState').collectionName;
+            // Restore Snapshots
+            const collectionName = appState.collectionName;
             db.collection(collectionName).onSnapshot(snapshot => {
                 this.scoutEntries = {};
                 snapshot.forEach(doc => {
@@ -44,61 +68,25 @@ document.addEventListener('alpine:init', () => {
                         this.scoutEntries[key].push(data);
                     }
                 });
-
-                // Sort match reports: Verified first, then newest
-                Object.keys(this.scoutEntries).forEach(key => {
-                    this.scoutEntries[key] = this.sortReports(this.scoutEntries[key]);
-                });
+                Object.keys(this.scoutEntries).forEach(k => this.scoutEntries[k] = this.sortReports(this.scoutEntries[k]));
             });
 
-            // Load ALL Pit Reports for the season (season-wide)
-            const pitCollectionName = Alpine.store('appState').pitCollectionName;
+            const pitCollectionName = appState.pitCollectionName;
             db.collection(pitCollectionName).onSnapshot(snapshot => {
                 this.pitReports = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
-                    if (!this.pitReports[data.teamNumber]) {
-                        this.pitReports[data.teamNumber] = [];
-                    }
+                    if (!this.pitReports[data.teamNumber]) this.pitReports[data.teamNumber] = [];
                     this.pitReports[data.teamNumber].push(data);
                 });
-
-                // Sort pit reports: Verified first, then newest
-                Object.keys(this.pitReports).forEach(num => {
-                    this.pitReports[num] = this.sortReports(this.pitReports[num]);
-                });
+                Object.keys(this.pitReports).forEach(n => this.pitReports[n] = this.sortReports(this.pitReports[n]));
             });
 
-            // Handle URL params
+            // Handle deep-linked expansion from legacy params if any
             const params = new URLSearchParams(window.location.search);
-            const eventParam = params.get('event') || params.get('regionals');
-            const teamParam = params.get('team');
-            const matchParam = params.get('match');
-
-            if (eventParam) {
-                // Auto-expand the regional
-                this.toggleRegional(eventParam);
-                
-                // If there's a match, we need to wait for data to load then expand it
-                if (matchParam) {
-                    // We'll use a simple interval or a watch if needed, but for now let's hope data loads fast
-                    // Best way is to check in loadRegionalData
-                    this._pendingMatchExpand = matchParam;
-                }
-            }
-
-            if (teamParam) {
-                this.teamSearchQuery = teamParam;
-            }
-
-            setTimeout(() => {
-                const appState = Alpine.store('appState');
-                let cleanUrl = `/${appState.league}/${appState.season}/regionals`;
-                if (!window.location.pathname.includes('/regionals/')) {
-                    history.replaceState(null, '', cleanUrl);
-                }
-            }, 500);
+            if (params.get('match')) this._pendingMatchExpand = params.get('match');
+            if (params.get('team')) this.teamSearchQuery = params.get('team');
         },
 
         sortReports(reports) {
@@ -115,12 +103,22 @@ document.addEventListener('alpine:init', () => {
         },
 
         get filteredRegionals() {
-            if (!this.searchQuery) return this.availableEvents.filter(e => e.season === 2026);
+            const season = parseInt(Alpine.store('appState').season);
+            const regional = Alpine.store('appState').regional;
+
+            // If a specific regional is in the URL context, only show that one
+            if (regional) {
+                return this.availableEvents.filter(e => e.key === regional);
+            }
+
+            if (!this.searchQuery) return this.availableEvents.filter(e => e.season === season);
             const q = this.searchQuery.toLowerCase();
             return this.availableEvents.filter(e =>
-                e.name.toLowerCase().includes(q) ||
-                e.key.toLowerCase().includes(q) ||
-                (this.eventTeamsMap[e.key] && this.eventTeamsMap[e.key].some(num => num.toString().includes(q)))
+                e.season === season && (
+                    e.name.toLowerCase().includes(q) ||
+                    e.key.toLowerCase().includes(q) ||
+                    (this.eventTeamsMap[e.key] && this.eventTeamsMap[e.key].some(num => num.toString().includes(q)))
+                )
             );
         },
 

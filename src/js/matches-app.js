@@ -19,32 +19,32 @@ document.addEventListener('alpine:init', () => {
             try {
                 this.manualTeams = await loadManualTeams();
 
-                // Handle URL params like ?team=8056&regionals=2026cnsh,2026flor
-                const params = new URLSearchParams(window.location.search);
-                if (params.has('team')) {
-                    this.searchQuery = params.get('team');
-                }
-                if (params.has('regionals')) {
-                    const regStr = params.get('regionals');
-                    if (regStr) {
-                        this.selectedEvents = regStr.split(',').filter(k => k);
-                    }
+                // 1. Sync regional from global appState (populated via URL by auth.js)
+                const appState = Alpine.store('appState');
+                if (appState.regional) {
+                    this.selectedEvents = [appState.regional];
                 }
 
-                // URL Link Chain Cleanup
+                // 2. URL Link Chain Cleanup / sync
                 setTimeout(() => {
-                    const appState = Alpine.store('appState');
                     const league = appState.league;
                     const season = appState.season;
-                    const event = this.selectedEvents[0] || 'default';
-                    let cleanUrl = `/${league}/${season}/${event}/matches`;
-                    if (this.searchQuery) { // if team filter is applied
-                       cleanUrl += `/${this.searchQuery}`;
+                    const event = appState.regional;
+                    
+                    let cleanUrl = `/${league}/${season}`;
+                    if (event) {
+                        cleanUrl += `/${event}/matches`;
+                        if (this.searchQuery) {
+                            cleanUrl += `/${this.searchQuery}`;
+                        }
+                    } else {
+                        cleanUrl += `/matches`;
                     }
-                    if (!window.location.pathname.includes('/matches/')) {
+                    
+                    if (window.location.pathname !== cleanUrl) {
                         history.replaceState(null, '', cleanUrl);
                     }
-                }, 500);
+                }, 100);
 
                 this.$watch('selectedEvents', () => {
                     this.fetchMatches();

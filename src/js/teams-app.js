@@ -15,20 +15,29 @@ document.addEventListener('alpine:init', () => {
         teamEventMatrix: {}, // Tracks which team is in which selected event
 
         async init() {
-            // Check for team search in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const teamFilter = urlParams.get('team');
-            if (teamFilter) {
-                this.searchQuery = teamFilter;
+            // 1. Sync regional from global appState (populated via URL by auth.js)
+            const appState = Alpine.store('appState');
+            if (appState.regional) {
+                this.selectedEvents = [appState.regional];
             }
 
+            // 2. Link Chain Cleanup
             setTimeout(() => {
-                const appState = Alpine.store('appState');
-                let cleanUrl = `/${appState.league}/${appState.season}/teams`;
-                if (!window.location.pathname.includes('/teams/')) {
+                const league = appState.league;
+                const season = appState.season;
+                const event = appState.regional;
+                
+                let cleanUrl = `/${league}/${season}`;
+                if (event) {
+                    cleanUrl += `/${event}/teams`;
+                } else {
+                    cleanUrl += `/teams`;
+                }
+                
+                if (window.location.pathname !== cleanUrl) {
                     history.replaceState(null, '', cleanUrl);
                 }
-            }, 500);
+            }, 100);
 
             this.loading = true;
 

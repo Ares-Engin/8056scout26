@@ -21,7 +21,7 @@
     <nav class="top-nav">
         <div class="top-nav__inner">
             <div class="top-nav__left">
-                <button @click="location.href='dashboard.html'" class="back-btn--shadow">
+                <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/dashboard'" class="back-btn--shadow">
                     <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
                         </path>
@@ -45,39 +45,54 @@
     </section>
     </section>
 
-    <!-- Enhanced Filters -->
-    <div class="filter-panel">
-        <div class="filter-group">
-            <label class="form-label--filter">Search Team / Match</label>
-            <input x-model="searchQuery" type="text" placeholder="e.g. 8056" class="form-input--search">
-        </div>
-
-
-        <div class="filter-group">
-            <label class="form-label--filter">Regionals</label>
-            <div class="filter-regional-list">
-                <template x-for="event in availableEvents.filter(e => selectedSeasons.includes(e.season))"
-                    :key="event.key">
-                    <button
-                        @click="selectedEvents.includes(event.key) ? selectedEvents = selectedEvents.filter(k => k !== event.key) : selectedEvents.push(event.key); init()"
-                        :class="selectedEvents.includes(event.key) ? 'filter-regional-btn--active' : 'filter-regional-btn--inactive'"
-                        class="filter-regional-btn" x-text="event.name"></button>
+    <!-- TBA Style Breadcrumbs / Context Header -->
+    <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-[64px] z-20">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <nav class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                <a @click="location.href='/'+$store.appState.league+'/'+$store.appState.season+'/dashboard'" class="text-slate-500 hover:text-orange-500 cursor-pointer" x-text="$store.appState.season"></a>
+                <span class="text-slate-700">/</span>
+                <span x-show="!$store.appState.regional" class="text-white">Events</span>
+                <template x-if="$store.appState.regional">
+                    <div class="flex items-center gap-2">
+                        <a @click="location.href='/'+$store.appState.league+'/'+$store.appState.season+'/matches'" class="text-slate-500 hover:text-orange-500 cursor-pointer">Events</a>
+                        <span class="text-slate-700">/</span>
+                        <span class="text-white" x-text="availableEvents.find(e => e.key === $store.appState.regional)?.name || $store.appState.regional"></span>
+                    </div>
                 </template>
-            </div>
-        </div>
+            </nav>
 
-        <div class="filter-group">
-            <label class="form-label--filter">Match Type</label>
-            <div class="filter-chips">
-                <template x-for="type in ['Practice', 'Qualification', 'Playoffs', 'Finals']">
-                    <button
-                        @click="selectedTypes.includes(type) ? selectedTypes = selectedTypes.filter(t => t !== type) : selectedTypes.push(type)"
-                        :class="selectedTypes.includes(type) ? 'filter-chip-type--active' : 'filter-chip--inactive'"
-                        class="filter-chip" x-text="type"></button>
-                </template>
+            <div class="flex items-center gap-4">
+                <div x-show="$store.appState.regional" class="relative">
+                    <input x-model="searchQuery" type="text" placeholder="Search Team..." 
+                        class="bg-slate-950 border border-slate-800 text-[10px] font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-orange-500 w-48">
+                    <svg class="absolute right-2.5 top-2 h-3.5 w-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Event Selection Interstitial (Show if no regional in URL) -->
+    <template x-if="!$store.appState.regional">
+        <div class="max-w-4xl mx-auto p-6">
+            <h2 class="text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-6 border-l-4 border-orange-500 pl-4">Select an Event to View Matches</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <template x-for="event in availableEvents.filter(e => e.season == $store.appState.season)" :key="event.key">
+                    <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/' + event.key + '/matches'"
+                        class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500 transition-all group group-hover:scale-[1.02]">
+                        <div class="text-left">
+                            <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest" x-text="event.key"></p>
+                            <p class="font-black text-white text-sm" x-text="event.name"></p>
+                        </div>
+                        <svg class="w-5 h-5 text-slate-700 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </template>
 
     <template x-if="loading">
         <div class="loading-container">
@@ -90,7 +105,7 @@
         <div class="error-banner" x-text="errorMessage"></div>
     </template>
 
-    <div class="match-grid">
+    <div x-show="$store.appState.regional" class="match-grid">
         <template x-for="match in filteredMatches()" :key="match.eventKey + '_' + match.type + '_' + match.matchNumber">
             <div class="match-card-new"
                 :class="expandedMatches.includes(match.eventKey + '_' + match.type + '_' + match.matchNumber) ? 'ring-2 ring-orange-500/50' : ''">

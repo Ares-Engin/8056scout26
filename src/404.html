@@ -19,31 +19,43 @@
       var targetPage = 'index.html'; // default
       var params = l.search;
 
-      if (path.length >= 4) {
+      if (path.length >= 2) {
           var league = path[0];
           var season = path[1];
-          var event = path[2];
-          var page = path[3];
-          var matchNumber = path[4] || '';
+          var pageOrEvent = path[2]; // could be 'dashboard', 'teams', or an event key
+          var pageIfEvent = path[3]; // if path[2] is event, this is 'matches'
+          var subId = path[4] || '';
 
-          // Validate known pages
-          if (['matches', 'scout', 'pit-scout', 'regionals'].includes(page)) {
-              if (page === 'scout' || page === 'pit-scout') {
-                  targetPage = page + '_' + league + '_' + season + '.html';
+          var q = new URLSearchParams(params);
+          q.set('league', league);
+          q.set('season', season);
+
+          // Pattern: /league/season/page
+          if (['dashboard', 'teams', 'matches', 'regionals', 'scout', 'pit-scout', 'statistics', 'account', 'info', 'feedback', 'accept'].includes(pageOrEvent)) {
+              if (pageOrEvent === 'scout' || pageOrEvent === 'pit-scout') {
+                  targetPage = pageOrEvent + '_' + league + '_' + season + '.html';
               } else {
-                  targetPage = page + '.html';
+                  targetPage = pageOrEvent + '.html';
               }
-              
-              // Forward the parameters behind the scenes
-              var q = new URLSearchParams(params);
-              q.set('league', league);
-              q.set('season', season);
-              q.set('regional', event);
-              if (page === 'matches' && matchNumber) {
-                  q.set('match', matchNumber.replace(/\D/g,''));
+          } 
+          // Pattern: /league/season/event/page
+          else if (pageOrEvent && ['matches', 'teams', 'regionals'].includes(pageIfEvent)) {
+              q.set('regional', pageOrEvent);
+              if (pageIfEvent === 'scout' || pageIfEvent === 'pit-scout') {
+                  targetPage = pageIfEvent + '_' + league + '_' + season + '.html';
+              } else {
+                  targetPage = pageIfEvent + '.html';
               }
-              params = '?' + q.toString();
+              if (pageIfEvent === 'matches' && subId) {
+                  q.set('match', subId.replace(/\D/g,''));
+              }
           }
+          // Default to dashboard if just /league/season
+          else if (path.length === 2) {
+              targetPage = 'dashboard.html';
+          }
+
+          params = '?' + q.toString();
       }
 
       var redirectUrl = l.origin + '/' + targetPage + params + l.hash;

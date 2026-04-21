@@ -64,8 +64,8 @@ document.addEventListener('alpine:init', () => {
                     },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-
-                await db.collection('pitScouting').add(report);
+                const pitCollectionName = Alpine.store('appState').pitCollectionName;
+                await db.collection(pitCollectionName).add(report);
                 alert('Pit Report Saved Successfully!');
                 location.href = 'teams.html';
             } catch (err) {

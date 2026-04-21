@@ -22,6 +22,14 @@ document.addEventListener('alpine:init', () => {
                 this.searchQuery = teamFilter;
             }
 
+            setTimeout(() => {
+                const appState = Alpine.store('appState');
+                let cleanUrl = `/${appState.league}/${appState.season}/teams`;
+                if (!window.location.pathname.includes('/teams/')) {
+                    history.replaceState(null, '', cleanUrl);
+                }
+            }, 500);
+
             this.loading = true;
 
             // Instant refresh on selection changes
@@ -30,7 +38,8 @@ document.addEventListener('alpine:init', () => {
             await this.fetchEventTeams();
 
             // 3. Fetch Pit Reports from Firestore
-            db.collection('pitScouting').onSnapshot(snapshot => {
+            const pitCollectionName = Alpine.store('appState').pitCollectionName;
+            db.collection(pitCollectionName).onSnapshot(snapshot => {
                 this.pitReports = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -229,7 +238,8 @@ document.addEventListener('alpine:init', () => {
         async deletePitReport(id) {
             if (!confirm("Are you sure you want to delete this pit report? This action cannot be undone.")) return;
             try {
-                await db.collection('pitScouting').doc(id).delete();
+                const pitCollectionName = Alpine.store('appState').pitCollectionName;
+                await db.collection(pitCollectionName).doc(id).delete();
             } catch (err) {
                 console.error("Delete failed:", err);
                 alert("Failed to delete pit report: " + err.message);

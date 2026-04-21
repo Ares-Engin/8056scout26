@@ -31,7 +31,8 @@ document.addEventListener('alpine:init', () => {
             });
 
             // Load ALL Match Scouting Reports
-            db.collection('scouting').onSnapshot(snapshot => {
+            const collectionName = Alpine.store('appState').collectionName;
+            db.collection(collectionName).onSnapshot(snapshot => {
                 this.scoutEntries = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -51,7 +52,8 @@ document.addEventListener('alpine:init', () => {
             });
 
             // Load ALL Pit Reports for the season (season-wide)
-            db.collection('pitScouting').onSnapshot(snapshot => {
+            const pitCollectionName = Alpine.store('appState').pitCollectionName;
+            db.collection(pitCollectionName).onSnapshot(snapshot => {
                 this.pitReports = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -89,6 +91,14 @@ document.addEventListener('alpine:init', () => {
             if (teamParam) {
                 this.teamSearchQuery = teamParam;
             }
+
+            setTimeout(() => {
+                const appState = Alpine.store('appState');
+                let cleanUrl = `/${appState.league}/${appState.season}/regionals`;
+                if (!window.location.pathname.includes('/regionals/')) {
+                    history.replaceState(null, '', cleanUrl);
+                }
+            }, 500);
         },
 
         sortReports(reports) {

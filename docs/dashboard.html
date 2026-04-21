@@ -47,12 +47,32 @@
   </nav>
 
   <section class="page-hero">
-    <h1 class="page-hero__title">REBUILT 2026</h1>
+    <h1 class="page-hero__title">REBUILT <span x-text="$store.appState.season"></span></h1>
+    <div class="mt-4 flex gap-4 justify-center items-center">
+      <div class="flex flex-col items-center">
+        <label class="text-xs text-slate-400 font-semibold mb-1 uppercase">League</label>
+        <select class="bg-slate-800 text-white border border-slate-700 rounded px-3 py-1 text-sm focus:outline-none focus:border-orange-500"
+                x-model="$store.appState.league" 
+                @change="$store.appState.setLeague($event.target.value)">
+          <option value="frc">FRC</option>
+          <option value="ftc">FTC</option>
+        </select>
+      </div>
+      <div class="flex flex-col items-center">
+        <label class="text-xs text-slate-400 font-semibold mb-1 uppercase">Season</label>
+        <select class="bg-slate-800 text-white border border-slate-700 rounded px-3 py-1 text-sm focus:outline-none focus:border-orange-500"
+                x-model="$store.appState.season" 
+                @change="$store.appState.setSeason($event.target.value)">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+        </select>
+      </div>
+    </div>
   </section>
 
   <main class="dashboard-grid">
     <!-- Scout Match -->
-    <button @click="location.href='scout.html'" class="dashboard-card">
+    <button @click="location.href='scout_' + $store.appState.league + '_' + $store.appState.season + '.html'" class="dashboard-card">
       <div class="dashboard-card__icon">
         <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

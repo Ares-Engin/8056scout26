@@ -143,7 +143,8 @@ document.addEventListener('alpine:init', () => {
                     },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-                await db.collection('scouting').add(data);
+                const collectionName = Alpine.store('appState').collectionName;
+                await db.collection(collectionName).add(data);
                 alert('Success!');
                 location.href = 'dashboard.html';
             } catch (e) {

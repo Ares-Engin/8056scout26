@@ -29,8 +29,10 @@ document.addEventListener('alpine:init', () => {
             this.loadingStats = true;
             try {
                 // 1. Basic Counts
-                const scoutSnap = await db.collection('scouting').get();
-                const pitSnap = await db.collection('pitScouting').get();
+                const collectionName = Alpine.store('appState').collectionName;
+                const pitCollectionName = Alpine.store('appState').pitCollectionName;
+                const scoutSnap = await db.collection(collectionName).get();
+                const pitSnap = await db.collection(pitCollectionName).get();
                 const userSnap = await db.collection('users').get();
 
                 this.stats.scoutedMatches = scoutSnap.size;

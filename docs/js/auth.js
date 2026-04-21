@@ -61,4 +61,30 @@ document.addEventListener('alpine:init', () => {
       });
     }
   });
+
+  // Global App State for League and Season selection
+  Alpine.store('appState', {
+    league: localStorage.getItem('app_league') || 'frc',
+    season: localStorage.getItem('app_season') || '2026',
+    
+    setLeague(l) {
+        this.league = l;
+        localStorage.setItem('app_league', l);
+        window.dispatchEvent(new Event('app-state-changed'));
+    },
+    
+    setSeason(s) {
+        this.season = s;
+        localStorage.setItem('app_season', s);
+        window.dispatchEvent(new Event('app-state-changed'));
+    },
+    
+    get collectionName() {
+        return `scouting_${this.league}_${this.season}`;
+    },
+
+    get pitCollectionName() {
+        return `pit-scouting_${this.league}_${this.season}`;
+    }
+  });
 });

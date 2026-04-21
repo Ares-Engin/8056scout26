@@ -31,12 +31,27 @@ document.addEventListener('alpine:init', () => {
                     }
                 }
 
+                // URL Link Chain Cleanup
+                setTimeout(() => {
+                    const appState = Alpine.store('appState');
+                    const league = appState.league;
+                    const season = appState.season;
+                    const event = this.selectedEvents[0] || 'default';
+                    let cleanUrl = `/${league}/${season}/${event}/matches`;
+                    if (this.searchQuery) { // if team filter is applied
+                       cleanUrl += `/${this.searchQuery}`;
+                    }
+                    if (!window.location.pathname.includes('/matches/')) {
+                        history.replaceState(null, '', cleanUrl);
+                    }
+                }, 500);
+
                 this.$watch('selectedEvents', () => {
                     this.fetchMatches();
                 });
 
-
-                db.collection('scouting').onSnapshot(snapshot => {
+                const collectionName = Alpine.store('appState').collectionName;
+                db.collection(collectionName).onSnapshot(snapshot => {
                     this.scoutEntries = {};
                     snapshot.forEach(doc => {
                         const data = doc.data();
@@ -389,7 +404,8 @@ document.addEventListener('alpine:init', () => {
         async deleteReport(id) {
             if (!confirm("Are you sure you want to delete this match report? This action cannot be undone.")) return;
             try {
-                await db.collection('scouting').doc(id).delete();
+                const collectionName = Alpine.store('appState').collectionName;
+                await db.collection(collectionName).doc(id).delete();
             } catch (err) {
                 console.error("Delete failed:", err);
                 alert("Failed to delete report: " + err.message);

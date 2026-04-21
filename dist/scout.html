@@ -2,285 +2,182 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Match Scouting - REBUILT 2026</title>
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Theme Manager -->
-  <script src="js/theme.js"></script>
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Scouting - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body class="page-body" x-data="scoutApp">
-  <nav class="top-nav">
-    <div class="top-nav__inner">
-      <div class="top-nav__left">
-        <button @click="location.href='dashboard.html'" class="back-btn--shadow">
-          <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-            </path>
-          </svg>
-        </button>
-      </div>
-
-      <div class="top-nav__center">
-        <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--nav">
-        <span class="brand__subtitle--orange">Laissez Faire</span>
-      </div>
-
-      <div class="top-nav__right">
-      </div>
-    </div>
-  </nav>
-
-  <section class="page-hero">
-    <h1 class="page-hero__title">Match Scouting</h1>
-  </section>
-
-  <div class="container--sm">
-
-    <!-- PRE-MATCH -->
-    <section class="card">
-      <h2 class="section-title">
-        <span class="section-number">01</span>
-        Match Information
-      </h2>
-      <div class="stack-spacing--6 text-slate-400">
-        <div class="form-grid">
-          <div>
-            <label class="form-label">Year / Season</label>
-            <select x-model="selectedYear" @change="init()" class="form-select">
-              <template x-for="year in availableSeasons" :key="year">
-                <option :value="year" x-text="year"></option>
-              </template>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Regional / Event</label>
-            <select x-model="regional" class="form-select">
-              <template x-for="event in filteredEvents" :key="event.key">
-                <option :value="event.key" x-text="event.name"></option>
-              </template>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div>
-            <label class="form-label">Match Number</label>
-            <input x-model="matchNumber" type="number" placeholder="Enter #" class="form-input">
-          </div>
-          <div>
-            <label class="form-label">Team Number</label>
-            <input x-model="teamNumber" type="number" placeholder="Enter #" class="form-input">
-          </div>
-        </div>
-
-        <div>
-          <label class="form-label--simple">Match Type</label>
-          <div class="form-grid--4col"
-            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.75rem;">
-            <template x-for="type in ['Practice', 'Qualification', 'Playoffs', 'Finals']">
-              <button @click="matchType = type" class="btn-match-type"
-                :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
-                x-text="type"></button>
-            </template>
-          </div>
-        </div>
-
-        <div>
-          <label class="form-label">Alliance Color</label>
-          <div class="form-grid">
-            <button @click="alliance = 'Red'" class="btn-alliance"
-              :class="alliance === 'Red' ? 'btn-alliance-red--active' : 'btn-alliance-red--inactive'">Red
-              Alliance</button>
-            <button @click="alliance = 'Blue'" class="btn-alliance"
-              :class="alliance === 'Blue' ? 'btn-alliance-blue--active' : 'btn-alliance-blue--inactive'">Blue
-              Alliance</button>
-          </div>
-        </div>
-
-        <!-- Test Data Toggle -->
-        <div class="flex items-start gap-3 p-3 rounded-lg border"
-          :class="isTestData ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-slate-700/50'">
-          <div class="flex items-center h-5 mt-0.5">
-            <input id="testDataCheckbox" type="checkbox" x-model="isTestData"
-              class="w-4 h-4 accent-yellow-400 cursor-pointer">
-          </div>
-          <label for="testDataCheckbox" class="cursor-pointer">
-            <span class="text-sm font-bold" :class="isTestData ? 'text-yellow-400' : 'text-slate-300'">Test Data</span>
-            <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">Check this box if this submission is for testing
-              purposes only. It will be visually marked as TEST in all reports.</p>
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- AUTONOMOUS -->
-    <section class="card">
-      <h2 class="section-title--orange">
-        <span class="section-number">02</span>
-        Autonomous
-      </h2>
-
-      <div class="stack-spacing--4">
-        <div>
-          <label class="form-label">Auto Climb</label>
-          <select x-model="auto.level1" class="form-select">
-            <option value="none">Not Attempted</option>
-            <option value="success">Successful</option>
-            <option value="failed">Failed</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="form-label--simple">Auto Scored</label>
-          <div class="gap-grid">
-            <template x-for="range in autoRanges">
-              <button @click="auto.scored = range" class="gap-btn"
-                :class="auto.scored === range ? 'gap-btn--active' : 'gap-btn--inactive'">
-                <span class="gap-btn__range" x-text="range"></span>
-              </button>
-            </template>
-          </div>
-        </div>
-
-        <div>
-          <label class="form-label--simple">Auto Failed Attempt</label>
-          <div class="gap-grid">
-            <template x-for="range in autoRanges">
-              <button @click="auto.failed = range" class="gap-btn"
-                :class="auto.failed === range ? 'gap-btn--active' : 'gap-btn--inactive'">
-                <span class="gap-btn__range" x-text="range"></span>
-              </button>
-            </template>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SHIFTS (Transition, Teleop A, Teleop B) -->
-    <template x-for="shift in [
-      { key: 'transitionShift', label: 'Transition Shift', color: 'orange', number: '03', ranges: 'transitionRanges' },
-      { key: 'teleopShiftA', label: 'Teleop Shift A', color: 'blue', number: '04', ranges: 'teleopRanges' },
-      { key: 'teleopShiftB', label: 'Teleop Shift B', color: 'blue', number: '05', ranges: 'teleopRanges' }
-    ]">
-      <section :class="'card--' + shift.color">
-        <h2 :class="'section-title--' + shift.color">
-          <span :class="'section-number--' + shift.color" x-text="shift.number"></span>
-          <span x-text="shift.label"></span>
-        </h2>
-        <div class="gap-grid">
-          <template x-for="range in $data[shift.ranges]">
-            <button @click="$data[shift.key] = range" class="gap-btn"
-              :class="$data[shift.key] === range ? 'gap-btn--active' : 'gap-btn--inactive'">
-              <span class="gap-btn__range" x-text="range"></span>
-            </button>
-          </template>
-        </div>
-      </section>
-    </template>
-
-
-    <section class="card--purple">
-      <h2 class="section-title--purple">
-        <span class="section-number--purple">06</span>
-        Endgame &amp; Ratings
-      </h2>
-
-      <div class="stack-spacing--6">
-        <div>
-          <label class="form-label--muted">Endgame Shift</label>
-          <div class="gap-grid mb-4">
-            <template x-for="range in teleopRanges">
-              <button @click="endgameShift = range" class="gap-btn"
-                :class="endgameShift === range ? 'gap-btn--active' : 'gap-btn--inactive'">
-                <span class="gap-btn__range" x-text="range"></span>
-              </button>
-            </template>
-          </div>
-        </div>
-        <div>
-          <label class="form-label--muted">Climb Level</label>
-          <select x-model="endgame.level" class="form-select--purple">
-            <option value="none">Not Attempted</option>
-            <option value="level1">Level 1</option>
-            <option value="level2">Level 2</option>
-            <option value="level3">Level 3</option>
-            <option value="failed">Attempted but Failed</option>
-          </select>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Timer -->
-        <div class="timer-container">
-          <div class="timer-display" x-text="timerSeconds.toFixed(1)">0.0</div>
-          <div class="timer-controls">
-            <button @click="startTimer" class="btn-timer--record" x-show="!timerActive">Start Timer</button>
-            <button @click="stopTimer" class="btn-timer--record" x-show="timerActive">Pause</button>
-            <button @click="recordClimb" class="btn-timer--record">Record Time</button>
-            <button @click="resetTimer" class="btn-timer--reset">Reset</button>
-          </div>
-          <div class="timer-result" x-show="recordedClimbTime">
-            Recorded Time: <span class="timer-result__value" x-text="recordedClimbTime + 's'"></span>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Ratings -->
-        <div class="stack-spacing--6">
-          <template x-for="([key, label]) in Object.entries({
-            driver: 'Driver Skill',
-            speed: 'Robot Speed',
-            shooterSpeed: 'Shooter Speed',
-            defense: 'Defensive Ability',
-            stability: 'Stability'
-          })">
-            <div>
-              <div class="range-header">
-                <label class="range-label" x-text="label"></label>
-                <span class="range-value" x-text="(ratings[key] || 3) + '/5'"></span>
-              </div>
-              <input type="range" min="1" max="5" step="1" x-model="ratings[key]" class="range-input">
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href = $store.appState.url('dashboard')" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
             </div>
-          </template>
-
-          <div>
-            <label class="form-label--muted">Comments</label>
-            <textarea x-model="ratings.comments" class="form-textarea" placeholder="Add match notes..."></textarea>
-          </div>
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+            <div class="top-nav__right"></div>
         </div>
-      </div>
+    </nav>
+
+    <section class="page-hero">
+        <h1 class="page-hero__title" x-text="$store.appState.league.toUpperCase() + ' Match Scouting'"></h1>
     </section>
 
-    <!-- Final Submission -->
-    <button @click="submit" :disabled="loading" class="btn-submit">
-      <div class="btn-submit__overlay"></div>
-      <template x-if="loading">
-        <svg class="spinner" fill="none" viewBox="0 0 24 24">
-          <circle class="spinner__circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="spinner__path" fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-          </path>
-        </svg>
-      </template>
-      <span class="btn-submit__text" x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
-      <span class="btn-submit__subtext">Confirm and Send to Cloud</span>
-    </button>
+    <div class="container--sm">
+        <!-- Section 1: Meta -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-number">01</span> Match Information</h2>
+            <div class="stack-spacing--6">
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Regional / Event</label>
+                        <select x-model="regional" class="form-select">
+                            <template x-for="event in $store.appState.availableEvents" :key="event.key">
+                                <option :value="event.key" x-text="event.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Match Number</label>
+                        <input x-model="matchNumber" type="number" placeholder="#" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">Team Number</label>
+                        <input x-model="teamNumber" type="number" placeholder="#" class="form-input">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Match Type</label>
+                    <div class="grid grid-cols-4 gap-2 mt-2">
+                        <template x-for="type in ['Practice', 'Qualification', 'Playoffs', 'Finals']">
+                            <button @click="matchType = type" class="btn-match-type"
+                                :class="matchType === type ? 'btn-match-type--active' : 'btn-match-type--inactive'"
+                                x-text="type"></button>
+                        </template>
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Alliance</label>
+                    <div class="form-grid">
+                        <button @click="alliance = 'Red'" class="btn-alliance" :class="alliance === 'Red' ? 'btn-alliance-red--active' : 'btn-alliance-red--inactive'">Red</button>
+                        <button @click="alliance = 'Blue'" class="btn-alliance" :class="alliance === 'Blue' ? 'btn-alliance-blue--active' : 'btn-alliance-blue--inactive'">Blue</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  </div>
+        <!-- FRC 2026 Specific Form -->
+        <template x-if="$store.appState.league === 'frc'">
+            <div class="stack-spacing--6">
+                <section class="card--orange">
+                    <h2 class="section-title--orange"><span class="section-number">02</span> Autonomous</h2>
+                    <div class="stack-spacing--4">
+                        <div>
+                            <label class="form-label">Auto Climb</label>
+                            <select x-model="auto.level1" class="form-select">
+                                <option value="none">Not Attempted</option>
+                                <option value="success">Successful</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Auto Scored</label>
+                            <div class="gap-grid">
+                                <template x-for="range in ranges.auto">
+                                    <button @click="auto.scored = range" class="gap-btn" :class="auto.scored === range ? 'gap-btn--active' : 'gap-btn--inactive'" x-text="range"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="card--blue">
+                    <h2 class="section-title--blue"><span class="section-number">03</span> Teleop Shifts</h2>
+                    <div class="stack-spacing--6">
+                        <div>
+                            <label class="form-label">Transition Shift</label>
+                            <div class="gap-grid">
+                                <template x-for="range in ranges.transition">
+                                    <button @click="transitionShift = range" class="gap-btn" :class="transitionShift === range ? 'gap-btn--active' : 'gap-btn--inactive'" x-text="range"></button>
+                                </template>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Teleop Shift A</label>
+                            <div class="gap-grid">
+                                <template x-for="range in ranges.teleop">
+                                    <button @click="teleopShiftA = range" class="gap-btn" :class="teleopShiftA === range ? 'gap-btn--active' : 'gap-btn--inactive'" x-text="range"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </template>
 
-  <script src="js/auth.js"></script>
-  <script src="js/custom-events.js"></script>
-  <script src="js/frc-config.js"></script>
-  <script src="js/scout-app.js"></script>
+        <!-- FTC 2025 Specific Form -->
+        <template x-if="$store.appState.league === 'ftc'">
+            <div class="stack-spacing--6">
+                <section class="card--orange">
+                    <h2 class="section-title--orange"><span class="section-number">02</span> Auto Samples & Specimens</h2>
+                    <div class="stack-spacing--4">
+                        <div>
+                            <label class="form-label">Samples Scored</label>
+                            <div class="gap-grid">
+                                <template x-for="n in [0,1,2,3,4,5]">
+                                    <button @click="auto.samples = n" class="gap-btn" :class="auto.samples == n ? 'gap-btn--active' : 'gap-btn--inactive'" x-text="n"></button>
+                                </template>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Specimens Scored</label>
+                            <div class="gap-grid">
+                                <template x-for="n in [0,1,2,3,4,5]">
+                                    <button @click="auto.specimens = n" class="gap-btn" :class="auto.specimens == n ? 'gap-btn--active' : 'gap-btn--inactive'" x-text="n"></button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="card--purple">
+                    <h2 class="section-title--purple"><span class="section-number">03</span> Endgame Ascents</h2>
+                    <div class="stack-spacing--4">
+                        <label class="form-label">Ascent Level</label>
+                        <select x-model="endgame.ascent" class="form-select--purple">
+                            <option value="none">No Ascent</option>
+                            <option value="level1">Level 1 (Park/Low)</option>
+                            <option value="level2">Level 2 (Mid)</option>
+                            <option value="level3">Level 3 (High)</option>
+                        </select>
+                    </div>
+                </section>
+            </div>
+        </template>
+
+        <!-- Submit -->
+        <button @click="submit" :disabled="loading" class="btn-submit mt-8">
+            <span x-text="loading ? 'Submitting...' : 'Upload Data'"></span>
+        </button>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/scout-app.js"></script>
 </body>
-
 </html>

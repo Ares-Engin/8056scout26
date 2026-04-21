@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Details - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body" x-data="matchDetailApp">
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href = $store.appState.url('matches')" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+            <div class="top-nav__right">
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="flex flex-col items-center">
+            <h1 class="page-hero__title" x-text="match ? '#' + match.matchNumber + ' ' + match.type : 'Loading Match...'"></h1>
+            <p class="text-xs font-black text-orange-500 uppercase tracking-widest mt-1" x-text="match?.eventShort || ''"></p>
+        </div>
+    </section>
+
+    <main class="max-w-4xl mx-auto px-4 pb-12">
+        <template x-if="loading">
+            <div class="loading-container py-12">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Fetching Match Intel...</p>
+            </div>
+        </template>
+
+        <template x-if="!loading && match">
+            <div class="space-y-6">
+                <!-- Match Meta & Score Summary -->
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                    <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-orange-500 to-blue-600 opacity-50"></div>
+                    
+                    <div class="flex items-center justify-between gap-8 mb-8">
+                        <!-- Red Alliance -->
+                        <div class="flex-1 text-center">
+                            <span class="text-xs font-black text-red-500 uppercase tracking-[0.2em] mb-4 block">Red Alliance</span>
+                            <div class="grid grid-cols-1 gap-2">
+                                <template x-for="t in redTeams" :key="t.teamNumber">
+                                    <a :href="$store.appState.url('teams', '', t.teamNumber)" 
+                                       class="p-3 bg-red-600/5 border border-red-500/10 rounded-xl hover:bg-red-600/10 transition-all flex flex-col items-center">
+                                        <span class="font-black text-red-400 text-lg" x-text="'#' + t.teamNumber"></span>
+                                        <span class="text-[9px] text-slate-500 font-bold truncate max-w-[100px]" x-text="getTeamData(t.teamNumber).nickname"></span>
+                                    </a>
+                                </template>
+                            </div>
+                            <div class="mt-6">
+                                <span class="text-4xl font-black text-white" x-text="match.scoreRedFinal || 0"></span>
+                            </div>
+                        </div>
+
+                        <div class="h-32 w-px bg-slate-800"></div>
+
+                        <!-- Blue Alliance -->
+                        <div class="flex-1 text-center">
+                            <span class="text-xs font-black text-blue-500 uppercase tracking-[0.2em] mb-4 block">Blue Alliance</span>
+                            <div class="grid grid-cols-1 gap-2">
+                                <template x-for="t in blueTeams" :key="t.teamNumber">
+                                    <a :href="$store.appState.url('teams', '', t.teamNumber)"
+                                       class="p-3 bg-blue-600/5 border border-blue-500/10 rounded-xl hover:bg-blue-600/10 transition-all flex flex-col items-center">
+                                        <span class="font-black text-blue-400 text-lg" x-text="'#' + t.teamNumber"></span>
+                                        <span class="text-[9px] text-slate-500 font-bold truncate max-w-[100px]" x-text="getTeamData(t.teamNumber).nickname"></span>
+                                    </a>
+                                </template>
+                            </div>
+                            <div class="mt-6">
+                                <span class="text-4xl font-black text-white" x-text="match.scoreBlueFinal || 0"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex items-center justify-center gap-3 border-t border-slate-800 pt-6">
+                        <a :href="FRC_CONFIG.getTbaMatchUrl(match.eventKey, match.type, match.matchNumber)" target="_blank"
+                            class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-900/20">View on TBA</a>
+                        <a :href="`scout.html?season=${$store.appState.season}&regional=${match.eventKey}&type=${match.type}&match=${match.matchNumber}`"
+                            class="px-6 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-orange-900/20">Scout Match</a>
+                    </div>
+                </div>
+
+                <!-- API Breakdown -->
+                <section>
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-4 px-2">Official Match Breakdown</h2>
+                    <template x-if="match.rawScoreBreakdown">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <template x-for="alliance in ['red', 'blue']">
+                                <div :class="alliance === 'red' ? 'bg-red-500/5 border-red-500/10' : 'bg-blue-500/5 border-blue-500/10'"
+                                    class="rounded-2xl border p-4">
+                                    <h3 :class="alliance === 'red' ? 'text-red-400' : 'text-blue-400'"
+                                        class="text-xs font-black uppercase tracking-widest mb-4 border-b border-white/5 pb-2"
+                                        x-text="alliance + ' alliance'"></h3>
+                                    <div class="space-y-2">
+                                        <template x-for="item in getBreakdownItems(alliance)" :key="item.label">
+                                            <div class="flex justify-between items-center text-[10px] font-bold">
+                                                <span class="text-slate-500" x-text="item.label"></span>
+                                                <span :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
+                                                    x-text="item.val || 0"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!match.rawScoreBreakdown">
+                        <div class="bg-slate-900/50 rounded-2xl p-8 border border-slate-800 text-center">
+                            <p class="text-xs text-slate-500 font-bold uppercase">No API breakdown data yet</p>
+                        </div>
+                    </template>
+                </section>
+
+                <!-- Video -->
+                <section x-show="match.videos?.length">
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-4 px-2">Match Replay</h2>
+                    <template x-if="match.videos && match.videos.find(v => v.type?.toLowerCase() === 'youtube')">
+                        <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800 shadow-2xl">
+                            <iframe class="w-full h-full"
+                                :src="'https://www.youtube.com/embed/' + match.videos.find(v => v.type?.toLowerCase() === 'youtube').key"
+                                frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </template>
+                </section>
+
+                <!-- Scouting Reports -->
+                <section>
+                    <div class="flex items-center justify-between mb-4 px-2">
+                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Scouting Intelligence</h2>
+                        <span class="text-[10px] font-black text-slate-600 uppercase" x-text="(scoutEntries.length || 0) + ' Reports'"></span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <template x-for="entry in scoutEntries" :key="entry.id">
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                                <div class="p-4 flex items-center justify-between bg-slate-800/20 shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <div class="px-2 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded font-black text-xs" x-text="'#' + entry.teamNumber"></div>
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] font-black text-white uppercase" x-text="getTeamData(entry.teamNumber).nickname"></span>
+                                            <span class="text-[8px] text-slate-500 font-bold uppercase tracking-tighter" x-text="'Report by #' + (entry.meta?.scouterTeam || '?')"></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button x-show="isAdmin" @click="deleteReport(entry.id)" class="p-2 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-lg transition-all">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </button>
+                                        <template x-if="isVerified(entry.meta?.scouterRole)">
+                                            <div class="bg-green-500/10 text-green-500 border border-green-500/20 p-1.5 rounded-full">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="p-5">
+                                    <!-- Scout Metrics -->
+                                    <div class="grid grid-cols-3 gap-3 mb-4">
+                                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 shadow-inner">
+                                            <span class="text-[8px] font-black text-slate-600 uppercase block mb-1">Auto</span>
+                                            <p class="text-xs font-black text-green-400" x-text="entry.data?.auto?.scored || 0"></p>
+                                        </div>
+                                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 shadow-inner">
+                                            <span class="text-[8px] font-black text-slate-600 uppercase block mb-1">Teleop</span>
+                                            <p class="text-xs font-black text-blue-400" x-text="entry.data?.teleopShiftA || 0"></p>
+                                        </div>
+                                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 shadow-inner">
+                                            <span class="text-[8px] font-black text-slate-600 uppercase block mb-1">Endgame</span>
+                                            <p class="text-xs font-black text-orange-400" x-text="entry.data?.endgame?.level || 'N/A'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow-inner" x-show="entry.data?.ratings?.comments">
+                                        <span class="text-[8px] font-black text-slate-600 uppercase block mb-2">Observations</span>
+                                        <p class="text-xs text-slate-300 italic" x-text="'&quot;' + entry.data.ratings.comments + '&quot;'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="!scoutEntries.length">
+                            <div class="bg-slate-900/30 rounded-2xl p-12 border border-slate-800 border-dashed text-center">
+                                <p class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em]">No scouting reports for this match</p>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </div>
+        </template>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/match-detail-app.js"></script>
+</body>
+</html>

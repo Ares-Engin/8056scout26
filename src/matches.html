@@ -6,14 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Match Results - REBUILT 2026</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Theme Manager -->
     <script src="js/theme.js"></script>
     <script src="js/custom-events.js"></script>
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
@@ -21,51 +18,44 @@
     <nav class="top-nav">
         <div class="top-nav__inner">
             <div class="top-nav__left">
-                <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/dashboard'" class="back-btn--shadow">
+                <button @click="location.href = $store.appState.url('dashboard')" class="back-btn--shadow">
                     <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
-                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
             </div>
-
             <div class="top-nav__center">
-                <img src="img/logo.png" alt="REBUILT Logo" class="brand__logo--nav">
+                <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
                 <span class="brand__subtitle--orange">Laissez Faire</span>
             </div>
-
-            <div class="top-nav__right">
-                <span class="text-[8px] font-black text-slate-600 uppercase tracking-widest mr-2">v.1.3 - 20:41</span>
-            </div>
+            <div class="top-nav__right"></div>
         </div>
     </nav>
 
     <section class="page-hero">
         <h1 class="page-hero__title">Match Results</h1>
     </section>
-    </section>
 
-    <!-- TBA Style Breadcrumbs / Context Header -->
+    <!-- Context Header -->
     <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-[64px] z-20">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <nav class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-                <a @click="location.href='/'+$store.appState.league+'/'+$store.appState.season+'/dashboard'" class="text-slate-500 hover:text-orange-500 cursor-pointer" x-text="$store.appState.season"></a>
+                <a @click="location.href = $store.appState.url('dashboard')" class="text-slate-500 hover:text-orange-500 cursor-pointer" x-text="$store.appState.season"></a>
                 <span class="text-slate-700">/</span>
                 <span x-show="!$store.appState.regional" class="text-white">Events</span>
                 <template x-if="$store.appState.regional">
                     <div class="flex items-center gap-2">
-                        <a @click="location.href='/'+$store.appState.league+'/'+$store.appState.season+'/matches'" class="text-slate-500 hover:text-orange-500 cursor-pointer">Events</a>
+                        <a @click="location.href = $store.appState.url('matches')" class="text-slate-500 hover:text-orange-500 cursor-pointer">Events</a>
                         <span class="text-slate-700">/</span>
                         <span class="text-white" x-text="availableEvents.find(e => e.key === $store.appState.regional)?.name || $store.appState.regional"></span>
                     </div>
                 </template>
             </nav>
-
             <div class="flex items-center gap-4">
                 <div x-show="$store.appState.regional" class="relative">
                     <input x-model="searchQuery" type="text" placeholder="Search Team..." 
                         class="bg-slate-950 border border-slate-800 text-[10px] font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-orange-500 w-48">
-                    <svg class="absolute right-2.5 top-2 h-3.5 w-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
@@ -73,637 +63,80 @@
         </div>
     </div>
 
-    <!-- Event Selection Interstitial (Show if no regional in URL) -->
-    <template x-if="!$store.appState.regional">
-        <div class="max-w-4xl mx-auto p-6">
-            <h2 class="text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-6 border-l-4 border-orange-500 pl-4">Select an Event to View Matches</h2>
+    <main class="max-w-4xl mx-auto p-6">
+        <!-- Event Selection -->
+        <template x-if="!$store.appState.regional">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <template x-for="event in availableEvents.filter(e => e.season == $store.appState.season)" :key="event.key">
-                    <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/' + event.key + '/matches'"
-                        class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500 transition-all group group-hover:scale-[1.02]">
+                    <button @click="location.href = $store.appState.url('matches', event.key)"
+                        class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500 transition-all group">
                         <div class="text-left">
                             <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest" x-text="event.key"></p>
                             <p class="font-black text-white text-sm" x-text="event.name"></p>
                         </div>
                         <svg class="w-5 h-5 text-slate-700 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
                 </template>
             </div>
-        </div>
-    </template>
+        </template>
 
-    <template x-if="loading">
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Syncing Data...</p>
-        </div>
-    </template>
-
-    <template x-if="errorMessage">
-        <div class="error-banner" x-text="errorMessage"></div>
-    </template>
-
-    <div x-show="$store.appState.regional" class="match-grid">
-        <template x-for="match in filteredMatches()" :key="match.eventKey + '_' + match.type + '_' + match.matchNumber">
-            <div class="match-card-new"
-                :class="expandedMatches.includes(match.eventKey + '_' + match.type + '_' + match.matchNumber) ? 'ring-2 ring-orange-500/50' : ''">
-
-                <!-- Compact Header (Always Visible) -->
-                <div @click="toggleMatch(match.eventKey + '_' + match.type + '_' + match.matchNumber)"
-                    class="match-card__header flex-col items-stretch pt-3 pb-2">
-                    <div class="flex items-center justify-between w-full px-4 mb-2">
-                        <div class="match-card__match-info">
+        <!-- Match Listing -->
+        <template x-if="$store.appState.regional">
+            <div class="space-y-3">
+                <template x-if="loading">
+                    <div class="py-12 flex flex-col items-center">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text">Syncing Matches...</p>
+                    </div>
+                </template>
+                <template x-for="match in filteredMatches" :key="match.key">
+                    <a :href="$store.appState.url('matches', $store.appState.regional, match.match_number)" 
+                       class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-orange-500 transition-all group">
+                        <div class="flex items-center gap-6">
                             <div class="flex flex-col">
-                                <span class="match-card__match-number" x-text="'#' + match.matchNumber"></span>
-                                <span class="match-card__match-type" x-text="match.type"></span>
+                                <span class="text-[10px] font-black text-orange-500 uppercase tracking-widest" x-text="match.type"></span>
+                                <span class="font-black text-white text-lg" x-text="'#' + match.match_number"></span>
                             </div>
-                            <div class="match-card__divider"></div>
-                            <div class="flex flex-col">
-                                <span class="match-card__event-name" x-text="match.eventShort"></span>
-                                <span class="match-card__event-year" x-text="match.year"></span>
-                            </div>
-                        </div>
-
-                        <!-- Score Preview & Buttons (Stacked Right) -->
-                        <div class="flex flex-col items-end gap-2 shrink-0 ml-4">
-                            <div class="flex flex-col gap-1.5">
-                                <!-- SCOUT MATCH SHORTCUT -->
-                                <a :href="`scout.html?season=${selectedSeasons[0] || match.eventKey.substring(0,4)}&regional=${match.eventKey}&type=${match.type}&match=${match.matchNumber}`"
-                                    class="px-2 py-1 bg-orange-500/10 hover:bg-orange-500 text-orange-400 hover:text-white rounded border border-orange-500/20 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-1.5 pointer-events-auto w-full min-w-[65px]"
-                                    @click.stop>
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                            d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    Scout
-                                </a>
-
-                                <!-- VIEW ON TBA -->
-                                <a :href="FRC_CONFIG.getTbaMatchUrl(match.eventKey, match.type, match.matchNumber)"
-                                    target="_blank"
-                                    class="px-2 py-1 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white rounded border border-blue-500/20 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-1.5 w-full min-w-[65px]">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
-                                        </path>
-                                    </svg>
-                                    TBA
-                                </a>
-
-                                <!-- ALWAYS VISIBLE YOUTUBE BUTTON -->
-                                <a :href="match.videos?.find(v => v.type?.toLowerCase() === 'youtube') ? 'https://www.youtube.com/watch?v=' + match.videos.find(v => v.type?.toLowerCase() === 'youtube').key : 'https://www.youtube.com/results?search_query=FRC+' + match.eventKey + '+' + match.type + '+' + match.matchNumber"
-                                    target="_blank"
-                                    class="px-2 py-1 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded border border-red-500/20 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-1.5 w-full min-w-[65px]">
-                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                    </svg>
-                                    YouTube
-                                </a>
-
-                                <!-- VIEW REGIONAL -->
-                                <a :href="`regionals.html?event=${match.eventKey}&match=${match.matchNumber}`"
-                                    class="px-2 py-1 bg-slate-800/50 hover:bg-orange-500/20 text-slate-400 hover:text-orange-400 rounded border border-slate-700 hover:border-orange-500/40 text-[9px] font-black uppercase tracking-tighter transition-all flex items-center justify-center gap-1.5 w-full min-w-[65px]">
-                                    Regional
-                                </a>
-                            </div>
-
-                            <div
-                                class="match-card__score-preview px-2 py-1 bg-slate-900/50 rounded-lg border border-slate-800/50 shadow-inner flex items-center gap-2">
-                                <span class="match-card__score-red text-[11px]"
-                                    x-text="match.scoreRedFinal || 0"></span>
-                                <div class="match-card__dot-red scale-75"></div>
-                                <div class="match-card__dot-blue scale-75"></div>
-                                <span class="match-card__score-blue text-[11px]"
-                                    x-text="match.scoreBlueFinal || 0"></span>
-                                <svg class="match-card__chevron shrink-0 w-3 h-3 ml-1"
-                                    :class="expandedMatches.includes(match.eventKey + '_' + match.type + '_' + match.matchNumber) ? 'rotate-180' : ''"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M19 9l-7 7-7-7">
-                                    </path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Team Numbers & Names (New Section) -->
-                    <div class="px-4 border-t border-slate-800/50 pt-2 flex flex-wrap gap-x-4 gap-y-1">
-                        <!-- Red Teams -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-1 h-3 rounded-full bg-red-500"></div>
-                            <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Red'))"
-                                :key="t.teamNumber">
-                                <div class="flex items-center gap-1">
-                                    <span class="text-[10px] font-black text-red-400" 
-                                        :class="isHighlighted(t.teamNumber) ? 'bg-red-500 text-white px-1 rounded ring-1 ring-red-400' : ''"
-                                        x-text="t.teamNumber"></span>
-                                    <span class="text-[9px] text-slate-400 font-bold max-w-[60px] truncate"
-                                        x-text="getTeamData(t.teamNumber).nickname"></span>
-                                </div>
-                            </template>
-                        </div>
-                        <!-- Blue Teams -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-1 h-3 rounded-full bg-blue-500"></div>
-                            <template x-for="t in (match.teams || []).filter(t => t.station.startsWith('Blue'))"
-                                :key="t.teamNumber">
-                                <div class="flex items-center gap-1">
-                                    <span class="text-[10px] font-black text-blue-400" 
-                                        :class="isHighlighted(t.teamNumber) ? 'bg-blue-500 text-white px-1 rounded ring-1 ring-blue-400' : ''"
-                                        x-text="t.teamNumber"></span>
-                                    <span class="text-[9px] text-slate-400 font-bold max-w-[60px] truncate"
-                                        x-text="getTeamData(t.teamNumber).nickname"></span>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Expanded Content -->
-                <div x-show="expandedMatches.includes(match.eventKey + '_' + match.type + '_' + match.matchNumber)"
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 -translate-y-2"
-                    x-transition:enter-end="opacity-100 translate-y-0" class="match-expanded">
-
-                    <!-- Alliance Data (API Based) -->
-                    <!-- New Expandable API Breakdown -->
-                    <div class="mt-4 border-t border-slate-800/50 pt-3" x-data="{ expandedApi: false }">
-                        <button @click="expandedApi = !expandedApi"
-                            class="w-full flex items-center justify-between px-3 py-2 bg-slate-900/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-colors">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Full API Match
-                                Breakdown</span>
-                            <template x-if="expandedApi && !match.rawScoreBreakdown && loading">
-                                <div
-                                    class="flex items-center gap-2 px-2 py-0.5 bg-orange-500/10 rounded border border-orange-500/20">
-                                    <div class="w-1 h-1 bg-orange-500 rounded-full animate-ping"></div>
-                                    <span class="text-[8px] font-black text-orange-500 uppercase">Syncing...</span>
-                                </div>
-                            </template>
-                            <svg class="w-3.5 h-3.5 text-slate-500 transition-transform duration-300"
-                                :class="expandedApi ? 'rotate-180' : ''" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-
-                        <div x-show="expandedApi" x-collapse x-transition.opacity class="mt-2 grid grid-cols-2 gap-2">
-                            <template x-if="match.rawScoreBreakdown">
-                                <template x-for="alliance in ['red', 'blue']">
-                                    <div :class="alliance === 'red' ? 'bg-red-500/5 border-red-500/10' : 'bg-blue-500/5 border-blue-500/10'"
-                                        class="rounded-lg border p-2.5">
-                                        <h5 :class="alliance === 'red' ? 'text-red-400' : 'text-blue-400'"
-                                            class="text-[9px] font-black uppercase tracking-tighter mb-2 border-b pb-1"
-                                            x-text="alliance + ' alliance'"></h5>
-
-                                        <div class="space-y-1.5">
-                                            <div class="mb-2 pb-1 border-b border-white/5">
-                                                <span
-                                                    class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Main
-                                                    Scores</span>
-                                            </div>
-                                            <template x-for="item in [
-                                                { label: 'Auto Points', val: match.rawScoreBreakdown[alliance].totalAutoPoints },
-                                                { label: 'Teleop Points', val: match.rawScoreBreakdown[alliance].totalTeleopPoints },
-                                                { label: 'Tower Points', val: match.rawScoreBreakdown[alliance].totalTowerPoints },
-                                                { label: 'Foul Points', val: match.rawScoreBreakdown[alliance].foulPoints },
-                                                { label: 'Major Fouls', val: match.rawScoreBreakdown[alliance].majorFoulCount },
-                                                { label: 'Minor Fouls', val: match.rawScoreBreakdown[alliance].minorFoulCount },
-                                                { label: 'Adjustments', val: match.rawScoreBreakdown[alliance].adjustPoints },
-                                                { label: 'Total Points', val: match.rawScoreBreakdown[alliance].totalPoints },
-                                                { label: 'RP Earned', val: match.rawScoreBreakdown[alliance].rp }
-                                            ]" :key="item.label">
-                                                <div class="flex justify-between items-center text-[9px] font-bold">
-                                                    <span class="text-slate-500" x-text="item.label"></span>
-                                                    <span :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
-                                                        x-text="item.val || 0"></span>
-                                                </div>
-                                            </template>
-
-                                            <div class="mt-3 mb-2 pb-1 border-b border-white/5">
-                                                <span
-                                                    class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Tower
-                                                    Robots</span>
-                                            </div>
-                                            <template x-for="robot in [1,2,3]" :key="robot">
-                                                <div
-                                                    class="flex justify-between items-center text-[9px] font-bold opacity-80">
-                                                    <span class="text-slate-500" x-text="'Auto Robot ' + robot"></span>
-                                                    <span :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
-                                                        x-text="match.rawScoreBreakdown[alliance]['autoTowerRobot' + robot]"></span>
-                                                </div>
-                                            </template>
-                                            <template x-for="robot in [1,2,3]" :key="robot">
-                                                <div
-                                                    class="flex justify-between items-center text-[9px] font-bold opacity-80">
-                                                    <span class="text-slate-500"
-                                                        x-text="'Endgame Robot ' + robot"></span>
-                                                    <span :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
-                                                        x-text="match.rawScoreBreakdown[alliance]['endGameTowerRobot' + robot]"></span>
-                                                </div>
-                                            </template>
-
-                                            <div class="mt-3 mb-2 pb-1 border-b border-white/5">
-                                                <span
-                                                    class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Hub
-                                                    Activity</span>
-                                            </div>
-                                            <template x-if="match.rawScoreBreakdown[alliance].hubScore">
-                                                <div class="space-y-1">
-                                                    <template
-                                                        x-for="shift in ['Auto', 'Transition', 'Shift1', 'Shift2', 'Shift3', 'Shift4', 'Teleop', 'Endgame']"
-                                                        :key="shift">
-                                                        <div
-                                                            class="flex justify-between items-center text-[9px] font-bold">
-                                                            <span class="text-slate-500"
-                                                                x-text="shift + ' Score'"></span>
-                                                            <div class="flex gap-2">
-                                                                <span class="text-slate-600"
-                                                                    x-text="match.rawScoreBreakdown[alliance].hubScore[shift.toLowerCase() + 'Count'] || 0"></span>
-                                                                <span
-                                                                    :class="alliance === 'red' ? 'text-red-300' : 'text-blue-300'"
-                                                                    x-text="match.rawScoreBreakdown[alliance].hubScore[shift.toLowerCase() + 'Points'] || 0"></span>
-                                                            </div>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                            </template>
-
-                                            <div class="mt-3 mb-2 pb-1 border-b border-white/5">
-                                                <span
-                                                    class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Achievements</span>
-                                            </div>
-                                            <template x-for="ach in [
-                                                { label: 'Energized', val: match.rawScoreBreakdown[alliance].energizedAchieved },
-                                                { label: 'Supercharged', val: match.rawScoreBreakdown[alliance].superchargedAchieved },
-                                                { label: 'Traversal', val: match.rawScoreBreakdown[alliance].traversalAchieved },
-                                                { label: 'G206 Penalty', val: match.rawScoreBreakdown[alliance].g206Penalty }
-                                            ]" :key="ach.label">
-                                                <div class="flex justify-between items-center text-[9px] font-bold">
-                                                    <span class="text-slate-500" x-text="ach.label"></span>
-                                                    <span
-                                                        :class="ach.val ? (alliance === 'red' ? 'text-red-400' : 'text-blue-400') : 'text-slate-700'"
-                                                        x-text="ach.val ? 'YES' : 'NO'"></span>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </template>
-                            </template>
-                            <template x-if="!match.rawScoreBreakdown">
-                                <div class="col-span-2 py-4 text-center">
-                                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">No API
-                                        data available for this match</span>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Watch Match Video -->
-                    <div class="mt-2 border-t border-slate-800/50 pt-3" x-data="{ expandedVideo: false }">
-                        <button @click="expandedVideo = !expandedVideo"
-                            class="w-full flex items-center justify-between px-3 py-2 bg-slate-900/50 hover:bg-slate-800 rounded-lg border border-slate-700/50 transition-colors">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-3.5 h-3.5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                </svg>
-                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Watch Match Video</span>
-                            </div>
-                            <svg class="w-3.5 h-3.5 text-slate-500 transition-transform duration-300"
-                                :class="expandedVideo ? 'rotate-180' : ''" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-
-                        <div x-show="expandedVideo" x-collapse x-transition.opacity class="mt-2">
-                            <template x-if="match.videos && match.videos.find(v => v.type?.toLowerCase() === 'youtube')">
-                                <div class="space-y-3">
-                                    <div class="aspect-video w-full rounded-lg overflow-hidden bg-black border border-slate-700/50">
-                                        <iframe class="w-full h-full"
-                                            :src="'https://www.youtube.com/embed/' + match.videos.find(v => v.type?.toLowerCase() === 'youtube').key"
-                                            frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen>
-                                        </iframe>
-                                    </div>
-                                    <!-- Direct Link Fallback -->
-                                    <div class="flex justify-center pb-2">
-                                        <a :href="'https://www.youtube.com/watch?v=' + match.videos.find(v => v.type?.toLowerCase() === 'youtube').key"
-                                            target="_blank"
-                                            class="text-[10px] font-black text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full transition-all flex items-center gap-2 shadow-lg shadow-red-900/20">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                            </svg>
-                                            Watch on YouTube (Direct Link)
-                                        </a>
-                                    </div>
-                                </div>
-                            </template>
-                            <template x-if="!(match.videos && match.videos.find(v => v.type?.toLowerCase() === 'youtube'))">
-                                <div class="py-6 flex flex-col items-center justify-center bg-slate-900/40 rounded-lg border border-slate-700/30">
-                                    <svg class="w-8 h-8 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    <p class="text-[10px] text-slate-500 italic uppercase tracking-widest mb-3">No match video available</p>
-                                    <!-- TBA Link Fallback -->
-                                    <a :href="FRC_CONFIG.getTbaMatchUrl(match.eventKey, match.type, match.matchNumber)"
-                                        target="_blank"
-                                        class="text-[10px] font-black text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-all flex items-center gap-2 shadow-lg shadow-blue-900/20">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                        </svg>
-                                        View Match on TBA
-                                    </a>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Scouted Data (Bottom) -->
-                    <div class="scout-section">
-                        <!-- Pit Report Shortcuts -->
-                        <div class="mb-4">
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Pit
-                                Report Shortcuts</span>
-                            <div class="flex flex-wrap gap-1.5">
-                                <template x-for="t in match.teams" :key="t.teamNumber">
-                                    <button @click.stop="location.href='teams.html?team=' + t.teamNumber"
-                                        class="px-2 py-1 bg-slate-800/50 hover:bg-orange-500/20 text-slate-400 hover:text-orange-400 border border-slate-700 hover:border-orange-500/40 rounded text-[9px] font-bold transition-all flex items-center gap-1.5">
-                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                        <span x-text="'#' + t.teamNumber"></span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-
-                        <h4 class="scout-section__title">Scouting Reports</h4>
-                        <div class="stack-spacing--4">
-                            <template
-                                x-for="entry in scoutEntries[match.eventKey + '_' + match.type + '_' + match.matchNumber] || []"
-                                :key="entry.id">
-                                <div class="scout-report">
-                                    <!-- Expandable Summary Header -->
-                                    <div @click="toggleReport(entry.id)" class="scout-report__summary-header">
-                                        <div class="scout-report__summary-left">
-                                            <div class="flex flex-col">
-                                                <div class="flex items-center gap-1.5">
-                                                    <div class="scout-report__team-badge--sm"
-                                                        x-text="'#' + entry.teamNumber"></div>
-                                                    <span
-                                                        class="text-[10px] font-black text-slate-300 truncate max-w-[80px]"
-                                                        x-text="getTeamData(entry.teamNumber).nickname || ''"></span>
-                                                    <template x-if="entry.meta?.isTestData">
-                                                        <span
-                                                            class="text-[9px] font-black px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 uppercase tracking-widest">TEST</span>
-                                                    </template>
-                                                </div>
-                                                <div class="scout-report__scouter-inline">
-                                                    <span class="scout-report__scouter-team-text"
-                                                        x-text="'Scouted by #' + (entry.meta?.scouterTeam || entry.meta?.scouterTeamNumber || '?')"></span>
-                                                    <span
-                                                        class="text-[9px] text-slate-500 font-bold ml-1 truncate max-w-[80px]"
-                                                        x-text="getTeamData(entry.meta?.scouterTeam || entry.meta?.scouterTeamNumber).nickname"></span>
-                                                    <template x-if="isVerified(entry.meta?.scouterRole)">
-                                                        <div class="scout-report__verified-tick">
-                                                            <svg class="h-3 w-3" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="3" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <!-- ADMIN DELETE -->
-                                            <button x-show="$store.auth.profile?.role === 'admin'"
-                                                @click.stop="deleteReport(entry.id)"
-                                                class="p-1.5 bg-red-600 hover:bg-red-500 text-white rounded transition-all shadow-lg shadow-red-950/20 flex items-center justify-center"
-                                                title="Delete Report">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2.5"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                            <svg class="h-4 w-4 transition-transform duration-200"
-                                                :class="expandedReports.includes(entry.id) ? 'rotate-180' : ''"
-                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Expanded Details -->
-                                    <div x-show="expandedReports.includes(entry.id)"
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 -translate-y-2"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        class="scout-report__details">
-
-                                        <!-- Metadata bar -->
-                                        <div class="scout-report__metadata-bar">
-                                            <span class="scout-report__timestamp"
-                                                x-text="formatDate(entry.createdAt)"></span>
-                                            <span class="scout-report__alliance-tag"
-                                                :class="(entry.meta?.alliance) === 'Red' ? 'text-red-400' : 'text-blue-400'"
-                                                x-text="((entry.meta?.alliance) || 'Unknown') + ' Alliance'"></span>
-                                        </div>
-
-                                        <!-- Data Grid: Auto / Teleop / Endgame -->
-                                        <div class="grid grid-cols-3 gap-2 p-3">
-                                            <!-- AUTO -->
-                                            <div class="bg-slate-800/60 rounded-lg p-2.5 ring-1 ring-green-500/20">
-                                                <div class="flex items-center gap-1.5 mb-2">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                                                    <span
-                                                        class="text-[10px] font-bold text-green-400 uppercase tracking-wider">Auto</span>
-                                                </div>
-                                                <div class="space-y-1">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Auto Scored</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-slate-200 bg-slate-700 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.auto?.scored || '0'"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400 text-red-400/80">Auto
-                                                            Failed</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-red-300 bg-red-500/10 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.auto?.failed || '0'"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Auto Climb</span>
-                                                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded"
-                                                            :class="(entry.data?.auto?.level1) === 'success' ? 'bg-green-500/20 text-green-400' : ((entry.data?.auto?.level1) === 'failed' ? 'bg-red-500/20 text-red-400' : 'bg-slate-700 text-slate-500')"
-                                                            x-text="(entry.data?.auto?.level1) === 'success' ? 'Scored' : ((entry.data?.auto?.level1) === 'failed' ? 'Failed' : 'N/A')"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- TELEOP -->
-                                            <div class="bg-slate-800/60 rounded-lg p-2.5 ring-1 ring-blue-500/20">
-                                                <div class="flex items-center gap-1.5 mb-2">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
-                                                    <span
-                                                        class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Teleop</span>
-                                                </div>
-                                                <div class="space-y-1">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Transition</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-slate-200 bg-slate-700 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.transitionShift || '0'"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Shift A</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-slate-200 bg-slate-700 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.teleopShiftA || '0'"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Shift B</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-slate-200 bg-slate-700 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.teleopShiftB || '0'"></span>
-                                                    </div>
-                                                    <div
-                                                        class="flex justify-between items-center border-t border-blue-500/10 pt-1 mt-1">
-                                                        <span
-                                                            class="text-[9px] text-blue-400 font-bold uppercase">Shooter
-                                                            Speed</span>
-                                                        <span class="text-[10px] font-black text-blue-300"
-                                                            x-text="(entry.data?.ratings?.shooterSpeed || 3) + '/5'"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- ENDGAME -->
-                                            <div class="bg-slate-800/60 rounded-lg p-2.5 ring-1 ring-orange-500/20">
-                                                <div class="flex items-center gap-1.5 mb-2">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
-                                                    <span
-                                                        class="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Endgame</span>
-                                                </div>
-                                                <div class="space-y-1">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Climb</span>
-                                                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded"
-                                                            :class="(() => { const lv = entry.data?.endgame?.level; return (!lv || lv === 'none') ? 'bg-slate-700 text-slate-500' : lv === 'failed' ? 'bg-red-500/20 text-red-400' : 'bg-orange-500/20 text-orange-400'; })()"
-                                                            x-text="(() => { const lv = entry.data?.endgame?.level; if (!lv || lv === 'none') return 'None'; if (lv === 'level1') return 'L1'; if (lv === 'level2') return 'L2'; if (lv === 'level3') return 'L3'; if (lv === 'failed') return 'Failed'; return lv; })()"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="text-[10px] text-slate-400">Endgame Shift</span>
-                                                        <span
-                                                            class="text-[10px] font-semibold text-slate-200 bg-slate-700 px-1.5 py-0.5 rounded"
-                                                            x-text="entry.data?.endgameShift || '0'"></span>
-                                                    </div>
-                                                    <div class="flex justify-between items-center"
-                                                        x-show="entry.data?.endgame?.climbTime">
-                                                        <span class="text-[10px] text-slate-400">Time</span>
-                                                        <span class="text-[10px] font-semibold text-orange-400"
-                                                            x-text="entry.data.endgame.climbTime + 's'"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- PHOTOS (If available) -->
-                                        <template x-if="entry.data?.images && entry.data?.images.length > 0">
-                                            <div class="px-3 pb-3">
-                                                <span
-                                                    class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Robot
-                                                    Photos</span>
-                                                <div class="flex flex-wrap gap-2">
-                                                    <template x-for="imgUrl in entry.data.images">
-                                                        <a :href="imgUrl" target="_blank"
-                                                            class="block w-16 h-16 rounded border border-slate-700 overflow-hidden bg-slate-900">
-                                                            <img :src="imgUrl"
-                                                                class="w-full h-full object-cover hover:scale-110 transition-transform">
-                                                        </a>
-                                                    </template>
-                                                </div>
-                                            </div>
+                            <div class="h-8 w-px bg-slate-800"></div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-1.5 h-3 bg-red-600 rounded-full"></div>
+                                    <div class="flex gap-2">
+                                        <template x-for="tk in match.alliances.red.team_keys">
+                                            <span class="text-[10px] font-black text-red-400" x-text="tk.substring(3)"></span>
                                         </template>
-
-                                        <!-- RATINGS -->
-                                        <div class="px-3 pb-3">
-                                            <div class="bg-slate-800/40 rounded-lg p-3 ring-1 ring-purple-500/20">
-                                                <div class="flex items-center gap-1.5 mb-2">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
-                                                    <span
-                                                        class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Ratings</span>
-                                                </div>
-                                                <div class="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                                                    <template
-                                                        x-for="(label, key) in { driver: 'Driver', speed: 'Speed', defense: 'Defense', stability: 'Stability' }">
-                                                        <div class="flex items-center gap-1.5">
-                                                            <span class="text-[10px] text-slate-400 w-14 shrink-0"
-                                                                x-text="label"></span>
-                                                            <div class="flex gap-0.5">
-                                                                <template x-for="star in [1,2,3,4,5]">
-                                                                    <div class="w-2.5 h-2.5 rounded-sm"
-                                                                        :class="star <= (entry.data?.ratings?.[key] || 0) ? 'bg-orange-400' : 'bg-slate-600'">
-                                                                    </div>
-                                                                </template>
-                                                            </div>
-                                                            <span class="text-[10px] text-slate-400"
-                                                                x-text="(entry.data?.ratings?.[key] || 0) + '/5'"></span>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                                <div class="mt-2 pt-2 border-t border-slate-700/40"
-                                                    x-show="entry.data?.ratings?.comments">
-                                                    <p class="text-[10px] text-slate-300 italic"
-                                                        x-text="'&quot;' + entry.data.ratings.comments + '&quot;'"></p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Footer: Pit Report link -->
-                                        <div class="px-3 pb-3 flex justify-end">
-                                            <button @click.stop="location.href='teams.html?team=' + entry.teamNumber"
-                                                class="text-[10px] font-bold text-orange-400 hover:text-orange-300 bg-orange-500/10 hover:bg-orange-500/20 px-2.5 py-1 rounded-full transition-colors flex items-center gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                                </svg>
-                                                Pit Report
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
-                            </template>
-                            <template
-                                x-if="!(scoutEntries[match.eventKey + '_' + match.type + '_' + match.matchNumber]?.length)">
-                                <div class="empty-scout">
-                                    <p class="empty-scout__text">No scouting reports available for this match</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-1.5 h-3 bg-blue-600 rounded-full"></div>
+                                    <div class="flex gap-2">
+                                        <template x-for="tk in match.alliances.blue.team_keys">
+                                            <span class="text-[10px] font-black text-blue-400" x-text="tk.substring(3)"></span>
+                                        </template>
+                                    </div>
                                 </div>
-                            </template>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-black text-red-500" x-text="match.alliances.red.score"></span>
+                                    <span class="text-slate-600 text-xs">-</span>
+                                    <span class="text-lg font-black text-blue-500" x-text="match.alliances.blue.score"></span>
+                                </div>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-700 group-hover:text-orange-500 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </a>
+                </template>
             </div>
         </template>
-    </div>
+    </main>
 
-    <!-- Your Application Logic -->
     <script src="js/auth.js"></script>
     <script src="js/frc-config.js"></script>
     <script src="js/matches-app.js"></script>
 </body>
-
 </html>

@@ -15,6 +15,12 @@
       var path = l.pathname.split('/');
       // Filter out empty strings
       path = path.filter(p => p.length > 0);
+
+      var basePath = '';
+      if (path[0] === '8056scout26') {
+          basePath = '/8056scout26';
+          path.shift();
+      }
       
       var targetPage = 'index.html'; // default
       var params = l.search;
@@ -58,7 +64,7 @@
           params = '?' + q.toString();
       }
 
-      var redirectUrl = l.origin + '/' + targetPage + params + l.hash;
+      var redirectUrl = l.origin + basePath + '/' + targetPage + params + l.hash;
       console.log('Redirecting to:', redirectUrl);
       window.location.replace(redirectUrl);
     </script>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body" x-data="regionalDetailApp">
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href = $store.appState.url('regionals')" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+            <div class="top-nav__right">
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="flex flex-col items-center">
+            <h1 class="page-hero__title" x-text="eventInfo ? eventInfo.name : 'Loading Event...'"></h1>
+            <p class="text-xs font-black text-orange-500 uppercase tracking-widest mt-1" x-text="eventKey"></p>
+        </div>
+    </section>
+
+    <!-- Context Toolbar -->
+    <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-[64px] z-20">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+             <div class="flex border-b border-slate-800 bg-slate-900/50 rounded-lg overflow-hidden">
+                <button @click="tab = 'matches'"
+                    :class="tab === 'matches' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:text-slate-300'"
+                    class="px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all">Matches</button>
+                <button @click="tab = 'rankings'"
+                    :class="tab === 'rankings' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:text-slate-300'"
+                    class="px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all">Rankings</button>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <input x-model="searchQuery" type="text" placeholder="Search Team..." 
+                        class="bg-slate-950 border border-slate-800 text-[10px] font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-orange-500 w-48">
+                    <svg class="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 py-8">
+        <template x-if="loading">
+            <div class="loading-container py-12">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Downloading Event Data...</p>
+            </div>
+        </template>
+
+        <template x-if="!loading">
+            <div>
+                <!-- MATCHES TAB -->
+                <div x-show="tab === 'matches'" class="space-y-3">
+                    <template x-for="match in filteredMatches" :key="match.key">
+                        <a :href="$store.appState.url('matches', eventKey, match.match_number)" 
+                           class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-orange-500 transition-all group">
+                            <div class="flex items-center gap-6">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black text-orange-500 uppercase tracking-widest" x-text="match.comp_level === 'qm' ? 'Quals' : 'Playoffs'"></span>
+                                    <span class="font-black text-white text-lg" x-text="'#' + match.match_number"></span>
+                                </div>
+                                <div class="h-8 w-px bg-slate-800"></div>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1.5 h-6 bg-red-600 rounded-full"></div>
+                                        <div class="flex gap-2">
+                                            <template x-for="tk in match.alliances.red.team_keys">
+                                                <span class="text-[11px] font-black text-red-400" x-text="tk.substring(3)"></span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+                                        <div class="flex gap-2">
+                                            <template x-for="tk in match.alliances.blue.team_keys">
+                                                <span class="text-[11px] font-black text-blue-400" x-text="tk.substring(3)"></span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-right">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg font-black text-red-500" x-text="match.alliances.red.score"></span>
+                                        <span class="text-slate-600 text-xs">-</span>
+                                        <span class="text-lg font-black text-blue-500" x-text="match.alliances.blue.score"></span>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-slate-700 group-hover:text-orange-500 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                        </a>
+                    </template>
+                </div>
+
+                <!-- RANKINGS TAB -->
+                <div x-show="tab === 'rankings'" class="space-y-2">
+                     <div class="grid grid-cols-12 px-6 py-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] bg-slate-900/50 rounded-xl mb-4">
+                        <div class="col-span-1">Rank</div>
+                        <div class="col-span-3">Team</div>
+                        <div class="col-span-2 text-right">W-L-T</div>
+                        <div class="col-span-2 text-right">RP</div>
+                        <div class="col-span-2 text-right">Avg Match</div>
+                        <div class="col-span-2 text-right">Score</div>
+                    </div>
+                    <template x-for="rank in filteredRankings" :key="rank.team_key">
+                        <a :href="$store.appState.url('teams', eventKey, rank.team_key.substring(3))"
+                           class="grid grid-cols-12 items-center p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-blue-500 transition-all group">
+                            <div class="col-span-1 text-xl font-black text-orange-500" x-text="rank.rank"></div>
+                            <div class="col-span-3 flex flex-col">
+                                <span class="text-sm font-black text-white group-hover:text-blue-400" x-text="'#' + rank.team_key.substring(3)"></span>
+                                <span class="text-[9px] text-slate-500 font-bold uppercase truncate" x-text="teamMap[rank.team_key]?.nickname || ''"></span>
+                            </div>
+                            <div class="col-span-2 text-right text-xs font-bold text-slate-400" x-text="rank.record ? `${rank.record.wins}-${rank.record.losses}-${rank.record.ties}` : '0-0-0'"></div>
+                            <div class="col-span-2 text-right font-black text-white" x-text="getRankValue(rank, 'Ranking Points')"></div>
+                            <div class="col-span-2 text-right font-black text-white" x-text="getRankValue(rank, 'Avg Match')"></div>
+                            <div class="col-span-2 text-right font-black text-white text-lg" x-text="getRankValue(rank, 'Ranking Score')"></div>
+                        </a>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/regional-detail-app.js"></script>
+</body>
+</html>

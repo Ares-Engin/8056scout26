@@ -106,6 +106,37 @@ document.addEventListener('alpine:init', () => {
         window.dispatchEvent(new Event('app-state-changed'));
     },
     
+    get basePath() {
+        const path = window.location.pathname;
+        // Specifically handle the 8056scout26 repo prefix for GitHub Pages
+        if (path.includes('/8056scout26/')) return '/8056scout26';
+        return '';
+    },
+
+    /**
+     * Generates a parametric URL including base path
+     * @param {string} page The page name (e.g. 'dashboard')
+     * @param {string} regional Optional regional key
+     * @param {string} subId Optional sub-id (match # or team #)
+     */
+    url(page, regional = '', subId = '') {
+        const base = this.basePath;
+        const reg = regional || this.regional;
+        let path = `${base}/${this.league}/${this.season}`;
+        
+        if (reg) {
+            path += `/${reg}`;
+        }
+        
+        path += `/${page}`;
+        
+        if (subId) {
+            path += `/${subId}`;
+        }
+        
+        return path;
+    },
+
     get collectionName() {
         return `scouting_${this.league}_${this.season}`;
     },

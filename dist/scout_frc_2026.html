@@ -20,7 +20,7 @@
   <nav class="top-nav">
     <div class="top-nav__inner">
       <div class="top-nav__left">
-        <button @click="location.href='dashboard.html'" class="back-btn--shadow">
+        <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/dashboard'" class="back-btn--shadow">
           <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
             </path>
@@ -280,7 +280,7 @@
   <script src="js/auth.js"></script>
   <script src="js/custom-events.js"></script>
   <script src="js/frc-config.js"></script>
-  <script src="js/scout-app.js"></script>
+  <script src="js/scout-frc-2026-app.js"></script>
 </body>
 
 </html>

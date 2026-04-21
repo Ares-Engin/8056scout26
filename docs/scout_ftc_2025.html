@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FTC Match Scouting - INTO THE DEEP 2025</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body" x-data="scoutApp">
+  <nav class="top-nav">
+    <div class="top-nav__inner">
+      <div class="top-nav__left">
+        <button @click="location.href='/' + $store.appState.league + '/' + $store.appState.season + '/dashboard'" class="back-btn--shadow">
+          <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="top-nav__center">
+        <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
+        <span class="brand__subtitle--orange">Laissez Faire</span>
+      </div>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <h1 class="page-hero__title italic">FTC: INTO THE DEEP</h1>
+    <p class="text-[10px] text-orange-500 font-black uppercase tracking-[0.3em]">2025 Season Scouting</p>
+  </section>
+
+  <div class="container--sm">
+    <!-- INFO -->
+    <section class="card">
+      <h2 class="section-title"><span class="section-number">01</span> Match Details</h2>
+      <div class="stack-spacing--6">
+        <div class="form-grid">
+            <div class="flex flex-col">
+                <label class="form-label">Regional</label>
+                <select x-model="regional" class="form-select uppercase">
+                    <template x-for="event in filteredEvents" :key="event.key">
+                        <option :value="event.key" x-text="event.name"></option>
+                    </template>
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="form-label">Match Type</label>
+                <select x-model="matchType" class="form-select">
+                    <option>Practice</option>
+                    <option>Qualification</option>
+                    <option>Finals</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label class="form-label">Match #</label>
+            <input x-model="matchNumber" type="number" class="form-input">
+          </div>
+          <div>
+            <label class="form-label">Team #</label>
+            <input x-model="teamNumber" type="number" class="form-input">
+          </div>
+        </div>
+
+        <div>
+           <label class="form-label">Alliance</label>
+           <div class="grid grid-cols-2 gap-2">
+               <button @click="alliance = 'Red'" :class="alliance === 'Red' ? 'bg-red-600' : 'bg-slate-800'" class="py-2 rounded font-black text-[10px] text-white uppercase transition-all">Red</button>
+               <button @click="alliance = 'Blue'" :class="alliance === 'Blue' ? 'bg-blue-600' : 'bg-slate-800'" class="py-2 rounded font-black text-[10px] text-white uppercase transition-all">Blue</button>
+           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTO -->
+    <section class="card--orange">
+      <h2 class="section-title--orange"><span class="section-number--orange">02</span> Autonomous Phase</h2>
+      <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase">Samples Scored</label>
+              <div class="flex items-center gap-2">
+                  <button @click="auto.samples = Math.max(0, auto.samples - 1)" class="w-10 h-10 bg-slate-800 rounded-lg text-white font-bold">-</button>
+                  <span class="flex-1 text-center font-black text-white" x-text="auto.samples"></span>
+                  <button @click="auto.samples++" class="w-10 h-10 bg-slate-800 rounded-lg text-white font-bold">+</button>
+              </div>
+          </div>
+          <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase">Specimens Scored</label>
+              <div class="flex items-center gap-2">
+                  <button @click="auto.specimens = Math.max(0, auto.specimens - 1)" class="w-10 h-10 bg-slate-800 rounded-lg text-white font-bold">-</button>
+                  <span class="flex-1 text-center font-black text-white" x-text="auto.specimens"></span>
+                  <button @click="auto.specimens++" class="w-10 h-10 bg-slate-800 rounded-lg text-white font-bold">+</button>
+              </div>
+          </div>
+      </div>
+      <div class="mt-4">
+          <label class="form-label">Auto Park / Hang</label>
+          <select x-model="auto.park" class="form-select--orange">
+              <option value="none">Did Not Move</option>
+              <option value="parked">Parked in Observation</option>
+              <option value="hang">Level 1 Ascent</option>
+          </select>
+      </div>
+    </section>
+
+    <!-- TELEOP -->
+    <section class="card--blue">
+      <h2 class="section-title--blue"><span class="section-number--blue">03</span> Teleop Scoring</h2>
+      <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2">
+                   <label class="text-[10px] font-black text-slate-500 uppercase">Action Efficiency</label>
+                   <div class="flex gap-1 mt-2">
+                       <template x-for="i in 5">
+                           <button @click="teleop.efficiency = i" :class="teleop.efficiency >= i ? 'bg-blue-500' : 'bg-slate-800'" class="flex-1 h-2 rounded-full transition-all"></button>
+                       </template>
+                   </div>
+              </div>
+          </div>
+          <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] font-black text-white uppercase">Basket Scoring (High)</span>
+              <div class="flex items-center gap-3">
+                  <button @click="teleop.highBasket = Math.max(0, teleop.highBasket - 1)" class="w-8 h-8 bg-slate-800 rounded text-white">-</button>
+                  <span class="w-6 text-center font-black text-blue-400" x-text="teleop.highBasket"></span>
+                  <button @click="teleop.highBasket++" class="w-8 h-8 bg-slate-800 rounded text-white">+</button>
+              </div>
+          </div>
+          <div class="flex justify-between items-center bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] font-black text-white uppercase">Chamber (Specimens)</span>
+              <div class="flex items-center gap-3">
+                  <button @click="teleop.chamber = Math.max(0, teleop.chamber - 1)" class="w-8 h-8 bg-slate-800 rounded text-white">-</button>
+                  <span class="w-6 text-center font-black text-blue-400" x-text="teleop.chamber"></span>
+                  <button @click="teleop.chamber++" class="w-8 h-8 bg-slate-800 rounded text-white">+</button>
+              </div>
+          </div>
+      </div>
+    </section>
+
+    <!-- ENDGAME -->
+    <section class="card--purple">
+      <h2 class="section-title--purple"><span class="section-number--purple">04</span> Endgame</h2>
+      <div class="space-y-4">
+          <div>
+              <label class="form-label">Final Ascent</label>
+              <select x-model="endgame.ascent" class="form-select--purple">
+                  <option value="none">No Ascent</option>
+                  <option value="level1">Level 1 Ascent</option>
+                  <option value="level2">Level 2 Ascent</option>
+                  <option value="level3">Level 3 Ascent</option>
+              </select>
+          </div>
+          <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+              <label class="text-[10px] font-black text-purple-400 uppercase tracking-widest block mb-2">Comments</label>
+              <textarea x-model="comments" placeholder="Breakdowns, specific strategies, etc..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-white focus:outline-none focus:border-purple-500 h-24"></textarea>
+          </div>
+      </div>
+    </section>
+
+    <!-- SUBMIT -->
+    <button @click="submit" :disabled="loading" class="btn-submit mt-8">
+      <span x-text="loading ? 'Uploading...' : 'Submit FTC Report'"></span>
+    </button>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/frc-config.js"></script>
+  <script src="js/scout-ftc-2025-app.js"></script>
+</body>
+</html>

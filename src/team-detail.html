@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Profile - REBUILT 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/theme.js"></script>
+    <script src="js/custom-events.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="page-body" x-data="teamDetailApp">
+    <nav class="top-nav">
+        <div class="top-nav__inner">
+            <div class="top-nav__left">
+                <button @click="location.href = $store.appState.url('teams')" class="back-btn--shadow">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="top-nav__center">
+                <img src="img/logo.png" alt="Logo" class="brand__logo--nav">
+                <span class="brand__subtitle--orange">Laissez Faire</span>
+            </div>
+            <div class="top-nav__right">
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="flex flex-col items-center">
+            <h1 class="page-hero__title" x-text="team ? '#' + team.team_number + ' ' + team.nickname : 'Loading Team...'"></h1>
+            <p class="text-xs font-black text-blue-500 uppercase tracking-widest mt-1" x-text="team?.city ? team.city + ', ' + (team.state_prov || team.country) : ''"></p>
+        </div>
+    </section>
+
+    <main class="max-w-4xl mx-auto px-4 pb-12">
+        <template x-if="loading">
+            <div class="loading-container py-12">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing Team Specs...</p>
+            </div>
+        </template>
+
+        <template x-if="!loading && team">
+            <div class="space-y-8">
+                <!-- Pit Scout Report -->
+                <section class="card--orange">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="section-title--orange m-0"><span class="section-number--orange">🔍</span> Pit Intelligence</h2>
+                        <template x-if="pitReport">
+                            <span class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Reports Found</span>
+                        </template>
+                    </div>
+
+                    <template x-if="pitReport">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase block mb-1">Drive Train</span>
+                                    <p class="text-sm font-black text-white" x-text="pitReport.data?.drivetrain || 'Unknown'"></p>
+                                </div>
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase block mb-1">Motor Count</span>
+                                    <p class="text-sm font-black text-white" x-text="pitReport.data?.motorCount || '?'"></p>
+                                </div>
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase block mb-1">Weight</span>
+                                    <p class="text-sm font-black text-white" x-text="(pitReport.data?.weight || '?') + ' kg'"></p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950 p-5 rounded-3xl border border-slate-800">
+                                <span class="text-[9px] font-black text-slate-600 uppercase block mb-3">Mechanism Summary</span>
+                                <p class="text-sm text-slate-300 leading-relaxed" x-text="pitReport.data?.mechanisms || 'No mechanism data recorded.'"></p>
+                            </div>
+
+                            <!-- Robot Photos -->
+                            <template x-if="pitReport.data?.images?.length">
+                                <section>
+                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Hardware Gallery</span>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        <template x-for="imgUrl in pitReport.data.images">
+                                            <a :href="imgUrl" target="_blank" class="aspect-square rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 block group">
+                                                <img :src="imgUrl" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            </a>
+                                        </template>
+                                    </div>
+                                </section>
+                            </template>
+                        </div>
+                    </template>
+                    
+                    <template x-if="!pitReport">
+                        <div class="py-12 flex flex-col items-center justify-center bg-slate-950/50 rounded-3xl border border-dashed border-slate-800">
+                            <svg class="w-12 h-12 text-slate-800 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 01-.586 1.414l-2.828 2.828a2 2 0 01-2.828 0L7.172 13.586A2 2 0 016.586 12.172V5L5 4h3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <p class="text-xs text-slate-600 font-bold uppercase tracking-widest mb-4">No Pit Report Available</p>
+                            <a :href="`pit-scout.html?team=${team.team_number}&regional=${$store.appState.regional}`" class="px-6 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest transition-all">Submit Pit Intelligence</a>
+                        </div>
+                    </template>
+                </section>
+
+                <!-- Match History in Event -->
+                <section>
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-6 border-l-4 border-blue-500 pl-4">Match Analysis (Current Event)</h2>
+                    <div class="space-y-3">
+                        <template x-for="match in teamMatches" :key="match.key">
+                            <a :href="$store.appState.url('matches', '', match.match_number)" 
+                               class="flex items-center justify-between p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:border-blue-500 transition-all group">
+                                <div class="flex items-center gap-6">
+                                    <span class="font-black text-slate-400 group-hover:text-blue-400 text-sm" x-text="'#' + match.match_number"></span>
+                                    <div class="h-4 w-px bg-slate-800"></div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-lg font-black text-white" x-text="match.alliances.red.score"></span>
+                                            <div class="w-2 h-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)]"></div>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <div class="w-2 h-2 rounded-full bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.5)]"></div>
+                                            <span class="text-lg font-black text-white" x-text="match.alliances.blue.score"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <svg class="w-4 h-4 text-slate-700 group-hover:text-blue-500 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </a>
+                        </template>
+                        <template x-if="!teamMatches.length">
+                            <p class="text-xs text-slate-600 font-bold uppercase py-8 text-center italic">No matches found for this team at this event yet.</p>
+                        </template>
+                    </div>
+                </section>
+            </div>
+        </template>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/frc-config.js"></script>
+    <script src="js/team-detail-app.js"></script>
+</body>
+</html>

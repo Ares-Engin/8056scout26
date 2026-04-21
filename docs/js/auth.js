@@ -64,12 +64,39 @@ document.addEventListener('alpine:init', () => {
 
   // Global App State for League and Season selection
   Alpine.store('appState', {
-    league: localStorage.getItem('app_league') || 'frc',
-    season: localStorage.getItem('app_season') || '2026',
+    league: 'frc',
+    season: '2026',
+    regional: '',
+
+    init() {
+        const params = new URLSearchParams(window.location.search);
+        
+        // 1. Priority: URL Params (for deep linking)
+        const urlLeague = params.get('league');
+        const urlSeason = params.get('season');
+        const urlRegional = params.get('regional');
+
+        if (urlLeague) this.league = urlLeague;
+        else this.league = localStorage.getItem('app_league') || 'frc';
+
+        if (urlSeason) this.season = urlSeason;
+        else this.season = localStorage.getItem('app_season') || '2026';
+
+        if (urlRegional) this.regional = urlRegional;
+
+        // 2. Persist initial state
+        localStorage.setItem('app_league', this.league);
+        localStorage.setItem('app_season', this.season);
+    },
     
     setLeague(l) {
         this.league = l;
-        localStorage.setItem('app_league', l);
+        // Automatic Season Shift
+        if (l === 'ftc') this.season = '2025';
+        else if (l === 'frc') this.season = '2026';
+        
+        localStorage.setItem('app_league', this.league);
+        localStorage.setItem('app_season', this.season);
         window.dispatchEvent(new Event('app-state-changed'));
     },
     
@@ -79,6 +106,37 @@ document.addEventListener('alpine:init', () => {
         window.dispatchEvent(new Event('app-state-changed'));
     },
     
+    get basePath() {
+        const path = window.location.pathname;
+        // Specifically handle the 8056scout26 repo prefix for GitHub Pages
+        if (path.includes('/8056scout26/')) return '/8056scout26';
+        return '';
+    },
+
+    /**
+     * Generates a parametric URL including base path
+     * @param {string} page The page name (e.g. 'dashboard')
+     * @param {string} regional Optional regional key
+     * @param {string} subId Optional sub-id (match # or team #)
+     */
+    url(page, regional = '', subId = '') {
+        const base = this.basePath;
+        const reg = regional || this.regional;
+        let path = `${base}/${this.league}/${this.season}`;
+        
+        if (reg) {
+            path += `/${reg}`;
+        }
+        
+        path += `/${page}`;
+        
+        if (subId) {
+            path += `/${subId}`;
+        }
+        
+        return path;
+    },
+
     get collectionName() {
         return `scouting_${this.league}_${this.season}`;
     },
